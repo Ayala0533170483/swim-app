@@ -1,0 +1,106 @@
+.errorContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5vw;
+}
+
+.errorContent {
+  text-align: center;
+  padding: 2rem;
+}
+
+.errorAnimation {
+  position: relative;
+  height: 200px;
+  margin: 2rem 0;
+}
+
+.error404 {
+  font-size: 80px;
+  font-weight: bold;
+  color: #2d3748;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.errorGhost {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 100px;
+}
+
+.errorGhostBody {
+  width: 60px;
+  height: 80px;
+  background: #fff;
+  border-radius: 50% 50% 0 0;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  animation: float 6s ease-in-out infinite;
+}
+
+.errorGhostEyes {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translateX(-50%);
+  width: 30px;
+  height: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.errorGhostEyes::before,
+.errorGhostEyes::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: #2d3748;
+  border-radius: 50%;
+}
+
+.errorGhostWaves {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: radial-gradient(circle at 50% 100%, transparent 12px, #fff 13px);
+  background-size: 20px 20px;
+  animation: waves 2s linear infinite;
+}
+
+.error {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 6vw;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes waves {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 20px 0;
+  }
+}
