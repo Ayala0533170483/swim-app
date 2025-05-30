@@ -1,5 +1,176 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background-color: #ffffff;
+
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 40px;
+        z-index: 1000;
+    }
+
+    .navbarLogo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .navbarLogo img {
+        height: 100px;
+        width: 140px;
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+    }
+
+    /* .navbarLogo h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+} */
+
+    .navbarLinks {
+        list-style: none;
+        display: flex;
+        gap: 40px;
+        padding: 0;
+        margin: 0;
+    }
+
+    .navbarLinks li {
+        display: inline;
+    }
+
+    .navbarLinks a {
+        text-decoration: none;
+        color: #333;
+        font-size: 18px;
+        transition: color 0.3s;
+    }
+
+    .navbarLinks a:hover {
+        color: #0077cc;
+    }
+
+    .navbarAuth {
+        display: flex;
+        gap: 15px;
+        margin-right: 100px;
+    }
+
+    .btn {
+        text-decoration: none;
+        padding: 8px 16px;
+        border: 1px solid #0077cc;
+        border-radius: 6px;
+        color: #0077cc;
+        background-color: white;
+        transition: all 0.3s;
+        font-size: 16px;
+    }
+
+    .btn:hover {
+        background-color: #f0f0f0;
+    }
+
+    .btn--primary {
+        background-color: #0077cc;
+        color: white;
+    }
+
+    .btn--primary:hover {
+        background-color: #005fa3;
+    }
+
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    z-index: 1000;
+}
+
+.navbarLogo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .navbarLogo img {
-    width: 10em;
-    height: 10em;
-    margin: 2em;
+    height: 100px;
+    width: 140px;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+/* .navbarLogo h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+} */
+
+.navbarLinks {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+    padding: 0;
+    margin: 0;
+}
+
+.navbarLinks li {
+    display: inline;
+}
+
+.navbarLinks a {
+    text-decoration: none;
+    color: #333;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.navbarLinks a:hover {
+    color: #0077cc;
+}
+
+.navbarAuth {
+    display: flex;
+    gap: 15px;
+    margin-right: 100px;
+}
+
+.btn {
+    text-decoration: none;
+    padding: 8px 16px;
+    border: 1px solid #0077cc;
+    border-radius: 6px;
+    color: #0077cc;
+    background-color: white;
+    transition: all 0.3s;
+    font-size: 16px;
+}
+
+.btn:hover {
+    background-color: #f0f0f0;
+}
+
+.btn--primary {
+    background-color: #0077cc;
+    color: white;
+}
+
+.btn--primary:hover {
+    background-color: #005fa3;
 }
