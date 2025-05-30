@@ -1,4 +1,4 @@
-const dal = require('../DAL/dal');
+const dal = require('../dal/dal.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { log } = require('../utils/logger');
