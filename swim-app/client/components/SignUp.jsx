@@ -1,8 +1,9 @@
-// Signup.jsx
 import React, { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { userContext } from "./App";
+import Cookies from "js-cookie";
+import '../styles/SignUp.css';
 
 function Signup() {
   const [isStepTwo, setIsStepTwo] = useState(false);
@@ -23,123 +24,195 @@ function Signup() {
   } = useForm();
 
   const onStepOne = (data) => {
-    const { username, password, verifyPassword } = data;
+    const { email, password, verifyPassword } = data;
     if (password !== verifyPassword) {
-      alert("Passwords do not match");
+      alert("הסיסמאות אינן תואמות");
       return;
     }
-    setStepOneData({ username, password });
+    setStepOneData({ email, password });
     setIsStepTwo(true);
   };
 
   const onStepTwo = async (data) => {
+    console.log("🚀 Signup attempt with:", data);
+
     const payload = {
-      username: stepOneData.username,
-      password: stepOneData.password,
       name: data.name,
-      email: data.email,
-      phone: data.phone,
+      email: stepOneData.email,
+      password: stepOneData.password,
+      type_id: parseInt(data.type_id),
     };
+
+    console.log("📤 Sending payload:", payload);
 
     try {
       const res = await fetch("http://localhost:3000/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(payload),
       });
+
+      console.log("📡 Response status:", res.status);
+
       if (!res.ok) {
-        const e = await res.json();
-        alert(e.message || "Signup failed");
+        const errorData = await res.json();
+        console.error("❌ Signup failed:", errorData);
+        alert(errorData.error || "ההרשמה נכשלה");
         return;
       }
-      const user = await res.json();
+
+      const responseData = await res.json();
+      console.log("✅ Signup successful:", responseData);
+
+      const { user, accessToken } = responseData;
+
+      Cookies.set("accessToken", accessToken, {
+        expires: 0.0104,
+        sameSite: "Lax"
+      });
+
       setUserData(user);
       localStorage.setItem("currentUser", JSON.stringify(user));
       navigate("/home");
-    } catch (e) {
-      console.error(e);
-      alert("An unexpected error occurred");
+
+    } catch (error) {
+      console.error("🔥 Network error:", error);
+      alert("שגיאת רשת: " + error.message);
     }
   };
 
+  const goBackToStepOne = () => {
+    setIsStepTwo(false);
+  };
+
   return (
-    <div>
-      {!isStepTwo ? (
-        <form className="login-container" onSubmit={submitStepOne(onStepOne)}>
+    <div className="signup-page">
+      <div className="signup-wrapper">
+        <div className="signup-header">
+          <h1 className="signup-title">הרשמה</h1>
+          <p className="signup-subtitle">הצטרפו לבית הספר לשחייה שלנו</p>
+        </div>
+
+        {/* Step Indicator */}
+        <div className="step-indicator">
+          <div className={`step-circle ${!isStepTwo ? 'active' : 'completed'}`}>
+            1
+          </div>
+          <div className={`step-line ${isStepTwo ? 'completed' : ''}`}></div>
+          <div className={`step-circle ${isStepTwo ? 'active' : 'inactive'}`}>
+            2
+          </div>
+        </div>
+
+        <div className="login-container">
+          {/* שלב 1: אימייל וסיסמה */}
           <input
-            {...reg1("username", {
-              required: "Username is required",
-              minLength: { value: 3, message: "At least 3 chars" },
+            type="email"
+            {...reg1("email", {
+              required: "אימייל נדרש",
+              pattern: { 
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 
+                message: "אימייל לא תקין" 
+              },
             })}
-            placeholder="Username"
+            placeholder="כתובת אימייל"
             className="login-input"
+            disabled={isStepTwo}
+            defaultValue={stepOneData?.email || ""}
           />
-          {err1.username && <span className="error-message">{err1.username.message}</span>}
+          {err1.email && <span className="error-message">{err1.email.message}</span>}
 
           <input
             type="password"
             {...reg1("password", {
-              required: "Password is required",
-              minLength: { value: 6, message: "At least 6 chars" },
+              required: "סיסמה נדרשת",
+              minLength: { value: 6, message: "לפחות 6 תווים" },
             })}
-            placeholder="Password"
+            placeholder="סיסמה"
             className="login-input"
+            disabled={isStepTwo}
+            defaultValue={stepOneData?.password || ""}
           />
           {err1.password && <span className="error-message">{err1.password.message}</span>}
 
-          <input
-            type="password"
-            {...reg1("verifyPassword", { required: "Please verify your password" })}
-            placeholder="Verify Password"
-            className="login-input"
-          />
-          {err1.verifyPassword && <span className="error-message">{err1.verifyPassword.message}</span>}
+          {!isStepTwo && (
+            <>
+              <input
+                type="password"
+                {...reg1("verifyPassword", { 
+                  required: "אנא אמת את הסיסמה" 
+                })}
+                placeholder="אימות סיסמה"
+                className="login-input"
+              />
+              {err1.verifyPassword && (
+                <span className="error-message">{err1.verifyPassword.message}</span>
+              )}
 
-          <button type="submit" className="login-button">
-            Next
-          </button>
-        </form>
-      ) : (
-        <form className="login-container" onSubmit={submitStepTwo(onStepTwo)}>
-          <input
-            {...reg2("name", {
-              required: "Name is required",
-              minLength: { value: 2, message: "At least 2 chars" },
-            })}
-            placeholder="Name"
-            className="login-input"
-          />
-          {err2.name && <span className="error-message">{err2.name.message}</span>}
+              <button
+                type="button"
+                onClick={submitStepOne(onStepOne)}
+                className="login-button"
+              >
+                המשך
+              </button>
+            </>
+          )}
 
-          <input
-            {...reg2("email", {
-              required: "Email is required",
-              pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email" },
-            })}
-            placeholder="Email"
-            className="login-input"
-          />
-          {err2.email && <span className="error-message">{err2.email.message}</span>}
+          {/* שלב 2: פרטים נוספים */}
+          {isStepTwo && (
+            <form onSubmit={submitStepTwo(onStepTwo)}>
+              <input
+                {...reg2("name", {
+                  required: "שם מלא נדרש",
+                  minLength: { value: 2, message: "לפחות 2 תווים" },
+                })}
+                placeholder="שם מלא"
+                className="login-input"
+              />
+              {err2.name && <span className="error-message">{err2.name.message}</span>}
 
-          <input
-            {...reg2("phone", {
-              required: "Phone is required",
-              pattern: { value: /^[0-9\-\+]{9,}$/, message: "Invalid phone" },
-            })}
-            placeholder="Phone"
-            className="login-input"
-          />
-          {err2.phone && <span className="error-message">{err2.phone.message}</span>}
+              <select
+                {...reg2("type_id", { required: "אנא בחר סוג משתמש" })}
+                className="login-input"
+              >
+                <option value="">בחר סוג משתמש</option>
+                <option value="1">תלמיד</option>
+                <option value="2">מורה</option>
+                <option value="3">מנהל</option>
+              </select>
+              {err2.type_id && <span className="error-message">{err2.type_id.message}</span>}
 
-          <button type="submit" disabled={isSubmitting} className="login-button">
-            {isSubmitting ? "Signing up..." : "Sign Up"}
-          </button>
-        </form>
-      )}
+              <div className="form-row">
+                <button 
+                  type="button" 
+                  onClick={goBackToStepOne}
+                  className="back-button"
+                  disabled={isSubmitting}
+                >
+                  חזור
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting} 
+                  className="login-button"
+                >
+                  {isSubmitting ? "נרשם..." : "הרשמה"}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
 
-      <button className="switch-signup" onClick={() => navigate("/login")}>
-        Already have an account?
-      </button>
+        <button 
+          className="switch-signup" 
+          onClick={() => navigate("/login")}
+          disabled={isSubmitting}
+        >
+          כבר יש לך חשבון? התחבר כאן
+        </button>
+      </div>
     </div>
   );
 }

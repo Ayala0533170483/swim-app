@@ -1,51 +1,81 @@
-const authService = require('../services/Service');
+const service = require('../services/service');
 const { log } = require('../utils/logger');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
-async function signup(req, res) {
+const SECRET = process.env.JWT_SECRET || 'access-secret';
+const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh-secret';
+
+async function signup(userData, ip) {
     try {
-        const ip = req.ip;
-        const { user, accessToken, refreshToken } = await Service.signup(req.body, ip);
+        // בדיקת קיום משתמש
+        const existingUser = await service.getUserWithPassword(userData.email);
+        if (existingUser) {
+            throw new Error('Email already in use');
+        }
 
-        res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'Strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
-        res.json({ user, accessToken });
+        // הצפנת הסיסמה
+        const saltRounds = 10;
+        const password_hash = await bcrypt.hash(userData.password, saltRounds);
+
+        // יצירת המשתמש
+        const newUser = await service.createUserWithPasswordHash(userData, password_hash);
+        
+        // יצירת טוקנים
+        const accessToken = createAccessToken(newUser, ip);
+        const refreshToken = createRefreshToken(newUser, ip);
+
+        return { user: newUser, accessToken, refreshToken };
     } catch (err) {
-        console.error(err);
-        const status = err.message.includes('in use') ? 409 : 500;
-        res.status(status).json({ error: err.message });
+        throw err;
     }
 }
 
-async function login(req, res) {
+async function login(email, password, ip) {
     try {
-        const ip = req.ip;
-        const { user, accessToken, refreshToken } = await Service.login(req.body.email, req.body.password, ip);
+        const user = await service.getUserWithPassword(email);
+        if (!user) {
+            throw new Error('Invalid credentials');
+        }
 
-        res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'Strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
-        res.json({ user, accessToken });
+        const isValidPassword = await bcrypt.compare(password, user.password_hash);
+        if (!isValidPassword) {
+            throw new Error('Invalid credentials');
+        }
+
+        // הסרת הסיסמה מהתשובה
+        const { password_hash, ...userWithoutPassword } = user;
+        
+        // יצירת טוקנים
+        const accessToken = createAccessToken(userWithoutPassword, ip);
+        const refreshToken = createRefreshToken(userWithoutPassword, ip);
+
+        return { user: userWithoutPassword, accessToken, refreshToken };
     } catch (err) {
-        console.error(err);
-        res.status(401).json({ error: err.message });
+        throw err;
     }
 }
 
-function logout(req, res) {
-    res.clearCookie('refreshToken', {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'Strict'
-    });
-    log(`[LOGOUT]`, { ip: req.ip });
-    res.json({ message: 'Logged out successfully' });
+function createAccessToken(user, ip) {
+    return jwt.sign(
+        { id: user.user_id, email: user.email, ip },
+        SECRET,
+        { expiresIn: '15m' }
+    );
 }
 
-module.exports = { signup, login, logout };
+function createRefreshToken(user, ip) {
+    return jwt.sign(
+        { id: user.user_id, email: user.email, ip },
+        REFRESH_SECRET,
+        { expiresIn: '7d' }
+    );
+}
+
+async function getItems(table, filters = {}) {
+    const result = await service.get(table, filters);
+    log(`[GET]`, { table, filters });
+    return result;
+}
+
+module.exports = { signup, login, getItems };

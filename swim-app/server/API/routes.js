@@ -1,5 +1,5 @@
 const express = require('express');
-const bl = require('../controllers/logic.js');
+const auth = require('../controllers/authController');
 
 function createGenericRouter(table) {
     const router = express.Router();
@@ -10,7 +10,7 @@ function createGenericRouter(table) {
             if (query.user_id === 'null' && req.user && req.user.id) {
                 query.user_id = req.user.id;
             }
-            const items = await bl.getItems(table, query);
+            const items = await auth.getItems(table, query);
             res.json(items);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -24,7 +24,7 @@ function createGenericRouter(table) {
             if (body.user_id === 'null' && req.user && req.user.id) {
                 body.user_id = req.user.id;
             }
-            const newItem = await bl.createItem(table, body);
+            const newItem = await auth.createItem(table, body);
             res.status(201).json(newItem);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -39,7 +39,7 @@ function createGenericRouter(table) {
                 body.user_id = req.user.id;
             }
     
-            await bl.updateItem(table, req.params.id, body);
+            await auth.updateItem(table, req.params.id, body);
             res.json({ message: `${table.slice(0, -1)} updated` });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -49,7 +49,7 @@ function createGenericRouter(table) {
 
     router.delete('/:id', async (req, res) => {
         try {
-            await bl.deleteItem(table, req.params.id);
+            await auth.deleteItem(table, req.params.id);
             res.json({ message: `${table.slice(0, -1)} deleted` });
         } catch (error) {
             res.status(500).json({ error: error.message });
