@@ -50,7 +50,7 @@ body {
 }
 
 .login-input {
-  width: 87%;
+  width: 100%;
   padding: 1rem 1.5rem;
   border: 2px solid #e6f3ff;
   border-radius: 12px;
@@ -59,7 +59,9 @@ body {
   background: #f8fbff;
   color: #333;
   text-align: right;
+  box-sizing: border-box; /* הוספה - כך הpadding לא מוסיף לרוחב */
 }
+
 
 .login-input:focus {
   outline: none;

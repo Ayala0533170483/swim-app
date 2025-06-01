@@ -191,7 +191,7 @@ function Signup() {
                   className="back-button"
                   disabled={isSubmitting}
                 >
-                  חזור
+                 →
                 </button>
                 <button 
                   type="submit" 

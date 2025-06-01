@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { userContext } from './App';
 import Cookies from 'js-cookie';
 import '../styles/NavBar.css';
@@ -19,10 +19,11 @@ function NavBar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <div className="navbar-logo">
+        {/* עטפתי את הלוגו ב-Link */}
+        <Link to="/home" className="navbar-logo">
           <img src={logo} alt="SwimSchool Logo" />
           {/* <h1>SwimSchool</h1> */}
-        </div>
+        </Link>
         
         <ul className="navbar-links">
           <li><NavLink to="/home" className="nav-link">דף בית</NavLink></li>

@@ -1,10 +1,23 @@
 .navbar {
-  background: linear-gradient(135deg, #0066cc, #00ccff);
-  box-shadow: 0 4px 20px rgba(0, 102, 204, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 102, 204, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
   padding: 0;
+  transition: all 0.3s ease;
+}
+
+.navbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 102, 204, 0.1), rgba(0, 204, 255, 0.05));
+  z-index: -1;
 }
 
 .navbar-container {
@@ -14,121 +27,258 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
+  position: relative;
 }
 
 .navbar-logo {
   display: flex;
   align-items: center;
   gap: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover {
+  transform: scale(1.05);
 }
 
 .navbar-logo img {
   height: 50px;
   width: auto;
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 102, 204, 0.2);
+  transition: all 0.3s ease;
+}
+
+.navbar-logo img:hover {
+  box-shadow: 0 8px 24px rgba(0, 102, 204, 0.3);
+  transform: rotate(5deg);
 }
 
 .navbar-logo h1 {
-  color: white;
+  color: #0066cc;
   font-size: 1.8rem;
   font-weight: 700;
   margin: 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+  background: linear-gradient(135deg, #0066cc, #00ccff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .navbar-links {
   display: flex;
   list-style: none;
-  gap: 2rem;
+  gap: 1rem;
   margin: 0;
   padding: 0;
-}
-
-.nav-link {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 1.1rem;
-  padding: 0.5rem 1rem;
-  border-radius: 25px;
-  transition: all 0.3s ease;
+  align-items: center;
   position: relative;
 }
 
-.nav-link:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+.navbar-links li {
+  position: relative;
 }
 
+/* פס לפני דף בית */
+.navbar-links li:nth-child(1)::before {
+  content: '';
+  position: absolute;
+  left: -0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 20px;
+  background: rgba(0, 102, 204, 0.3);
+}
+
+/* פס לפני מי אנחנו */
+.navbar-links li:nth-child(2)::before {
+  content: '';
+  position: absolute;
+  left: -0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 20px;
+  background: rgba(0, 102, 204, 0.3);
+}
+
+/* פס לפני סניפים */
+.navbar-links li:nth-child(3)::before {
+  content: '';
+  position: absolute;
+  left: -0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 20px;
+  background: rgba(0, 102, 204, 0.3);
+}
+
+/* צור קשר - בלי פס לפניו */
+
+
+.nav-link {
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  background: transparent;
+}
+
+/* קו תחתון לדף הפעיל - כפתורי ניווט */
 .nav-link.active {
-  background: rgba(255, 255, 255, 0.3);
-  font-weight: 600;
+  font-weight: 700;
+  color: #0052a3;
+  position: relative;
+}
+
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(90deg, #0066cc, #00ccff);
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 102, 204, 0.4);
+}
+
+.nav-link:hover {
+  transform: translateY(-2px);
+  color: #0052a3;
+  text-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+}
+
+/* אפקט hover עדין */
+.nav-link:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .navbar-auth {
   display: flex;
   align-items: center;
   gap: 1rem;
+  position: relative;
 }
 
 .user-menu {
   display: flex;
   align-items: center;
   gap: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.user-menu:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 102, 204, 0.15);
 }
 
 .welcome-text {
-  color: white;
+  color: #0066cc;
   font-weight: 500;
   font-size: 1rem;
 }
 
+/* כפתורים נקיים */
 .btn {
-  padding: 0.7rem 1.5rem;
-  border-radius: 25px;
+  padding: 0.8rem 1.5rem;
   text-decoration: none;
   font-weight: 600;
   font-size: 1rem;
   transition: all 0.3s ease;
-  border: 2px solid transparent;
+  border: none;
   cursor: pointer;
   display: inline-block;
   text-align: center;
-}
-
-.btn-login {
-  color: white;
-  border: 2px solid white;
   background: transparent;
-}
-
-.btn-login:hover {
-  background: white;
   color: #0066cc;
-  transform: translateY(-2px);
+  position: relative;
 }
 
+.btn-login,
 .btn-signup {
-  background: white;
   color: #0066cc;
-  border: 2px solid white;
+  background: transparent;
 }
 
+/* קו תחתון לכפתורי התחברות/הרשמה פעילים */
+.btn-login.active,
+.btn-signup.active {
+  font-weight: 700;
+  color: #0052a3;
+}
+
+.btn-login.active::before,
+.btn-signup.active::before {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(90deg, #0066cc, #00ccff);
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 102, 204, 0.4);
+}
+
+.btn-login:hover,
 .btn-signup:hover {
-  background: transparent;
-  color: white;
   transform: translateY(-2px);
+  color: #0052a3;
+  text-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
 }
 
 .btn-logout {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  background: transparent;
+  color: #0066cc;
 }
 
 .btn-logout:hover {
-  background: rgba(255, 255, 255, 0.3);
   transform: translateY(-2px);
+  color: #0052a3;
+  text-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+}
+
+/* פס בין התחברות להרשמה */
+.navbar-auth::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1px;
+  height: 20px;
+  background: rgba(0, 102, 204, 0.3);
+}
+
+/* אנימציות מיוחדות */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.navbar-logo img {
+  animation: float 6s ease-in-out infinite;
 }
 
 /* Responsive Design */
@@ -138,13 +288,31 @@
     gap: 1rem;
     padding: 1rem;
   }
-  
+
   .navbar-links {
-    gap: 1rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  
+
   .nav-link {
-    font-size: 1rem;
-    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
   }
+
+  .btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  /* הסרת הפסים במובייל */
+  .navbar-links li::after,
+  .navbar-auth::before {
+    display: none;
+  }
+}
+
+/* אפקט מיוחד לכל הנאב בר */
+.navbar:hover {
+  box-shadow: 0 12px 40px rgba(0, 102, 204, 0.15);
 }

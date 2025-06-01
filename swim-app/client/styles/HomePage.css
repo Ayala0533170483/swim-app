@@ -3,11 +3,11 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Hero Section */
+/* Hero Section - רק וידאו וכותרת */
 .hero-section {
   position: relative;
-  height: 80vh;
-  min-height: 600px;
+  height: 50vh;
+  min-height: 400px;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -18,8 +18,16 @@
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+/* placeholder לוידאו - תמחק כשתוסיף וידאו אמיתי */
+.hero-video-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: linear-gradient(135deg, #0066cc, #00ccff, #66d9ff);
-  clip-path: ellipse(100% 100% at 50% 0%);
 }
 
 .hero-overlay {
@@ -28,7 +36,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 102, 204, 0.7);
+  background: rgba(0, 102, 204, 0.6);
   z-index: 1;
 }
 
@@ -45,16 +53,32 @@
 .hero-title {
   font-size: 3.5rem;
   font-weight: 800;
-  margin-bottom: 1rem;
-  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+  margin: 0;
   line-height: 1.2;
+  color: white;
+  animation: fadeInDown 1s ease-out, gentleSparkle 4s ease-in-out infinite;
 }
 
-.hero-subtitle {
+/* Content Section - כל השאר */
+.content-section {
+  padding: 4rem 0;
+  background: #f8fbff;
+}
+
+.steps-container {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding-bottom: 1rem;
+  animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+.steps-subtitle {
   font-size: 1.5rem;
   margin-bottom: 3rem;
   font-weight: 300;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  color: #0066cc;
+  animation: fadeInUp 1s ease-out 0.5s both;
 }
 
 .hero-steps {
@@ -62,8 +86,9 @@
   justify-content: center;
   align-items: center;
   gap: 2rem;
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
+  animation: fadeInUp 1s ease-out 0.7s both;
 }
 
 .step {
@@ -71,11 +96,12 @@
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  animation: bounceIn 1s ease-out 0.9s both;
 }
 
 .step-number {
-  background: white;
-  color: #0066cc;
+  background: linear-gradient(135deg, #0066cc, #00ccff);
+  color: white;
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -84,43 +110,32 @@
   justify-content: center;
   font-size: 1.5rem;
   font-weight: bold;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+  transition: all 0.3s ease;
+}
+
+.step-number:hover {
+  transform: scale(1.1) rotate(360deg);
+  box-shadow: 0 8px 25px rgba(0, 102, 204, 0.5);
 }
 
 .step-text {
   font-size: 1.2rem;
   font-weight: 600;
+  color: #0066cc;
 }
 
 .step-arrow {
   font-size: 2rem;
-  color: white;
-  font-weight: bold;
-}
-
-.cta-button {
-  background: white;
   color: #0066cc;
-  padding: 1rem 3rem;
-  border: none;
-  border-radius: 50px;
-  font-size: 1.3rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-}
-
-.cta-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-  background: #f0f8ff;
+  font-weight: bold;
+  animation: pulse 2s infinite;
 }
 
 /* Features Section */
 .features-section {
   padding: 6rem 0;
-  background: #f8fbff;
+  background: white;
 }
 
 .container {
@@ -135,6 +150,7 @@
   color: #0066cc;
   margin-bottom: 4rem;
   font-weight: 700;
+  animation: fadeInUp 1s ease-out;
 }
 
 .features-grid {
@@ -151,10 +167,15 @@
   box-shadow: 0 10px 30px rgba(0, 102, 204, 0.1);
   transition: all 0.3s ease;
   border: 2px solid transparent;
+  animation: fadeInUp 1s ease-out;
 }
 
+.feature-card:nth-child(1) { animation-delay: 0.2s; }
+.feature-card:nth-child(2) { animation-delay: 0.4s; }
+.feature-card:nth-child(3) { animation-delay: 0.6s; }
+
 .feature-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-10px) scale(1.02);
   box-shadow: 0 20px 40px rgba(0, 102, 204, 0.2);
   border-color: #00ccff;
 }
@@ -162,6 +183,7 @@
 .feature-icon {
   font-size: 4rem;
   margin-bottom: 1.5rem;
+  animation: bounce 2s infinite;
 }
 
 .feature-card h3 {
@@ -196,17 +218,71 @@
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  animation: fadeInUp 1s ease-out;
 }
+
+.stat-item:nth-child(1) { animation-delay: 0.1s; }
+.stat-item:nth-child(2) { animation-delay: 0.2s; }
+.stat-item:nth-child(3) { animation-delay: 0.3s; }
+.stat-item:nth-child(4) { animation-delay: 0.4s; }
 
 .stat-number {
   font-size: 3rem;
   font-weight: 800;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: countUp 2s ease-out;
 }
 
 .stat-label {
   font-size: 1.2rem;
   font-weight: 500;
+}
+
+/* אנימציות */
+@keyframes gentleSparkle {
+  0%, 100% {
+    text-shadow: 
+      2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    text-shadow: 
+      2px 2px 4px rgba(0, 0, 0, 0.5),
+      0 0 8px rgba(255, 255, 255, 0.6),
+      0 0 12px rgba(255, 255, 255, 0.4);
+  }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { opacity: 1; transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+@keyframes countUp {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
 }
 
 /* Responsive Design */
@@ -215,7 +291,7 @@
     font-size: 2.5rem;
   }
   
-  .hero-subtitle {
+  .steps-subtitle {
     font-size: 1.2rem;
   }
   
@@ -238,5 +314,30 @@
   
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    height: 40vh;
+    min-height: 300px;
+  }
+  
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .content-section {
+    padding: 2rem 0;
+  }
+  
+  .step-number {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  
+  .step-text {
+    font-size: 1rem;
   }
 }

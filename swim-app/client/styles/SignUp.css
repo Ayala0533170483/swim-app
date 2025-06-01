@@ -62,7 +62,7 @@ body {
 }
 
 .step-circle.active {
-  background: #0066cc;
+  background: #003d7a; /* כחול כהה */
   color: white;
 }
 
@@ -72,7 +72,7 @@ body {
 }
 
 .step-circle.completed {
-  background: #00cc66;
+  background: #0169d1;
   color: white;
 }
 
@@ -103,7 +103,9 @@ body {
   background: #f8fbff;
   color: #333;
   text-align: right;
+  box-sizing: border-box; /* הוספה - כך הpadding לא מוסיף לרוחב */
 }
+
 
 .login-input:focus {
   outline: none;
@@ -185,7 +187,7 @@ body {
 .back-button {
   background: transparent;
   color: #666;
-  border: 2px solid #ddd;
+  border: 0px solid #ddd;
   padding: 0.8rem 1.5rem;
   border-radius: 12px;
   font-size: 1rem;

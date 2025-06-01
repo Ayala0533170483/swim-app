@@ -4,13 +4,24 @@ import '../styles/HomePage.css';
 const HomePage = () => {
     return (
         <div className="homepage">
-            {/* Hero Section */}
+            {/* Hero Section - רק וידאו וכותרת */}
             <section className="hero-section">
                 <div className="hero-video-container">
+                    {/* כאן תוסיף וידאו בהמשך */}
+                    <div className="hero-video-placeholder"></div>
                     <div className="hero-overlay"></div>
                     <div className="hero-content">
                         <h1 className="hero-title">ברוכים הבאים לבית הספר לשחייה המוביל</h1>
-                        <p className="hero-subtitle">למד לשחות עם המורים הטובים ביותר במתקנים המתקדמים</p>
+                    </div>
+                </div>
+            </section>
+
+            {/* Content Section - כל השאר */}
+            <section className="content-section">
+                <div className="container">
+                    {/* Steps Section */}
+                    <div className="steps-container">
+                        <p className="steps-subtitle">למד לשחות עם המורים הטובים ביותר במתקנים המתקדמים</p>
                         <div className="hero-steps">
                             <div className="step">
                                 <span className="step-number">1</span>
@@ -27,8 +38,8 @@ const HomePage = () => {
                                 <span className="step-text">שוחים!</span>
                             </div>
                         </div>
-                        <button className="cta-button">התחל עכשיו</button>
                     </div>
+                    
                 </div>
             </section>
 
@@ -61,11 +72,11 @@ const HomePage = () => {
                 <div className="container">
                     <div className="stats-grid">
                         <div className="stat-item">
-                            <span className="stat-number">500+</span>
+                            <span className="stat-number">+500</span>
                             <span className="stat-label">תלמידים פעילים</span>
                         </div>
                         <div className="stat-item">
-                            <span className="stat-number">25+</span>
+                            <span className="stat-number">+25</span>
                             <span className="stat-label">מורים מקצועיים</span>
                         </div>
                         <div className="stat-item">
@@ -73,7 +84,7 @@ const HomePage = () => {
                             <span className="stat-label">סניפים</span>
                         </div>
                         <div className="stat-item">
-                            <span className="stat-number">10+</span>
+                            <span className="stat-number">+10</span>
                             <span className="stat-label">שנות ניסיון</span>
                         </div>
                     </div>
