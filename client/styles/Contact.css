@@ -224,10 +224,10 @@ body {
   text-align: center;
 }
 
-/* סקציית רשתות חברתיות - לרוחב כל העמוד */
+/* סקציית רשתות חברתיות - רק לוגואים */
 .social-media-section {
   background: white;
-  padding: 3rem;
+  padding: 2rem;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 102, 204, 0.1);
   text-align: center;
@@ -236,170 +236,43 @@ body {
 
 .social-media-section h2 {
   color: #0066cc;
-  font-size: 2.2rem;
-  margin-bottom: 0.8rem;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
   font-weight: 700;
-}
-
-.social-media-section p {
-  color: #666;
-  font-size: 1.1rem;
-  margin-bottom: 2.5rem;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .social-links {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-  max-width: 800px;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
 .social-link {
-  display: flex;
-  flex-direction: column;
+  display: inline-flex;
   align-items: center;
-  padding: 1.5rem 1rem;
-  border-radius: 15px;
-  text-decoration: none;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 50%;
   transition: all 0.3s ease;
-  border: 2px solid transparent;
-  position: relative;
-  overflow: hidden;
-}
-
-.social-link::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  border-radius: 13px;
-}
-
-.social-link:hover::before {
-  opacity: 1;
+  text-decoration: none;
 }
 
 .social-link:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.social-icon {
-  font-size: 2rem; /* הקטנתי מ-4rem ל-2rem */
-  margin-bottom: 0.8rem; /* הקטנתי מ-1rem ל-0.8rem */
-  transition: transform 0.3s ease;
+.social-link svg {
+  transition: all 0.3s ease;
 }
 
-.social-link:hover .social-icon {
-  transform: scale(1.1);
-}
-
-.social-content h3 {
-  font-size: 1.2rem; /* הקטנתי מ-1.5rem ל-1.2rem */
-  font-weight: 700;
-  margin-bottom: 0.3rem; /* הקטנתי מ-0.5rem ל-0.3rem */
-  transition: color 0.3s ease;
-}
-
-.social-content span {
-  font-size: 0.9rem; /* הקטנתי מ-1rem ל-0.9rem */
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
-}
-
-.social-link:hover .social-content span {
-  opacity: 1;
-}
-
-/* עיצוב ספציפי לכל רשת חברתית */
-.social-link.facebook {
-  background: linear-gradient(135deg, #e8f4fd, #d1e9fc);
-  border-color: #1877f2;
-}
-
-.social-link.facebook::before {
-  background: linear-gradient(135deg, #1877f2, #0d5dbf);
-}
-
-.social-link.facebook .social-content h3 {
-  color: #1877f2;
-}
-
-.social-link.facebook:hover .social-content h3,
-.social-link.facebook:hover .social-content span {
-  color: white;
-}
-
-.social-link.instagram {
-  background: linear-gradient(135deg, #fdf2f8, #fce7f3);
-  border-color: #e4405f;
-}
-
-.social-link.instagram::before {
-  background: linear-gradient(135deg, #e4405f, #c13584, #833ab4);
-}
-
-.social-link.instagram .social-content h3 {
-  color: #e4405f;
-}
-
-.social-link.instagram:hover .social-content h3,
-.social-link.instagram:hover .social-content span {
-  color: white;
-}
-
-.social-link.youtube {
-  background: linear-gradient(135deg, #fef2f2, #fee2e2);
-  border-color: #ff0000;
-}
-
-.social-link.youtube::before {
-  background: linear-gradient(135deg, #ff0000, #cc0000);
-}
-
-.social-link.youtube .social-content h3 {
-  color: #ff0000;
-}
-
-.social-link.youtube:hover .social-content h3,
-.social-link.youtube:hover .social-content span {
-  color: white;
-}
-
-.social-link.tiktok {
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-  border-color: #000000;
-}
-
-.social-link.tiktok::before {
-  background: linear-gradient(135deg, #000000, #333333);
-}
-
-.social-link.tiktok .social-content h3 {
-  color: #000000;
-}
-
-.social-link.tiktok:hover .social-content h3,
-.social-link.tiktok:hover .social-content span {
-  color: white;
+.social-link:hover svg {
+  filter: brightness(1.1);
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
-  .social-links {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.2rem;
-  }
-}
-
 @media (max-width: 768px) {
   .contact-header h1 {
     font-size: 2.2rem;
@@ -421,24 +294,20 @@ body {
   }
   
   .social-media-section {
-    padding: 2.5rem 2rem;
+    padding: 1.5rem;
   }
   
   .social-media-section h2 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
   }
   
   .social-links {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: 1.5rem;
   }
   
-  .social-link {
-    padding: 1.2rem 0.8rem;
-  }
-  
-  .social-icon {
-    font-size: 1.8rem;
+  .social-link svg {
+    width: 35px;
+    height: 35px;
   }
 }
 
@@ -470,27 +339,15 @@ body {
   }
   
   .social-media-section {
-    padding: 2rem 1rem;
+    padding: 1rem;
   }
   
   .social-links {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.8rem;
+    gap: 1rem;
   }
   
-  .social-link {
-    padding: 1rem 0.5rem;
-  }
-  
-  .social-icon {
-    font-size: 1.5rem;
-  }
-  
-  .social-content h3 {
-    font-size: 1rem;
-  }
-  
-  .social-content span {
-    font-size: 0.8rem;
+  .social-link svg {
+    width: 30px;
+    height: 30px;
   }
 }

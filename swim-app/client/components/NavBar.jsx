@@ -21,7 +21,7 @@ function NavBar() {
       <div className="navbar-container">
         <div className="navbar-logo">
           <img src={logo} alt="SwimSchool Logo" />
-          <h1>SwimSchool</h1>
+          {/* <h1>SwimSchool</h1> */}
         </div>
         
         <ul className="navbar-links">

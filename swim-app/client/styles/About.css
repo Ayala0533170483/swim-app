@@ -238,7 +238,7 @@
 .values-list li::before {
   content: "✓";
   position: absolute;
-  right: 1rem;
+  right: 0.1rem;
   top: 50%;
   transform: translateY(-50%);
   background: #0066cc;

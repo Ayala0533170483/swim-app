@@ -63,15 +63,15 @@ function About() {
             </p>
             <div className="team-stats">
               <div className="team-stat">
-                <span className="stat-number">25+</span>
+                <span className="stat-number">+25</span>
                 <span className="stat-label">מורים מוסמכים</span>
               </div>
               <div className="team-stat">
-                <span className="stat-number">10+</span>
+                <span className="stat-number">+10</span>
                 <span className="stat-label">שנות ניסיון</span>
               </div>
               <div className="team-stat">
-                <span className="stat-number">5000+</span>
+                <span className="stat-number">+5000</span>
                 <span className="stat-label">תלמידים מרוצים</span>
               </div>
               <div className="team-stat">
