@@ -8,20 +8,14 @@ const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh-secret';
 
 async function signup(userData, ip) {
     try {
-        // בדיקת קיום משתמש
         const existingUser = await service.getUserWithPassword(userData.email);
         if (existingUser) {
             throw new Error('Email already in use');
         }
 
-        // הצפנת הסיסמה
         const saltRounds = 10;
         const password_hash = await bcrypt.hash(userData.password, saltRounds);
-
-        // יצירת המשתמש
         const newUser = await service.createUserWithPasswordHash(userData, password_hash);
-        
-        // יצירת טוקנים
         const accessToken = createAccessToken(newUser, ip);
         const refreshToken = createRefreshToken(newUser, ip);
 
@@ -35,17 +29,15 @@ async function login(email, password, ip) {
     try {
         const user = await service.getUserWithPassword(email);
         if (!user) {
-            throw new Error('Invalid credentials');
+            throw new Error('שגיאת שרת,נסה שוב');
         }
 
         const isValidPassword = await bcrypt.compare(password, user.password_hash);
         if (!isValidPassword) {
-            throw new Error('Invalid credentials');
+            throw new Error('אחד או יותר מהפרטים שהזנת שגוי');
         }
-
-        // הסרת הסיסמה מהתשובה
         const { password_hash, ...userWithoutPassword } = user;
-        
+
         // יצירת טוקנים
         const accessToken = createAccessToken(userWithoutPassword, ip);
         const refreshToken = createRefreshToken(userWithoutPassword, ip);
@@ -72,10 +64,4 @@ function createRefreshToken(user, ip) {
     );
 }
 
-async function getItems(table, filters = {}) {
-    const result = await service.get(table, filters);
-    log(`[GET]`, { table, filters });
-    return result;
-}
-
-module.exports = { signup, login, getItems };
+module.exports = { signup, login };

@@ -57,13 +57,10 @@ function Signup() {
 
       if (!res.ok) {
         const errorData = await res.json();
-        console.error("❌ Signup failed:", errorData);
         alert(errorData.error || "ההרשמה נכשלה");
         return;
       }
-
       const responseData = await res.json();
-      console.log("✅ Signup successful:", responseData);
 
       const { user, accessToken } = responseData;
 
@@ -77,7 +74,6 @@ function Signup() {
       navigate("/home");
 
     } catch (error) {
-      console.error("🔥 Network error:", error);
       alert("שגיאת רשת: " + error.message);
     }
   };

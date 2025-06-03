@@ -186,7 +186,6 @@
 .feature-icon {
   font-size: 4rem;
   margin-bottom: 1.5rem;
-  animation: bounce 2s infinite;
 }
 
 .feature-card h3 {
@@ -275,12 +274,6 @@
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.1); }
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-10px); }
-  60% { transform: translateY(-5px); }
 }
 
 @keyframes countUp {

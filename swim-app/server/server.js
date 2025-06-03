@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 const authRouter = require('./API/authRouter.js');
-const varifyToken = require('./controllers/varifyToken.js');
+// const varifyToken = require('./controllers/varifyToken.js');
 
 // כל הבקשות שקשורות ל-auth (login/signup) עוברות בלי varifyToken
 app.use('/', authRouter);

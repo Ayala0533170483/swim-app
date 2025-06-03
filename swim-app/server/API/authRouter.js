@@ -42,6 +42,7 @@ router.post('/signup', async (req, res) => {
         });
 
         res.json({ user, accessToken });
+        
     } catch (error) {
         console.error(error);
         const status = error.message.includes('in use') ? 409 : 500;

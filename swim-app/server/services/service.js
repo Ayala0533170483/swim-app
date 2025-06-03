@@ -40,13 +40,10 @@ async function createUserWithPasswordHash(userData, password_hash) {
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
-        
-        // הגדרת ברירת מחדל ל-is_active
         if (userData.is_active === undefined) {
             userData.is_active = 1;
         }
 
-        // יצירת המשתמש עם השדות החדשים
         const [userResult] = await connection.query('INSERT INTO users SET ?', {
             name: userData.name,
             email: userData.email,
@@ -56,7 +53,6 @@ async function createUserWithPasswordHash(userData, password_hash) {
         
         const user_id = userResult.insertId;
 
-        // שמירת הסיסמה
         await connection.query('INSERT INTO passwords SET ?', {
             user_id,
             password_hash
@@ -64,7 +60,6 @@ async function createUserWithPasswordHash(userData, password_hash) {
 
         await connection.commit();
         
-        // החזרת המשתמש עם הפרטים המלאים
         const newUser = await getUserById(user_id);
         return newUser;
         
@@ -101,14 +96,11 @@ async function create(table, data) {
     return { id: res.insertId, ...data };
 }
 
-// Update an existing row - עדכון לפי השדה החדש
 async function update(table, id, data) {
-    // בטבלת users השדה הוא user_id ולא id
     const idField = table === 'users' ? 'user_id' : 'id';
     await pool.query(`UPDATE ?? SET ? WHERE ${idField} = ?`, [table, data, id]);
 }
 
-// Soft delete a row - עדכון לפי השדה החדש
 async function remove(table, id) {
     const idField = table === 'users' ? 'user_id' : 'id';
     await pool.query(`UPDATE ?? SET is_active = 0 WHERE ${idField} = ?`, [table, id]);
