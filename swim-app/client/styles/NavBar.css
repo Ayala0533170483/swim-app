@@ -169,21 +169,6 @@
   position: relative;
 }
 
-.user-menu {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 0.5rem 1rem;
-  border-radius: 25px;
-  transition: all 0.3s ease;
-}
-
-.user-menu:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 102, 204, 0.15);
-}
 
 .welcome-text {
   color: #0066cc;
@@ -196,7 +181,7 @@
   padding: 0.8rem 1.5rem;
   text-decoration: none;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.1rem;
   transition: all 0.3s ease;
   border: none;
   cursor: pointer;
@@ -213,7 +198,7 @@
   background: transparent;
 }
 
-/* קו תחתון לכפתורי התחברות/הרשמה פעילים */
+
 .btn-login.active,
 .btn-signup.active {
   font-weight: 700;
@@ -252,7 +237,7 @@
   text-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
 }
 
-/* פס בין התחברות להרשמה */
+
 .navbar-auth::before {
   content: '';
   position: absolute;
@@ -264,7 +249,7 @@
   background: rgba(0, 102, 204, 0.3);
 }
 
-/* אנימציות מיוחדות */
+
 @keyframes float {
 
   0%,
@@ -281,7 +266,7 @@
   animation: float 6s ease-in-out infinite;
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
   .navbar-container {
     flex-direction: column;
