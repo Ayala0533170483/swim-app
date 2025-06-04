@@ -40,7 +40,6 @@ async function login(email, password, ip) {
         }
         const { password_hash, ...userWithoutPassword } = user;
 
-        // יצירת טוקנים
         const accessToken = createAccessToken(userWithoutPassword, ip);
         const refreshToken = createRefreshToken(userWithoutPassword, ip);
 
@@ -66,25 +65,19 @@ function createRefreshToken(user, ip) {
     );
 }
 
-// הוסף את הפונקציה הזאת בסוף הקובץ, לפני module.exports:
 
 async function refreshAccessToken(refreshToken, ip) {
     try {
-        // בדוק אם הרפרש טוקן תקף
         const decoded = jwt.verify(refreshToken, REFRESH_SECRET);
-
-        // בדוק IP (אבטחה)
         if (decoded.ip !== ip) {
             throw new Error('IP mismatch');
         }
 
-        // בדוק שהמשתמש עדיין קיים בדטהבייס
         const user = await service.getUserById(decoded.id);
         if (!user || !user.is_active) {
             throw new Error('User not found');
         }
 
-        // צור Access Token חדש (משתמש בפונקציה שכבר יש לך)
         const newAccessToken = createAccessToken(user, ip);
 
         return { user, accessToken: newAccessToken };

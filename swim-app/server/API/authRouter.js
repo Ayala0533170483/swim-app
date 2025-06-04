@@ -9,10 +9,9 @@ router.post('/login', async (req, res) => {
 
         const { user, accessToken, refreshToken } = await auth.login(email, password, ip);
 
-        // HTTP handling - cookies ו-response
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: false, // שנה ל-true בפרודקשן
+            secure: false,
             sameSite: 'Lax',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
@@ -33,10 +32,9 @@ router.post('/signup', async (req, res) => {
             ip
         );
 
-        // HTTP handling - cookies ו-response
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: false, // שנה ל-true בפרודקשן
+            secure: false,
             sameSite: 'Lax',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });

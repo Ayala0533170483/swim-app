@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { userContext } from './App';
 import Cookies from 'js-cookie';
+import UserDashboard from './UserDashboard';
 import '../styles/NavBar.css';
 import logo from '../assets/logo.png';
 
@@ -19,12 +20,10 @@ function NavBar() {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {/* עטפתי את הלוגו ב-Link */}
         <Link to="/home" className="navbar-logo">
           <img src={logo} alt="SwimSchool Logo" />
-          {/* <h1>SwimSchool</h1> */}
         </Link>
-        
+
         <ul className="navbar-links">
           <li><NavLink to="/home" className="nav-link">דף בית</NavLink></li>
           <li><NavLink to="/about" className="nav-link">מי אנחנו</NavLink></li>
@@ -34,9 +33,14 @@ function NavBar() {
 
         <div className="navbar-auth">
           {userData ? (
-            <div className="user-menu">
-              <span className="welcome-text">שלום, {userData.name}</span>
-              <button onClick={handleLogout} className="btn btn-logout">התנתק</button>
+            <div className="user-section">
+              <UserDashboard />
+              <button
+                onClick={handleLogout}
+                className="btn btn-logout"
+              >
+                התנתק
+              </button>
             </div>
           ) : (
             <>

@@ -83,12 +83,12 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
             />
-            
+
             {error && <div className="error-message">{error}</div>}
-            
-            <button 
-              type="submit" 
-              className="login-button" 
+
+            <button
+              type="submit"
+              className="login-button"
               disabled={isLoading}
             >
               {isLoading ? "מתחבר..." : "התחבר"}
@@ -96,8 +96,8 @@ function Login() {
           </div>
         </form>
 
-        <button 
-          className="switch-signup" 
+        <button
+          className="switch-signup"
           onClick={() => navigate("/signup")}
           disabled={isLoading}
         >

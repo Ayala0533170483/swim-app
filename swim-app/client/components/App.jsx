@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';  // הוספנו Navigate
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { createContext, useState } from 'react';
 import Home from './HomePage';
 import About from './About';
@@ -10,10 +10,12 @@ import Signup from './SignUp';
 import Profile from './Profile';
 import NotFound from './NotFound';
 import MainLayout from './MainLayout';
+import UserDashboard from './UserDashboard';
+
 export const userContext = createContext();
 
 export default function App() {
-      const [userData, setUserData] = useState(localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")) : null);
+    const [userData, setUserData] = useState(localStorage.getItem("currentUser") ? JSON.parse(localStorage.getItem("currentUser")) : null);
     return (
         <userContext.Provider value={{ userData, setUserData }}>
             <Routes>
@@ -26,8 +28,9 @@ export default function App() {
                     <Route path="login" element={<Login />} />
                     <Route path="signup" element={<Signup />} />
                     <Route path="profile" element={<Profile />} />
-                    <Route path="*" element={<NotFound />} />
                 </Route>
+                <Route path="/:username/*" element={<UserDashboard />} />
+                <Route path="*" element={<NotFound />} />
             </Routes>
         </userContext.Provider>
     );
