@@ -15,19 +15,12 @@ async function signup(userData, ip) {
 
         const saltRounds = 10;
         const password_hash = await bcrypt.hash(userData.password, saltRounds);
-        if (!userData.type_id == 3) {
+        const newUser = await service.createUserWithPasswordHash(userData, password_hash);
+        const accessToken = createAccessToken(newUser, ip);
+        const refreshToken = createRefreshToken(newUser, ip);
 
+        return { user: newUser, accessToken, refreshToken };
 
-
-            const newUser = await service.createUserWithPasswordHash(userData, password_hash);
-            const accessToken = createAccessToken(newUser, ip);
-            const refreshToken = createRefreshToken(newUser, ip);
-
-            return { user: newUser, accessToken, refreshToken };
-        }
-        else{
-            throw ("משתמש מורשה")
-        }
     } catch (err) {
         throw err;
     }
@@ -73,4 +66,33 @@ function createRefreshToken(user, ip) {
     );
 }
 
-module.exports = { signup, login };
+// הוסף את הפונקציה הזאת בסוף הקובץ, לפני module.exports:
+
+async function refreshAccessToken(refreshToken, ip) {
+    try {
+        // בדוק אם הרפרש טוקן תקף
+        const decoded = jwt.verify(refreshToken, REFRESH_SECRET);
+
+        // בדוק IP (אבטחה)
+        if (decoded.ip !== ip) {
+            throw new Error('IP mismatch');
+        }
+
+        // בדוק שהמשתמש עדיין קיים בדטהבייס
+        const user = await service.getUserById(decoded.id);
+        if (!user || !user.is_active) {
+            throw new Error('User not found');
+        }
+
+        // צור Access Token חדש (משתמש בפונקציה שכבר יש לך)
+        const newAccessToken = createAccessToken(user, ip);
+
+        return { user, accessToken: newAccessToken };
+
+    } catch (err) {
+        throw new Error('Invalid refresh token');
+    }
+}
+
+module.exports = { signup, login, refreshAccessToken };
+

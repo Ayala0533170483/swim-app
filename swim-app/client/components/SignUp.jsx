@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { userContext } from "./App";
@@ -7,7 +7,7 @@ import '../styles/SignUp.css';
 
 function Signup() {
   const [isStepTwo, setIsStepTwo] = useState(false);
-  const [stepOneData, setStepOneData] = useState(null);
+  const stepOneRef = useRef(null); 
   const { setUserData } = useContext(userContext);
   const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ function Signup() {
       alert("הסיסמאות אינן תואמות");
       return;
     }
-    setStepOneData({ email, password });
+    stepOneRef.current = { email, password }; 
     setIsStepTwo(true);
   };
 
@@ -38,8 +38,8 @@ function Signup() {
 
     const payload = {
       name: data.name,
-      email: stepOneData.email,
-      password: stepOneData.password,
+      email: stepOneRef.current.email, 
+      password: stepOneRef.current.password, 
       type_id: parseInt(data.type_id),
     };
 
@@ -64,13 +64,16 @@ function Signup() {
 
       const { user, accessToken } = responseData;
 
-      Cookies.set("accessToken", accessToken, {
-        expires: 0.0104,
-        sameSite: "Lax"
-      });
+    Cookies.set("accessToken", accessToken, {
+    expires: 0.0104,
+    sameSite: "Lax",
+    secure: false, // true בפרודקשן
+    httpOnly: false // כדי שהקליינט יוכל לגשת
+});
 
       setUserData(user);
       localStorage.setItem("currentUser", JSON.stringify(user));
+      stepOneRef.current = null;
       navigate("/home");
 
     } catch (error) {
@@ -107,15 +110,15 @@ function Signup() {
             type="email"
             {...reg1("email", {
               required: "אימייל נדרש",
-              pattern: { 
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 
-                message: "אימייל לא תקין" 
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "אימייל לא תקין"
               },
             })}
             placeholder="כתובת אימייל"
             className="login-input"
             disabled={isStepTwo}
-            defaultValue={stepOneData?.email || ""}
+            defaultValue={stepOneRef.current?.email || ""} // תיקון כאן
           />
           {err1.email && <span className="error-message">{err1.email.message}</span>}
 
@@ -128,7 +131,7 @@ function Signup() {
             placeholder="סיסמה"
             className="login-input"
             disabled={isStepTwo}
-            defaultValue={stepOneData?.password || ""}
+            defaultValue={stepOneRef.current?.password || ""} // תיקון כאן
           />
           {err1.password && <span className="error-message">{err1.password.message}</span>}
 
@@ -136,8 +139,8 @@ function Signup() {
             <>
               <input
                 type="password"
-                {...reg1("verifyPassword", { 
-                  required: "אנא אמת את הסיסמה" 
+                {...reg1("verifyPassword", {
+                  required: "אנא אמת את הסיסמה"
                 })}
                 placeholder="אימות סיסמה"
                 className="login-input"
@@ -176,22 +179,21 @@ function Signup() {
                 <option value="">בחר סוג משתמש</option>
                 <option value="1">תלמיד</option>
                 <option value="2">מורה</option>
-           
               </select>
               {err2.type_id && <span className="error-message">{err2.type_id.message}</span>}
 
               <div className="form-row">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={goBackToStepOne}
                   className="back-button"
                   disabled={isSubmitting}
                 >
-                 →
+                  →
                 </button>
-                <button 
-                  type="submit" 
-                  disabled={isSubmitting} 
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
                   className="login-button"
                 >
                   {isSubmitting ? "נרשם..." : "הרשמה"}
@@ -201,8 +203,8 @@ function Signup() {
           )}
         </div>
 
-        <button 
-          className="switch-signup" 
+        <button
+          className="switch-signup"
           onClick={() => navigate("/login")}
           disabled={isSubmitting}
         >

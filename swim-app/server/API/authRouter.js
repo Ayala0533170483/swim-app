@@ -6,14 +6,14 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const ip = req.ip;
-        
+
         const { user, accessToken, refreshToken } = await auth.login(email, password, ip);
 
         // HTTP handling - cookies ו-response
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: false, // שנה ל-true בפרודקשן
-            sameSite: 'Strict',
+            sameSite: 'Lax',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
@@ -29,7 +29,7 @@ router.post('/signup', async (req, res) => {
         const ip = req.ip;
 
         const { user, accessToken, refreshToken } = await auth.signup(
-            { name, email, password, type_id }, 
+            { name, email, password, type_id },
             ip
         );
 
@@ -37,12 +37,12 @@ router.post('/signup', async (req, res) => {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: false, // שנה ל-true בפרודקשן
-            sameSite: 'Strict',
+            sameSite: 'Lax',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
         res.json({ user, accessToken });
-        
+
     } catch (error) {
         console.error(error);
         const status = error.message.includes('in use') ? 409 : 500;
@@ -54,9 +54,30 @@ router.post('/logout', (req, res) => {
     res.clearCookie('refreshToken', {
         httpOnly: true,
         secure: false,
-        sameSite: 'Strict'
+        sameSite: 'Lax'
     });
     res.json({ message: 'Logged out successfully' });
 });
 
+router.post('/refresh', (req, res) => {
+    const token = req.cookies.refreshToken;
+    if (!token) return res.sendStatus(401);
+
+    jwt.verify(token, REFRESH_SECRET, (err, payload) => {
+        if (err) return res.sendStatus(403);
+
+        const ip = req.ip;
+        if (payload.ip !== ip) {
+            return res.status(403).json({ error: 'IP mismatch' });
+        }
+
+        const newAccessToken = jwt.sign(
+            { id: payload.id, email: payload.email, ip: payload.ip },
+            ACCESS_SECRET,
+            { expiresIn: '15m' }
+        );
+
+        res.json({ accessToken: newAccessToken });
+    });
+});
 module.exports = router;

@@ -9,12 +9,13 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
-
+app.set('trust proxy', true); /*Correct IP*/
 const authRouter = require('./API/authRouter.js');
 // const varifyToken = require('./controllers/varifyToken.js');
-
+// app.use(verifyToken);
 // כל הבקשות שקשורות ל-auth (login/signup) עוברות בלי varifyToken
 app.use('/', authRouter);
+
 // app.use('/login', authRouter);
 // app.use('/signup', authRouter);
 
