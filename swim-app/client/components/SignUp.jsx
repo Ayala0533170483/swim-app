@@ -176,7 +176,7 @@ function Signup() {
                 <option value="">בחר סוג משתמש</option>
                 <option value="1">תלמיד</option>
                 <option value="2">מורה</option>
-                <option value="3">מנהל</option>
+           
               </select>
               {err2.type_id && <span className="error-message">{err2.type_id.message}</span>}
 

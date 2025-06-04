@@ -15,14 +15,23 @@ async function signup(userData, ip) {
 
         const saltRounds = 10;
         const password_hash = await bcrypt.hash(userData.password, saltRounds);
-        const newUser = await service.createUserWithPasswordHash(userData, password_hash);
-        const accessToken = createAccessToken(newUser, ip);
-        const refreshToken = createRefreshToken(newUser, ip);
+        if (!userData.type_id == 3) {
 
-        return { user: newUser, accessToken, refreshToken };
+
+
+            const newUser = await service.createUserWithPasswordHash(userData, password_hash);
+            const accessToken = createAccessToken(newUser, ip);
+            const refreshToken = createRefreshToken(newUser, ip);
+
+            return { user: newUser, accessToken, refreshToken };
+        }
+        else{
+            throw ("משתמש מורשה")
+        }
     } catch (err) {
         throw err;
     }
+
 }
 
 async function login(email, password, ip) {

@@ -15,6 +15,8 @@ const authRouter = require('./API/authRouter.js');
 
 // כל הבקשות שקשורות ל-auth (login/signup) עוברות בלי varifyToken
 app.use('/', authRouter);
+// app.use('/login', authRouter);
+// app.use('/signup', authRouter);
 
 // כל שאר הנתיבים שדורשים הרשאות
 // const createRouter = require('./API/routes.js');
