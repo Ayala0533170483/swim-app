@@ -1,6 +1,7 @@
+import React from 'react';
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
-import "../styles/NotFound.css"; // Assuming you have a CSS file for styles
+import "../styles/NotFound.css"; 
 
 function Error() {
   const navigate = useNavigate();

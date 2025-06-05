@@ -10,8 +10,7 @@ import Signup from './SignUp';
 import Profile from './Profile';
 import NotFound from './NotFound';
 import MainLayout from './MainLayout';
-import UserDashboard from './UserDashboard';
-
+import MyLessons from './MyLessons';
 export const userContext = createContext();
 
 export default function App() {
@@ -19,8 +18,8 @@ export default function App() {
     return (
         <userContext.Provider value={{ userData, setUserData }}>
             <Routes>
-                <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/" element={<MainLayout />}>
+                    <Route index element={<Navigate to="/home" replace />} />
                     <Route path="home" element={<Home />} />
                     <Route path="about" element={<About />} />
                     <Route path="branches" element={<Branches />} />
@@ -28,8 +27,11 @@ export default function App() {
                     <Route path="login" element={<Login />} />
                     <Route path="signup" element={<Signup />} />
                     <Route path="profile" element={<Profile />} />
+                    <Route path="/my-lessons" element={<MyLessons />} />
+                    <Route path=":username/my-lessons" element={<MyLessons />} />
+                    <Route path=":username/Profile" element={<Profile />} />
+
                 </Route>
-                <Route path="/:username/*" element={<UserDashboard />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </userContext.Provider>

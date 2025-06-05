@@ -339,50 +339,76 @@
   color: #0066cc;
 }
 
+.image-placeholder {
+  width: 100%;
+  height: 300px;
+  background: linear-gradient(135deg, #e6f3ff, #cce7ff);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0066cc;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border: 2px dashed #00ccff;
+  overflow: hidden;
+  /* הוסף כדי לחתוך את התמונה אם היא גדולה מדי */
+}
+
+/* הוסף סטיילים חדשים לתמונה */
+.image-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* שומר על יחס גובה-רוחב ומכסה את כל השטח */
+  border-radius: 13px;
+  /* קצת פחות מה-container כדי שיראה יפה */
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .about-header h1 {
     font-size: 2.5rem;
   }
-  
+
   .about-section {
     grid-template-columns: 1fr;
     gap: 2rem;
     padding: 2rem;
   }
-  
+
   .about-text h2,
   .mission-section h2,
   .team-section h2,
   .values-section h2 {
     font-size: 2rem;
   }
-  
+
   .mission-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .team-stats {
     grid-template-columns: 1fr;
   }
-  
+
   .values-list {
     grid-template-columns: 1fr;
   }
-  
+
   .cta-section {
     padding: 3rem 2rem;
   }
-  
+
   .cta-section h2 {
     font-size: 2rem;
   }
-  
+
   .cta-buttons {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .cta-button {
     width: 100%;
     max-width: 300px;
@@ -393,15 +419,15 @@
   .container {
     padding: 0 1rem;
   }
-  
+
   .about-header {
     padding: 2rem 1rem;
   }
-  
+
   .about-header h1 {
     font-size: 2rem;
   }
-  
+
   .about-section,
   .mission-section,
   .team-section,
@@ -409,7 +435,7 @@
   .cta-section {
     padding: 2rem 1.5rem;
   }
-  
+
   .stat-number {
     font-size: 2.5rem;
   }
