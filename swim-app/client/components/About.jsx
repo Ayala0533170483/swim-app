@@ -144,8 +144,8 @@ function About() {
 
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'he-IL';
-      utterance.onend = () => setIsSpeaking(false); // When speech ends
-      utterance.onerror = () => setIsSpeaking(false); // Handle error
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
       utteranceRef.current = utterance;
 
       setIsSpeaking(true);
@@ -180,8 +180,8 @@ function About() {
                 במהלך השנים הצלחנו ללמד אלפי תלמידים לשחות, החל מתינוקות ועד למבוגרים.
                 הגישה שלנו משלבת טכניקות הוראה מתקדמות עם סביבה תומכת ומעודדת.
               </p>
-              <button 
-                className={`cta-button speak-toggle ${isSpeaking ? 'speaking' : ''}`} 
+              <button
+                className={`cta-button speak-toggle ${isSpeaking ? 'speaking' : ''}`}
                 onClick={handleSpeakToggle}
                 style={{ marginTop: '10px' }}
               >
@@ -262,13 +262,13 @@ function About() {
               אנחנו כאן כדי ללוות אתכם בכל צעד בדרך למימוש המטרות שלכם.
             </p>
             <div className="cta-buttons">
-              <button 
+              <button
                 className="cta-button primary"
                 onClick={() => navigate('/signup')}
               >
                 הירשמו עכשיו
               </button>
-              <button 
+              <button
                 className="cta-button secondary"
                 onClick={() => navigate('/contact')}
               >

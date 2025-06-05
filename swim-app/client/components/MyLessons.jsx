@@ -12,10 +12,10 @@ function MyLessons() {
   // בדיקה אם המשתמש הוא מורה
   const isTeacher = userData?.type_id === 2;
 
-  // מפתחות השדות לטופס הוספת שיעור
-const lessonKeys = [
+  // מפתחות השדות לטופס הוספת שיעור - רק עברית!
+  const lessonKeys = [
     'בריכה',
-    'תאריך השיעור', 
+    'תאריך השיעור',
     'שעת התחלה',
     'שעת סיום',
     'סוג השיעור',
@@ -24,16 +24,16 @@ const lessonKeys = [
     'רמת השיעור'
   ];
 
-  // ערכי ברירת מחדל לטופס
+  // ערכי ברירת מחדל לטופס - רק עברית עם ערכים אמיתיים!
   const defaultLessonValues = {
-    pool_id: '',
-    lesson_date: '',
-    start_time: '',
-    end_time: '',
-    lesson_type: 'private',
-    max_participants: 1,
-    age_range: '',
-    level: 'beginner'
+    'בריכה': '1',                    // מזהה בריכה
+    'תאריך השיעור': '2024-01-15',    // תאריך בפורמט YYYY-MM-DD
+    'שעת התחלה': '10:00',           // שעה בפורמט HH:MM
+    'שעת סיום': '11:00',            // שעה בפורמט HH:MM
+    'סוג השיעור': 'פרטי',           // פרטי או קבוצתי
+    'מקסימום משתתפים': '1',         // מספר משתתפים
+    'טווח גילאים': '6-12',          // טווח גילאים
+    'רמת השיעור': 'מתחיל'           // רמת השיעור
   };
 
   // סטיילים מותאמים לטופס הוספת שיעור
@@ -95,8 +95,8 @@ const lessonKeys = [
     }
   };
 
-
   const handleAddLesson = (newLesson) => {
+    console.log('New lesson added:', newLesson);
     setLessons(prevLessons => [...prevLessons, newLesson]);
   };
 
@@ -136,7 +136,7 @@ const lessonKeys = [
             <AddItem
               keys={lessonKeys}
               type="lessons"
-              role={userData.type_name}
+              role="teacher"
               addDisplay={handleAddLesson}
               defaltValues={defaultLessonValues}
               buttonText="הוספת שיעור חדש"
@@ -155,7 +155,7 @@ const lessonKeys = [
               <div className="no-lessons">
                 <h3>{isTeacher ? 'אין לך שיעורים שנוצרו' : 'אין לך שיעורים רשומים'}</h3>
                 <p>
-                  {isTeacher 
+                  {isTeacher
                     ? 'לחץ על "הוספת שיעור חדש" כדי ליצור שיעור חדש'
                     : 'לחץ על "רישום לשיעור חדש" כדי להירשם לשיעור'
                   }
