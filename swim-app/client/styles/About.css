@@ -355,6 +355,39 @@
   /* הוסף כדי לחתוך את התמונה אם היא גדולה מדי */
 }
 
+
+
+
+.cta-button.speak-toggle {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s, transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  direction: rtl;
+}
+
+.cta-button.speak-toggle:hover {
+  background-color: #0056b3;
+}
+
+.cta-button.speak-toggle.speaking {
+  background-color: #dc3545;
+  animation: pulse 1.2s infinite;
+}
+
+
+
+
+
+
+
 /* הוסף סטיילים חדשים לתמונה */
 .image-placeholder img {
   width: 100%;
