@@ -28,21 +28,21 @@ function UserDashboard() {
 
     const usernameForUrl = userData.name.toLowerCase().replace(/\s+/g, '-');
 
-    switch (userData.type_id) {
-      case 2: // תלמיד
+    switch (userData.type_name) {
+      case "student": // תלמיד
         return [
           { path: `/${usernameForUrl}/my-lessons`, label: 'השיעורים שלי' },
           { path: `/${usernameForUrl}/register-lesson`, label: 'רישום לשיעור חדש' },
           { path: `/${usernameForUrl}/profile`, label: 'הפרופיל שלי' }
 
         ];
-      case 3: // מורה
+      case "teacher": // מורה
         return [
           { path: `/${usernameForUrl}/my-lessons`, label: 'השיעורים שלי' },
           //   { path: `/${usernameForUrl}/pending-requests`, label: 'בקשות ממתינות'},
           //   { path: `/${usernameForUrl}/profile`, label: 'הפרופיל שלי'}
         ];
-      case 1: // מנהל מערכת
+      case "admin": // מנהל מערכת
         return [
           { path: `/${usernameForUrl}/admin`, label: 'ניהול מערכת' },
           { path: `/${usernameForUrl}/register-lesson`, label: 'רישום לשיעור חדש' },

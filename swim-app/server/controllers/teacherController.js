@@ -16,7 +16,7 @@ const typeToTableMap = {
 const typeToPrimaryKeyMap = {
     'users': 'user_id',
     'lessons': 'lesson_id',
-    'cancellations': 'cancellation_id', 
+    'cancellations': 'cancellation_id',
     'lesson_requests': 'request_id',
     'students': 'student_id',
     'classes': 'class_id',
@@ -48,7 +48,7 @@ function translateHebrewFields(itemData) {
     };
 
     const translatedData = {};
-    
+
     // קודם העתק את כל השדות האנגליים
     for (const [key, value] of Object.entries(itemData)) {
         if (!Object.keys(translation).includes(key)) { // אם זה לא שדה עברי
@@ -57,20 +57,20 @@ function translateHebrewFields(itemData) {
             }
         }
     }
-    
+
     // עכשיו תרגם את השדות העבריים (רק אם יש להם ערך משמעותי)
     for (const [hebrewKey, englishKey] of Object.entries(translation)) {
         if (itemData[hebrewKey] && itemData[hebrewKey] !== '' && itemData[hebrewKey] !== null) {
             const hebrewValue = itemData[hebrewKey];
             const englishValue = valueTranslation[hebrewValue] || hebrewValue;
-            
+
             // רק אם הערך לא "n" או ערך ריק
             if (englishValue !== 'n' && englishValue !== '') {
                 translatedData[englishKey] = englishValue;
             }
         }
     }
-    
+
     return translatedData;
 }
 
@@ -78,7 +78,7 @@ async function createItem(type, itemData) {
     try {
         console.log(`=== Creating item of type: ${type} ===`);
         console.log('Original data received:', JSON.stringify(itemData, null, 2));
-        
+
         const tableName = typeToTableMap[type];
         if (!tableName) {
             throw new Error(`Invalid item type: ${type}`);
@@ -91,7 +91,7 @@ async function createItem(type, itemData) {
             console.log('Before translation:', JSON.stringify(itemData, null, 2));
             itemData = translateHebrewFields(itemData);
             console.log('After translation:', JSON.stringify(itemData, null, 2));
-            
+
             console.log('Starting validation...');
             validateLessonData(itemData);
             console.log('Validation passed successfully');
@@ -100,17 +100,17 @@ async function createItem(type, itemData) {
         console.log('Calling service.create with data:', JSON.stringify(itemData, null, 2));
         const newItem = await service.create(tableName, itemData);
         console.log('Service.create returned:', JSON.stringify(newItem, null, 2));
-        
+
         // תיקון שם השדה הראשי
         const primaryKey = typeToPrimaryKeyMap[type];
         console.log(`Primary key for ${type}: ${primaryKey}`);
-        
+
         if (primaryKey && newItem.id) {
             newItem[primaryKey] = newItem.id;
             delete newItem.id;
             console.log('After primary key fix:', JSON.stringify(newItem, null, 2));
         }
-        
+
         console.log('=== Item created successfully ===');
         return newItem;
     } catch (error) {
@@ -127,18 +127,18 @@ async function createItem(type, itemData) {
 function validateLessonData(itemData) {
     console.log('=== Starting validation ===');
     console.log('Data to validate:', JSON.stringify(itemData, null, 2));
-    
+
     const requiredFields = ['pool_id', 'lesson_date', 'start_time', 'end_time', 'lesson_type'];
     console.log('Required fields:', requiredFields);
-    
+
     const missingFields = requiredFields.filter(field => {
         const exists = itemData[field] && itemData[field] !== '';
         console.log(`Field ${field}: ${itemData[field]} - ${exists ? 'OK' : 'MISSING'}`);
         return !exists;
     });
-    
+
     console.log('Missing fields:', missingFields);
-    
+
     if (missingFields.length > 0) {
         const hebrewFieldNames = {
             'pool_id': 'בריכה',
@@ -148,7 +148,7 @@ function validateLessonData(itemData) {
             'lesson_type': 'סוג השיעור',
             'teacher_id': 'מזהה מורה'
         };
-        
+
         const missingHebrewFields = missingFields.map(field => hebrewFieldNames[field] || field);
         const errorMessage = `שדות חובה חסרים: ${missingHebrewFields.join(', ')}`;
         console.error('Validation failed:', errorMessage);
@@ -165,13 +165,13 @@ function validateLessonData(itemData) {
     // הגדרת ערכי ברירת מחדל
     itemData.is_confirmed = itemData.is_confirmed ?? 0;
     itemData.is_active = itemData.is_active ?? 1;
-    
+
     // הוספת teacher_id זמני אם חסר
     if (!itemData.teacher_id) {
         console.log('Adding temporary teacher_id');
         itemData.teacher_id = 1; // זמני
     }
-    
+
     console.log('Final data after validation:', JSON.stringify(itemData, null, 2));
     console.log('=== Validation completed successfully ===');
 }
@@ -181,7 +181,7 @@ async function getItems(type, filters = {}) {
     try {
         console.log(`=== Getting items of type: ${type} ===`);
         console.log('Filters received:', JSON.stringify(filters, null, 2));
-        
+
         const tableName = typeToTableMap[type];
         if (!tableName) {
             throw new Error(`Invalid item type: ${type}`);
@@ -191,11 +191,11 @@ async function getItems(type, filters = {}) {
         if (type === 'users' && filters.user_id) {
             console.log(`Getting user profile for user_id: ${filters.user_id}`);
             const user = await service.getUserById(filters.user_id);
-            
+
             if (!user) {
                 throw new Error('User not found');
             }
-            
+
             console.log('User found:', JSON.stringify(user, null, 2));
             return [user]; // מחזיר מערך כמו שהקליינט מצפה
         }
@@ -204,7 +204,7 @@ async function getItems(type, filters = {}) {
         console.log(`Using table: ${tableName}`);
         const items = await service.get(tableName, filters);
         console.log(`Found ${items.length} items`);
-        
+
         return items;
     } catch (error) {
         console.error(`=== ERROR getting ${type} ===`);
@@ -218,7 +218,7 @@ async function updateItem(type, id, updateData) {
     try {
         console.log(`=== Updating item of type: ${type}, id: ${id} ===`);
         console.log('Update data:', JSON.stringify(updateData, null, 2));
-        
+
         const tableName = typeToTableMap[type];
         if (!tableName) {
             throw new Error(`Invalid item type: ${type}`);
@@ -238,7 +238,7 @@ async function updateItem(type, id, updateData) {
 async function deleteItem(type, id) {
     try {
         console.log(`=== Deleting item of type: ${type}, id: ${id} ===`);
-        
+
         const tableName = typeToTableMap[type];
         if (!tableName) {
             throw new Error(`Invalid item type: ${type}`);

@@ -12,16 +12,16 @@ app.use(cookieParser());
 app.set('trust proxy', true); /*Correct IP*/
 const authRouter = require('./API/authRouter.js');
 const teacherRouter = require('./API/teacherRouter.js');
-// const studentRouter = require('./API/studentRouter.js');
-// const pupilRouter = require('./API/pupilRouter.js');
+const studentRouter = require('./API/studentRouter.js');
+const adminlRouter = require('./API/adminRouter.js');
 // const varifyToken = require('./controllers/varifyToken.js');
 // app.use(verifyToken);
 // כל הבקשות שקשורות ל-auth (login/signup) עוברות בלי varifyToken
 app.use('/', authRouter);
 
 app.use('/teacher', teacherRouter);
-// app.use('/student', studentRouter);
-// app.use('/pupil', pupilRouter);
+app.use('/student', studentRouter);
+app.use('/admin', adminlRouter);
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
