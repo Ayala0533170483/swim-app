@@ -2,6 +2,7 @@ const service = require('../services/service');
 
 // מיפוי סוגי פריטים לטבלאות במסד הנתונים
 const typeToTableMap = {
+    'users': 'users',
     'students': 'students',
     'classes': 'classes',
     'lessons': 'lessons',
@@ -13,6 +14,7 @@ const typeToTableMap = {
 
 // מיפוי שמות השדות הראשיים
 const typeToPrimaryKeyMap = {
+    'users': 'user_id',
     'lessons': 'lesson_id',
     'cancellations': 'cancellation_id', 
     'lesson_requests': 'request_id',
@@ -177,45 +179,78 @@ function validateLessonData(itemData) {
 // שאר הפונקציות
 async function getItems(type, filters = {}) {
     try {
+        console.log(`=== Getting items of type: ${type} ===`);
+        console.log('Filters received:', JSON.stringify(filters, null, 2));
+        
         const tableName = typeToTableMap[type];
         if (!tableName) {
             throw new Error(`Invalid item type: ${type}`);
         }
 
+        // טיפול מיוחד עבור users
+        if (type === 'users' && filters.user_id) {
+            console.log(`Getting user profile for user_id: ${filters.user_id}`);
+            const user = await service.getUserById(filters.user_id);
+            
+            if (!user) {
+                throw new Error('User not found');
+            }
+            
+            console.log('User found:', JSON.stringify(user, null, 2));
+            return [user]; // מחזיר מערך כמו שהקליינט מצפה
+        }
+
+        // טיפול רגיל עבור שאר הסוגים
+        console.log(`Using table: ${tableName}`);
         const items = await service.get(tableName, filters);
+        console.log(`Found ${items.length} items`);
+        
         return items;
     } catch (error) {
-        console.error(`Error getting ${type}:`, error);
+        console.error(`=== ERROR getting ${type} ===`);
+        console.error('Error message:', error.message);
+        console.error('=== END ERROR ===');
         throw error;
     }
 }
 
 async function updateItem(type, id, updateData) {
     try {
+        console.log(`=== Updating item of type: ${type}, id: ${id} ===`);
+        console.log('Update data:', JSON.stringify(updateData, null, 2));
+        
         const tableName = typeToTableMap[type];
         if (!tableName) {
             throw new Error(`Invalid item type: ${type}`);
         }
 
         await service.update(tableName, id, updateData);
+        console.log('=== Item updated successfully ===');
         return { message: `${type} updated successfully` };
     } catch (error) {
-        console.error(`Error updating ${type}:`, error);
+        console.error(`=== ERROR updating ${type} ===`);
+        console.error('Error message:', error.message);
+        console.error('=== END ERROR ===');
         throw error;
     }
 }
 
 async function deleteItem(type, id) {
     try {
+        console.log(`=== Deleting item of type: ${type}, id: ${id} ===`);
+        
         const tableName = typeToTableMap[type];
         if (!tableName) {
             throw new Error(`Invalid item type: ${type}`);
         }
 
         await service.remove(tableName, id);
+        console.log('=== Item deleted successfully ===');
         return { message: `${type} deleted successfully` };
     } catch (error) {
-        console.error(`Error deleting ${type}:`, error);
+        console.error(`=== ERROR deleting ${type} ===`);
+        console.error('Error message:', error.message);
+        console.error('=== END ERROR ===');
         throw error;
     }
 }
