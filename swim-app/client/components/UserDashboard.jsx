@@ -33,25 +33,25 @@ function UserDashboard() {
         return [
           { path: `/${usernameForUrl}/my-lessons`, label: 'השיעורים שלי' },
           { path: `/${usernameForUrl}/register-lesson`, label: 'רישום לשיעור חדש' },
-          { path: `/${usernameForUrl}/profile`, label: 'הפרופיל שלי' }
+          { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
 
         ];
       case "teacher": // מורה
         return [
           { path: `/${usernameForUrl}/my-lessons`, label: 'השיעורים שלי' },
           //   { path: `/${usernameForUrl}/pending-requests`, label: 'בקשות ממתינות'},
-          //   { path: `/${usernameForUrl}/profile`, label: 'הפרופיל שלי'}
+            { path: `/${usernameForUrl}`, label: 'הפרופיל שלי'}
         ];
       case "admin": // מנהל מערכת
         return [
           { path: `/${usernameForUrl}/admin`, label: 'ניהול מערכת' },
           { path: `/${usernameForUrl}/register-lesson`, label: 'רישום לשיעור חדש' },
-          //   { path: `/${usernameForUrl}/profile`, label: 'הפרופיל שלי' }
+          //   { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
           //   { path: `/${usernameForUrl}/students`, label: 'ניהול תלמידים', icon: '👥' },
           //   { path: `/${usernameForUrl}/teachers`, label: 'ניהול מורים'},
           //   { path: `/${usernameForUrl}/pools`, label: 'ניהול בריכות' },
           //   { path: `/${usernameForUrl}/general`, label: 'ניהול כללי', icon: '⚙️' },
-          //   { path: `/${usernameForUrl}/profile`, label: 'הפרופיל שלי', icon: '👤' }
+            { path: `/${usernameForUrl}`, label: 'הפרופיל שלי', icon: '👤' }
         ];
       default:
         return [{ path: '/profile', label: 'הפרופיל שלי', icon: '👤' }];

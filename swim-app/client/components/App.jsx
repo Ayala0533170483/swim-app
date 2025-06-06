@@ -5,8 +5,8 @@ import Home from './HomePage';
 import About from './About';
 import Branches from './Branches';
 import Contact from './Contact';
-import Login from './LogIn';
-import Signup from './SignUp';
+import Login from './auth/LogIn';
+import Signup from './auth/SignUp';
 import Profile from './Profile';
 import NotFound from './NotFound';
 import MainLayout from './MainLayout';
@@ -26,10 +26,9 @@ export default function App() {
                     <Route path="contact" element={<Contact />} />
                     <Route path="login" element={<Login />} />
                     <Route path="signup" element={<Signup />} />
-                    <Route path="profile" element={<Profile />} />
                     <Route path="/my-lessons" element={<MyLessons />} />
                     <Route path=":username/my-lessons" element={<MyLessons />} />
-                    <Route path=":username/Profile" element={<Profile />} />
+                    <Route path=":username" element={<Profile />} />
 
                 </Route>
                 <Route path="*" element={<NotFound />} />

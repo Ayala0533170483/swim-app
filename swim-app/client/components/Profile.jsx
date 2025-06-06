@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { fetchData } from "../js-files/GeneralRequests";
 import { userContext } from './App';
 import useHandleError from "./useHandleError";
+import Update from "./Update";
 import "../styles/Profile.css";
 
 function UserProfile() {
@@ -32,9 +33,8 @@ function UserProfile() {
     const getUserTypeText = (typeId) => {
         switch (typeId) {
             case 1: return "מנהל מערכת";
-            case 2: return "תלמיד";
-            case 3: return "מורה";
-            default: return "לא מוגדר";
+            case 2: return "מורה";
+            case 3: return "תלמיד";
         }
     };
 
@@ -67,7 +67,11 @@ function UserProfile() {
                 </div>
 
                 <div className="profile-actions">
-                    <button className="btn btn-edit">ערוך פרופיל</button>
+                    <Update 
+                        item={userDetails}
+                        updateDisplay={setUserDetails}
+                        editableFields={['name', 'email', 'password']}
+                    />
                     <button className="btn btn-change-password">שנה סיסמה</button>
                 </div>
             </div>
