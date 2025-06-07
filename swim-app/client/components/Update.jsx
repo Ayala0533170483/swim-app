@@ -1,15 +1,13 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { FaPen } from "react-icons/fa";
-// import "../styles/Update.css";
+import "../styles/Update.css";
 import useHandleError from "./useHandleError";
-import { updateData } from "../js-files/GeneralRequests";
-import { userContext } from './App';
-
-function Update({ item, updateDisplay, setDisplayChanged = () => {}, editableFields = [] }) {
+import refreshToken from "../js-files/refreshToken";
+import Cookies from 'js-cookie';
+function Update({ userType,item, type, updateDisplay,nameButton, setDisplayChanged = () => {} }) {
     const [showUpdateDetails, setShowUpdateDetails] = useState(false);
     const [updatedItem, setUpdatedItem] = useState(item);
     const { handleError } = useHandleError();
-    const { userData } = useContext(userContext);
 
     const handleInputChange = (key, value) => {
         setUpdatedItem((prevItem) => ({
@@ -18,24 +16,39 @@ function Update({ item, updateDisplay, setDisplayChanged = () => {}, editableFie
         }));
     };
 
+    const sendUpdateRequest = async (token) => {
+        return await fetch(`http://localhost:3000//${userType}/${type}/${item.id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                // ...(token && { Authorization: `Bearer ${token}` }),
+            },
+            credentials: 'include',
+            body: JSON.stringify({ ...item, ...updatedItem }),
+        });
+    };
+
     async function updateItem() {
+        let token = Cookies.get("accessToken");
+
         try {
-            let response = await updateData(
-                userData.type_name, 
-                "users", 
-                item.user_id, 
-                { ...item, ...updatedItem }, 
-                handleError
-            );
-            
-            if (response) {
+            let response = await sendUpdateRequest(token);
+
+            if (response.status === 401|| response.status === 403) {
+                token = await refreshToken();
+                response = await sendUpdateRequest(token);
+            }
+
+            if (response.ok) {
                 const updatedData = { ...item, ...updatedItem };
                 updateDisplay(updatedData);
                 setShowUpdateDetails(false);
                 setDisplayChanged(true);
+            } else {
+                throw new Error("Failed to update item.");
             }
-        } catch (error) {
-            console.error("Error updating profile:", error);
+        } catch (ex) {
+            handleError("updateError", ex);
         }
     }
 
@@ -46,33 +59,40 @@ function Update({ item, updateDisplay, setDisplayChanged = () => {}, editableFie
 
     return (
         <>
-            <FaPen className="edit-icon" onClick={() => setShowUpdateDetails(true)} />
+                <button className="edit-button" onClick={() => setShowUpdateDetails(true)}>
+            <FaPen className="edit-icon" />
+            {nameButton}
+        </button>
+
             {showUpdateDetails && (
                 <div className="overlay">
                     <div className="modal">
-                        <h2>עריכת פרופיל</h2>
-                        {editableFields.map((key) => (
-                            <div key={key} style={{ marginBottom: "10px" }}>
-                                <label htmlFor={key} style={{ display: "block", fontWeight: "bold" }}>
-                                    {key}:
-                                </label>
-                                <input
-                                    id={key}
-                                    value={updatedItem[key]}
-                                    placeholder={key}
-                                    onChange={(e) => handleInputChange(key, e.target.value)}
-                                    style={{
-                                        width: "100%",
-                                        padding: "8px",
-                                        border: "1px solid #ccc",
-                                        borderRadius: "4px",
-                                    }}
-                                />
-                            </div>
-                        ))}
+                        <h2>{nameButton}</h2>
+                        {Object.keys(updatedItem).map(
+                            (key) =>
+                                key !== "id" && (
+                                    <div key={key} style={{ marginBottom: "10px" }}>
+                                        <label htmlFor={key} style={{ display: "block", fontWeight: "bold" }}>
+                                            {key}:
+                                        </label>
+                                        <input
+                                            id={key}
+                                            value={updatedItem[key]}
+                                            placeholder={key}
+                                            onChange={(e) => handleInputChange(key, e.target.value)}
+                                            style={{
+                                                width: "100%",
+                                                padding: "8px",
+                                                border: "1px solid #ccc",
+                                                borderRadius: "4px",
+                                            }}
+                                        />
+                                    </div>
+                                )
+                        )}
                         <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-                            <button onClick={updateItem} className="btn-primary">עדכן</button>
-                            <button onClick={handleCancel} className="btn-primary">ביטול</button>
+                            <button onClick={updateItem} className="btn-primary">Update</button>
+                            <button onClick={handleCancel} className="btn-primary">Cancel</button>
                         </div>
                     </div>
                 </div>

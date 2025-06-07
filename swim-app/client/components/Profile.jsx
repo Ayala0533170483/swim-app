@@ -35,7 +35,25 @@ function UserProfile() {
             case 1: return "מנהל מערכת";
             case 2: return "מורה";
             case 3: return "תלמיד";
+            default: return "לא ידוע";
         }
+    };
+
+    // פונקציה לעדכון הפרופיל - רק השדות הניתנים לעריכה
+    const updateProfile = (updatedData) => {
+        const allowedFields = ['name', 'email'];
+        const filteredData = {};
+        
+        allowedFields.forEach(field => {
+            if (updatedData[field] !== undefined) {
+                filteredData[field] = updatedData[field];
+            }
+        });
+        
+        setUserDetails(prevDetails => ({
+            ...prevDetails,
+            ...filteredData
+        }));
     };
 
     if (loading) {
@@ -45,6 +63,13 @@ function UserProfile() {
     if (!userDetails) {
         return <div className="error">לא ניתן לטעון את הפרופיל</div>;
     }
+
+    // יצירת אובייקט עם השדות הניתנים לעריכה בלבד
+    const editableUserData = {
+        id: userDetails.user_id || userDetails.id,
+        name: userDetails.name,
+        email: userDetails.email
+    };
 
     return (
         <div className="profile-container">
@@ -68,11 +93,12 @@ function UserProfile() {
 
                 <div className="profile-actions">
                     <Update 
-                        item={userDetails}
-                        updateDisplay={setUserDetails}
-                        editableFields={['name', 'email', 'password']}
+                        item={editableUserData}
+                        type="/users"
+                        updateDisplay={updateProfile}
+                        nameButton="עריכת פרופיל"
+                        userType={userData?.type_name}
                     />
-                    <button className="btn btn-change-password">שנה סיסמה</button>
                 </div>
             </div>
         </div>

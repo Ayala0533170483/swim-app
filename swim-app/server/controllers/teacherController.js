@@ -224,7 +224,19 @@ async function updateItem(type, id, updateData) {
             throw new Error(`Invalid item type: ${type}`);
         }
 
-        await service.update(tableName, id, updateData);
+        // תרגום שדות עבריים לאנגליים אם נדרש
+        if (type === 'lessons') {
+            console.log('Before translation:', JSON.stringify(updateData, null, 2));
+            updateData = translateHebrewFields(updateData);
+            console.log('After translation:', JSON.stringify(updateData, null, 2));
+        }
+
+        // קביעת שם השדה הראשי לפי הטבלה
+        const primaryKey = typeToPrimaryKeyMap[type];
+        
+        // קריאה לסרוייס עם הפרמטרים הנכונים
+        await service.updateWithCustomId(tableName, primaryKey, id, updateData);
+        
         console.log('=== Item updated successfully ===');
         return { message: `${type} updated successfully` };
     } catch (error) {
@@ -234,6 +246,7 @@ async function updateItem(type, id, updateData) {
         throw error;
     }
 }
+
 
 async function deleteItem(type, id) {
     try {

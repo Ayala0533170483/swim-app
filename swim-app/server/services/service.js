@@ -119,6 +119,11 @@ async function update(table, id, data) {
     const idField = table === 'users' ? 'user_id' : 'id';
     await pool.query(`UPDATE ?? SET ? WHERE ${idField} = ?`, [table, data, id]);
 }
+async function updateWithCustomId(table, idField, id, data) {
+    // פונקציה גנרית עם שדה ID מותאם אישית
+    const sql = `UPDATE ?? SET ? WHERE ?? = ?`;
+    await pool.query(sql, [table, data, idField, id]);
+}
 
 async function remove(table, id) {
     const idField = table === 'users' ? 'user_id' : 'id';
