@@ -11,6 +11,9 @@ import Profile from './Profile';
 import NotFound from './NotFound';
 import MainLayout from './MainLayout';
 import MyLessons from './MyLessons';
+import LessonTest from './LessonTest';
+
+// בתוך הראוטס:
 export const userContext = createContext();
 
 export default function App() {
@@ -29,6 +32,7 @@ export default function App() {
                     <Route path="/my-lessons" element={<MyLessons />} />
                     <Route path=":username/my-lessons" element={<MyLessons />} />
                     <Route path=":username" element={<Profile />} />
+<Route path="/lesson-test" element={<LessonTest />} />
 
                 </Route>
                 <Route path="*" element={<NotFound />} />
