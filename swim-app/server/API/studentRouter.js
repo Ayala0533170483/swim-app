@@ -55,9 +55,7 @@ router.put('/:type/:id', async (req, res) => {
     try {
         const { type, id } = req.params;
         const updateData = req.body;
-        
-        console.log(`Updating ${type} with id ${id}:`, updateData);
-        
+                
         const result = await studentController.updateItem(type, id, updateData);
         
         res.json({

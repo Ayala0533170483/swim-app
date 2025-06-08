@@ -4,7 +4,8 @@ import "../styles/Update.css";
 import useHandleError from "./useHandleError";
 import refreshToken from "../js-files/refreshToken";
 import Cookies from 'js-cookie';
-function Update({ userType,item, type, updateDisplay,nameButton, setDisplayChanged = () => {} }) {
+
+function Update({ userType, item, type, updateDisplay, nameButton, setDisplayChanged = () => { } }) {
     const [showUpdateDetails, setShowUpdateDetails] = useState(false);
     const [updatedItem, setUpdatedItem] = useState(item);
     const { handleError } = useHandleError();
@@ -17,11 +18,10 @@ function Update({ userType,item, type, updateDisplay,nameButton, setDisplayChang
     };
 
     const sendUpdateRequest = async (token) => {
-        return await fetch(`http://localhost:3000//${userType}/${type}/${item.id}`, {
+        return await fetch(`http://localhost:3000/${userType}/${type}/${item.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                // ...(token && { Authorization: `Bearer ${token}` }),
             },
             credentials: 'include',
             body: JSON.stringify({ ...item, ...updatedItem }),
@@ -34,7 +34,7 @@ function Update({ userType,item, type, updateDisplay,nameButton, setDisplayChang
         try {
             let response = await sendUpdateRequest(token);
 
-            if (response.status === 401|| response.status === 403) {
+            if (response.status === 401 || response.status === 403) {
                 token = await refreshToken();
                 response = await sendUpdateRequest(token);
             }
@@ -59,40 +59,41 @@ function Update({ userType,item, type, updateDisplay,nameButton, setDisplayChang
 
     return (
         <>
-                <button className="edit-button" onClick={() => setShowUpdateDetails(true)}>
-            <FaPen className="edit-icon" />
-            {nameButton}
-        </button>
+            <button className="edit-button" onClick={() => setShowUpdateDetails(true)}>
+                <FaPen className="edit-icon" />
+                {nameButton}
+            </button>
 
             {showUpdateDetails && (
                 <div className="overlay">
                     <div className="modal">
-                        <h2>{nameButton}</h2>
-                        {Object.keys(updatedItem).map(
-                            (key) =>
-                                key !== "id" && (
-                                    <div key={key} style={{ marginBottom: "10px" }}>
-                                        <label htmlFor={key} style={{ display: "block", fontWeight: "bold" }}>
-                                            {key}:
-                                        </label>
-                                        <input
-                                            id={key}
-                                            value={updatedItem[key]}
-                                            placeholder={key}
-                                            onChange={(e) => handleInputChange(key, e.target.value)}
-                                            style={{
-                                                width: "100%",
-                                                padding: "8px",
-                                                border: "1px solid #ccc",
-                                                borderRadius: "4px",
-                                            }}
-                                        />
-                                    </div>
-                                )
-                        )}
-                        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-                            <button onClick={updateItem} className="btn-primary">Update</button>
-                            <button onClick={handleCancel} className="btn-primary">Cancel</button>
+                        <h2 className="modal-title">{nameButton}</h2>
+                        <div className="form-container">
+                            {Object.keys(updatedItem).map(
+                                (key) =>
+                                    key !== "id" && (
+                                        <div key={key} className="form-field">
+                                            <label htmlFor={key} className="field-label">
+                                                {key}:
+                                            </label>
+                                            <input
+                                                id={key}
+                                                value={updatedItem[key]}
+                                                placeholder={key}
+                                                onChange={(e) => handleInputChange(key, e.target.value)}
+                                                className="field-input"
+                                            />
+                                        </div>
+                                    )
+                            )}
+                        </div>
+                        <div className="button-container">
+                            <button onClick={updateItem} className="btn-primary">
+                                עריכה
+                            </button>
+                            <button onClick={handleCancel} className="btn-primary">
+                                ביטול
+                            </button>
                         </div>
                     </div>
                 </div>

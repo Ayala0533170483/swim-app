@@ -54,9 +54,22 @@ async function createItem(table, data) {
     return result;
 }
 
-async function updateItem(table, id, data) {
-    const result = await service.updateItem(table, id, data);
-    return result;
+async function updateItem(type, id, updateData) {
+    try {
+        const tableName = typeToTableMap[type];
+        if (!tableName) {
+            throw new Error(`Invalid item type: ${type}`);
+        }
+
+        delete updateData.id;
+        delete updateData.user_id;
+        await service.update(tableName, id, updateData);
+        
+        console.log('=== Item updated successfully ===');
+        return { message: `${type} updated successfully` };
+    } catch (error) {
+        throw error;
+    }
 }
 
 async function deleteItem(table, id) {

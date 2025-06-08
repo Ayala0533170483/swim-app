@@ -6,7 +6,7 @@ import Update from "./Update";
 import "../styles/Profile.css";
 
 function UserProfile() {
-    const { userData } = useContext(userContext);
+    const { userData, setUserData } = useContext(userContext); // הוספת setUserData
     const [userDetails, setUserDetails] = useState(null);
     const [loading, setLoading] = useState(true);
     const { handleError } = useHandleError();
@@ -39,21 +39,23 @@ function UserProfile() {
         }
     };
 
-    // פונקציה לעדכון הפרופיל - רק השדות הניתנים לעריכה
+    // פונקציה לעדכון הסטייט המקומי, הלוקל סטורג' והקונטקסט
     const updateProfile = (updatedData) => {
-        const allowedFields = ['name', 'email'];
-        const filteredData = {};
-        
-        allowedFields.forEach(field => {
-            if (updatedData[field] !== undefined) {
-                filteredData[field] = updatedData[field];
-            }
-        });
-        
         setUserDetails(prevDetails => ({
             ...prevDetails,
-            ...filteredData
+            ...updatedData
         }));
+
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        if (currentUser && currentUser.user_id === updatedData.id) {
+            const updatedUser = {
+                ...currentUser,
+                name: updatedData.name || currentUser.name,
+                email: updatedData.email || currentUser.email
+            };
+            localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+            setUserData(updatedUser);
+        }
     };
 
     if (loading) {
@@ -64,8 +66,7 @@ function UserProfile() {
         return <div className="error">לא ניתן לטעון את הפרופיל</div>;
     }
 
-    // יצירת אובייקט עם השדות הניתנים לעריכה בלבד
-    const editableUserData = {
+    const editableFields = {
         id: userDetails.user_id || userDetails.id,
         name: userDetails.name,
         email: userDetails.email
@@ -92,9 +93,9 @@ function UserProfile() {
                 </div>
 
                 <div className="profile-actions">
-                    <Update 
-                        item={editableUserData}
-                        type="/users"
+                    <Update
+                        item={editableFields}
+                        type="users"
                         updateDisplay={updateProfile}
                         nameButton="עריכת פרופיל"
                         userType={userData?.type_name}

@@ -216,33 +216,24 @@ async function getItems(type, filters = {}) {
 
 async function updateItem(type, id, updateData) {
     try {
-        console.log(`=== Updating item of type: ${type}, id: ${id} ===`);
-        console.log('Update data:', JSON.stringify(updateData, null, 2));
-
         const tableName = typeToTableMap[type];
         if (!tableName) {
             throw new Error(`Invalid item type: ${type}`);
         }
 
-        // תרגום שדות עבריים לאנגליים אם נדרש
-        if (type === 'lessons') {
-            console.log('Before translation:', JSON.stringify(updateData, null, 2));
-            updateData = translateHebrewFields(updateData);
-            console.log('After translation:', JSON.stringify(updateData, null, 2));
-        }
+        delete updateData.id;
+        delete updateData.user_id;
 
-        // קביעת שם השדה הראשי לפי הטבלה
-        const primaryKey = typeToPrimaryKeyMap[type];
-        
-        // קריאה לסרוייס עם הפרמטרים הנכונים
-        await service.updateWithCustomId(tableName, primaryKey, id, updateData);
+        console.log('Update data:', JSON.stringify(updateData, null, 2));
+        console.log('Table:', tableName, 'ID:', id);
+
+        await service.update(tableName, id, updateData);
         
         console.log('=== Item updated successfully ===');
         return { message: `${type} updated successfully` };
     } catch (error) {
         console.error(`=== ERROR updating ${type} ===`);
         console.error('Error message:', error.message);
-        console.error('=== END ERROR ===');
         throw error;
     }
 }

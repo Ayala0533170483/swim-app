@@ -55,23 +55,21 @@ router.put('/:type/:id', async (req, res) => {
     try {
         const { type, id } = req.params;
         const updateData = req.body;
-
-        console.log(`Updating ${type} with id ${id}:`, updateData);
-
+                
         const result = await adminController.updateItem(type, id, updateData);
-
+        
         res.json({
             success: true,
             data: result,
             message: `${type} updated successfully`
         });
-
+        
     } catch (error) {
         console.error(`Error updating ${req.params.type}:`, error);
-        res.status(500).json({
-            success: false,
+        res.status(500).json({ 
+            success: false, 
             message: `Error updating ${req.params.type}`,
-            error: error.message
+            error: error.message 
         });
     }
 });

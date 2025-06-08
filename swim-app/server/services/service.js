@@ -92,18 +92,18 @@ async function create(table, data) {
         console.log(`=== Service.create called ===`);
         console.log(`Table: ${table}`);
         console.log('Data before processing:', JSON.stringify(data, null, 2));
-        
+
         data.is_active ??= 1;
         console.log('Data after adding is_active:', JSON.stringify(data, null, 2));
-        
+
         console.log('Executing SQL query...');
         const [res] = await pool.query('INSERT INTO ?? SET ?', [table, data]);
         console.log('SQL result:', res);
-        
+
         const result = { id: res.insertId, ...data };
         console.log('Returning result:', JSON.stringify(result, null, 2));
         console.log(`=== Service.create completed ===`);
-        
+
         return result;
     } catch (error) {
         console.error(`=== Service.create error ===`);
@@ -119,11 +119,11 @@ async function update(table, id, data) {
     const idField = table === 'users' ? 'user_id' : 'id';
     await pool.query(`UPDATE ?? SET ? WHERE ${idField} = ?`, [table, data, id]);
 }
-async function updateWithCustomId(table, idField, id, data) {
-    // פונקציה גנרית עם שדה ID מותאם אישית
-    const sql = `UPDATE ?? SET ? WHERE ?? = ?`;
-    await pool.query(sql, [table, data, idField, id]);
-}
+// async function updateWithCustomId(table, idField, id, data) {
+//     // פונקציה גנרית עם שדה ID מותאם אישית
+//     const sql = `UPDATE ?? SET ? WHERE ?? = ?`;
+//     await pool.query(sql, [table, data, idField, id]);
+// }
 
 async function remove(table, id) {
     const idField = table === 'users' ? 'user_id' : 'id';
