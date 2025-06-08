@@ -1,118 +1,199 @@
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { FaPlus } from "react-icons/fa";
+import "../styles/AddItem.css";
 import useHandleError from "./useHandleError";
 import refreshToken from "../js-files/refreshToken";
 import Cookies from 'js-cookie';
 
 function AddItem({
+    userType,
     keys,
     type,
     addDisplay,
-    role,
-    defaltValues,
+    defaltValues = {},
+    nameButton = "הוסף פריט",
     setDisplayChanged = () => { },
-    buttonText, // טקסט הכפתור
-    buttonClassName = "add-item-button", // CSS class לכפתור
-    containerClassName = "add-item-container", // CSS class לקונטיינר
-    customStyles = {} // סטיילים מותאמים אישית
+    validationRules = {},
+    userId = null
 }) {
     const [showAddItem, setShowAddItem] = useState(false);
-    const [item, setItem] = useState(defaltValues);
     const { handleError } = useHandleError();
 
-    const handleInputChange = (key, value) => {
-        setItem((prevItem) => ({ ...prevItem, [key]: value }));
-    };
+    const {
+        register,
+        handleSubmit,
+        watch,
+        reset,
+        setValue,
+        formState: { errors },
+    } = useForm({
+        defaultValues: defaltValues,
+        mode: 'onChange'
+    });
 
-    const isFormValid = Object.values(item).some(
-        (value) => typeof value === "string" && value.trim() !== ""
-    );
+    const watchedValues = watch();
 
-    const sendAddRequest = async (token) => {
-        return await fetch(`http://localhost:3000/${role}/${type}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                ...(token && { Authorization: `Bearer ${token}` }),
-            },
-            credentials: 'include',
-            body: JSON.stringify(item),
-        });
-    };
+    // const sendAddRequest = async (token, data) => {
+    //     return await fetch(`http://localhost:3000/${userType}/${userId}/${type}`, {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             ...(token && { Authorization: `Bearer ${token}` }),
+    //         },
+    //         credentials: 'include',
+    //         body: JSON.stringify(data),
+    //     });
+    // };
+const sendAddRequest = async (token, data) => {
+    const url = `http://localhost:3000/${userType}/${userId}/${type}`;
+    console.log('Sending request to:', url);
+    
+    return await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        credentials: 'include',
+        body: JSON.stringify(data),
+    });
+};
 
-    const addNewItem = async () => {
-        if (!isFormValid) {
-            alert("Please fill in at least one field before saving.");
-            return;
-        }
-
+    const onSubmit = async (data) => {
         let token = Cookies.get("accessToken");
 
         try {
-            let response = await sendAddRequest(token);
+            let response = await sendAddRequest(token, data);
 
             if (response.status === 401 || response.status === 403) {
                 token = await refreshToken();
-                response = await sendAddRequest(token);
+                response = await sendAddRequest(token, data);
             }
 
-            if (!response.ok) {
-                throw new Error("Failed to add item.");
+            if (response.ok) {
+                const newItem = await response.json();
+                addDisplay(newItem);
+                setDisplayChanged(true);
+                reset(defaltValues);
+                setShowAddItem(false);
+            } else {
+                try {
+                    const error = await response.json();
+                    alert(error.error || 'הוספה נכשלה');
+                } catch {
+                    alert('הוספה נכשלה');
+                }
             }
-
-            const newItem = await response.json();
-            addDisplay(newItem);
-            setDisplayChanged(true);
-            setItem(defaltValues);
-            setShowAddItem(false);
         } catch (error) {
-            handleError("addError", error);
+            console.error('Error adding item:', error);
+            alert('שגיאה בהוספה');
+        }
+    };
+
+    const handleCancel = () => {
+        reset(defaltValues);
+        setShowAddItem(false);
+    };
+
+    const handleFieldChange = (field, value) => {
+        if (validationRules.onFieldChange) {
+            const updates = validationRules.onFieldChange(field.key, value, watchedValues, setValue);
+            if (updates) {
+                Object.keys(updates).forEach(key => {
+                    setValue(key, updates[key]);
+                });
+            }
         }
     };
 
     return (
         <>
-            <button
-                className={buttonClassName}
-                onClick={() => setShowAddItem(true)}
-                style={customStyles.button}
-            >
-                {buttonText || `Add ${type}`}
+            <button className="edit-button" onClick={() => setShowAddItem(true)}>
+                <FaPlus className="edit-icon" />
+                {nameButton}
             </button>
+
             {showAddItem && (
-                <div
-                    className={containerClassName}
-                    style={customStyles.container}
-                >
-                    {keys.map((key) => (
-                        <div key={key} className="form-field" style={customStyles.field}>
-                            <label htmlFor={key} className="form-label" style={customStyles.label}>
-                                {key}:
-                            </label>
-                            <input
-                                id={key}
-                                placeholder={key}
-                                value={item[key] || ""}
-                                onChange={(e) => handleInputChange(key, e.target.value)}
-                                className="form-input"
-                                style={customStyles.input}
-                            />
-                        </div>
-                    ))}
-                    <div className="button-container" style={customStyles.buttonContainer}>
-                        <button
-                            className="send-button"
-                            onClick={addNewItem}
-                            style={customStyles.sendButton}
-                        >
-                            Send
-                        </button>
-                        <button
-                            className="cancel-button"
-                            onClick={() => setShowAddItem(false)}
-                            style={customStyles.cancelButton}
-                        >
-                            Cancel
-                        </button>
+                <div className="overlay">
+                    <div className="modal">
+                        <h2 className="modal-title">{nameButton}</h2>
+                        <form onSubmit={handleSubmit(onSubmit)} className="form-container">
+                            {keys && keys.map((field) => (
+                                <div key={field.key} className="form-field">
+                                    <label htmlFor={field.key} className="field-label">
+                                        {field.label}:
+                                    </label>
+
+                                    {field.type === 'select' ? (
+                                        <>
+                                            <select
+                                                id={field.key}
+                                                className="field-input"
+                                                {...register(field.key, validationRules[field.key] || {})}
+                                                onChange={(e) => handleFieldChange(field, e.target.value)}
+                                            >
+                                                <option value="">{field.placeholder || `בחר ${field.label}`}</option>
+                                                {field.options?.map(option => (
+                                                    <option key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {errors[field.key] && (
+                                                <span className="error-message">
+                                                    {errors[field.key].message}
+                                                </span>
+                                            )}
+                                        </>
+                                    ) : field.type === 'textarea' ? (
+                                        <>
+                                            <textarea
+                                                id={field.key}
+                                                placeholder={field.placeholder || field.label}
+                                                className="field-input"
+                                                rows={field.rows || 3}
+                                                {...register(field.key, validationRules[field.key] || {})}
+                                                onChange={(e) => handleFieldChange(field, e.target.value)}
+                                            />
+                                            {errors[field.key] && (
+                                                <span className="error-message">
+                                                    {errors[field.key].message}
+                                                </span>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <input
+                                                id={field.key}
+                                                type={field.inputType || 'text'}
+                                                placeholder={field.placeholder || field.label}
+                                                className="field-input"
+                                                min={field.min}
+                                                max={field.max}
+                                                step={field.step}
+                                                {...register(field.key, validationRules[field.key] || {})}
+                                                onChange={(e) => handleFieldChange(field, e.target.value)}
+                                            />
+                                            {errors[field.key] && (
+                                                <span className="error-message">
+                                                    {errors[field.key].message}
+                                                </span>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            ))}
+
+                            <div className="button-container">
+                                <button type="submit" className="btn-primary">
+                                    הוספה
+                                </button>
+                                <button type="button" onClick={handleCancel} className="btn-primary">
+                                    ביטול
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}

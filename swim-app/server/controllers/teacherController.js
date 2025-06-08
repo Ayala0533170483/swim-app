@@ -86,7 +86,6 @@ async function createItem(type, itemData) {
 
         console.log(`Using table: ${tableName}`);
 
-        // תרגום שדות עבריים לאנגליים
         if (type === 'lessons') {
             console.log('Before translation:', JSON.stringify(itemData, null, 2));
             itemData = translateHebrewFields(itemData);
@@ -95,13 +94,14 @@ async function createItem(type, itemData) {
             console.log('Starting validation...');
             validateLessonData(itemData);
             console.log('Validation passed successfully');
+            
+            // 🔴 שיעור שמורה יוצר מאושר אוטומטית
+            itemData.is_confirmed = 1;
         }
 
         console.log('Calling service.create with data:', JSON.stringify(itemData, null, 2));
         const newItem = await service.create(tableName, itemData);
-        console.log('Service.create returned:', JSON.stringify(newItem, null, 2));
 
-        // תיקון שם השדה הראשי
         const primaryKey = typeToPrimaryKeyMap[type];
         console.log(`Primary key for ${type}: ${primaryKey}`);
 
@@ -163,7 +163,6 @@ function validateLessonData(itemData) {
     }
 
     // הגדרת ערכי ברירת מחדל
-    itemData.is_confirmed = itemData.is_confirmed ?? 0;
     itemData.is_active = itemData.is_active ?? 1;
 
     // הוספת teacher_id זמני אם חסר
@@ -237,7 +236,6 @@ async function updateItem(type, id, updateData) {
         throw error;
     }
 }
-
 
 async function deleteItem(type, id) {
     try {

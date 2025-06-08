@@ -27,12 +27,17 @@ router.get('/:type', async (req, res) => {
     }
 });
 
-router.post('/:type', async (req, res) => {
+router.post('/:userId/:type', async (req, res) => {
     try {
-        const { type } = req.params;
-        const itemData = req.body;
+        const { userId, type } = req.params;
+        let itemData = req.body;
         
-        console.log(`Creating new ${type}:`, itemData);
+        // הוסף teacher_id מה-URL
+        if (type === 'lessons') {
+            itemData.teacher_id = userId;
+        }
+        
+        console.log(`Creating new ${type} for user ${userId}:`, itemData);
         
         const newItem = await teacherController.createItem(type, itemData);
         
@@ -51,6 +56,7 @@ router.post('/:type', async (req, res) => {
         });
     }
 });
+
 
 router.put('/:type/:id', async (req, res) => {
     try {

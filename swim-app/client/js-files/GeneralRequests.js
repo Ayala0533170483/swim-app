@@ -1,17 +1,24 @@
-export const fetchData = async (userType, typeOfItem, attribute, id = "", handleError) => {
+export const fetchData = async (userType, typeOfItem = "", attribute = "", id = "", handleError) => {
     try {
-        const response = await fetch(`http://localhost:3000/${userType}/${typeOfItem}/?${attribute}=${id}`);
+        const pathParts = [userType, typeOfItem].filter(Boolean);
+        const basePath = pathParts.join('/');
+        const queryString = attribute ? `?${attribute}=${id}` : '';
+        const url = `http://localhost:3000/${basePath}${queryString}`;
+
+        const response = await fetch(url, {
+            credentials: 'include'
+        });
+
         if (!response.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+
         const result = await response.json();
-        if (result.success && result.data) {
-            return result.data;
-        } else {
-            throw new Error("No user found with that ID");
-        }
+        return result?.success ? result.data : result;
+
     } catch (error) {
-        handleError("getError", error)
+        handleError?.("getError", error);
+        console.error('Error fetching data:', error);
+        return null;
     }
 };
-

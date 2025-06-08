@@ -42,7 +42,6 @@ router.post('/:type', async (req, res) => {
         });
 
     } catch (error) {
-        console.error(`Error creating ${req.params.type}:`, error);
         res.status(500).json({
             success: false,
             message: `Error creating ${req.params.type}`,
