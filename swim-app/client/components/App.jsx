@@ -32,7 +32,6 @@ export default function App() {
                     <Route path="/my-lessons" element={<MyLessons />} />
                     <Route path=":username/my-lessons" element={<MyLessons />} />
                     <Route path=":username" element={<Profile />} />
-
                 </Route>
                 <Route path="*" element={<NotFound />} />
             </Routes>

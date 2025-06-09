@@ -3,7 +3,7 @@ export const fetchData = async (userType, typeOfItem = "", attribute = "", id = 
         const pathParts = [userType, typeOfItem].filter(Boolean);
         const basePath = pathParts.join('/');
         const queryString = attribute ? `?${attribute}=${id}` : '';
-        const url = `http://localhost:3000/${basePath}${queryString}`;
+        const url = `http://localhost:3000/${queryString}`;
 
         const response = await fetch(url, {
             credentials: 'include'
