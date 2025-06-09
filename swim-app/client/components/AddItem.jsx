@@ -31,23 +31,10 @@ function AddItem({
         defaultValues: defaltValues,
         mode: 'onChange'
     });
-
     const watchedValues = watch();
 
-    // const sendAddRequest = async (token, data) => {
-    //     return await fetch(`http://localhost:3000/${userType}/${userId}/${type}`, {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //             ...(token && { Authorization: `Bearer ${token}` }),
-    //         },
-    //         credentials: 'include',
-    //         body: JSON.stringify(data),
-    //     });
-    // };
 const sendAddRequest = async (token, data) => {
-    const url = `http://localhost:3000/${userType}/${userId}/${type}`;
-    console.log('Sending request to:', url);
+    const url = `http://localhost:3000//api/${type}`;
     
     return await fetch(url, {
         method: "POST",
