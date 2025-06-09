@@ -15,7 +15,7 @@ function UserProfile() {
         const fetchUserProfile = async () => {
             if (userData && userData.user_id) {
                 try {
-                    let response = await fetchData(userData.type_name, "users", "user_id", userData.user_id, handleError);
+                    let response = await fetchData("users", "user_id", userData.user_id, handleError);
                     if (response) {
                         setUserDetails(response[0]);
                         setLoading(false);
