@@ -12,11 +12,9 @@ app.use(cookieParser());
 app.set('trust proxy', true); /*Correct IP*/
 const authRouter = require('./API/authRouter.js');
 // const verifyToken = require('./verifyToken');
-// const teacherRouter = require('./API/teacherRouter.js');
-// const studentRouter = require('./API/studentRouter.js');
 const usersRouter = require('./API/usersRouter.js');
 const poolsRouter = require('./API/poolsRouter.js');
-//     await pool.query(sql, [table, data, idField, id]);
+const lessonesRouter = require('./API/lessonsRouter.js');
 
 // const varifyToken = require('./controllers/varifyToken.js');
 // app.use(verifyToken);
@@ -26,7 +24,7 @@ app.use('/', authRouter);
 // app.use('/student', studentRouter);
 app.use('/users', usersRouter);
 app.use('/pools', poolsRouter);
-app.use('/lessone', poolsRouter);
+app.use('/lessons', lessonesRouter);
 
 const PORT = 3000;
 app.listen(PORT, () => {

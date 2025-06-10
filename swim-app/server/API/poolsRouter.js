@@ -22,4 +22,26 @@ router.get('/', async (req, res) => {
         });
     }
 });
+
+router.post('/', async (req, res) => {
+    try {
+        const pool = req.body;
+
+        const newItem = await usersController.createItem(pool);
+
+        res.status(201).json({
+            success: true,
+            data: newItem,
+            message: 'pool created successfully'
+        });
+
+    } catch (error) {
+        console.error('Error creating user:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error creating pool',
+            error: error.message
+        });
+    }
+});
 module.exports = router;

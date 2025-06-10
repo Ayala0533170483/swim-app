@@ -18,7 +18,7 @@ function Update({ userType, item, type, updateDisplay, nameButton, setDisplayCha
     };
 
     const sendUpdateRequest = async (token) => {
-        return await fetch(`http://localhost:3000/${userType}/${type}/${item.id}`, {
+        return await fetch(`http://localhost:3000/${type}/${item.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

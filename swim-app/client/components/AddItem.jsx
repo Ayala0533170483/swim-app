@@ -34,7 +34,7 @@ function AddItem({
     const watchedValues = watch();
 
 const sendAddRequest = async (token, data) => {
-    const url = `http://localhost:3000//api/${type}`;
+    const url = `http://localhost:3000/${type}`;
     
     return await fetch(url, {
         method: "POST",

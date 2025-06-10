@@ -9,7 +9,7 @@ import {
   createLessonKeys,
   createLessonValidationRules,
   defaultLessonValues
-} from './structures/lessonStructures';
+} from '../structures/lessonStructures';
 import '../styles/MyLessons.css';
 
 function MyLessons() {
@@ -149,7 +149,7 @@ function MyLessons() {
               userId={userData.user_id}
               type="lessons"
               addDisplay={handleAddLesson}
-              defaltValues={defaultLessonValues}
+              defaltValues={defaultLessonValues(userData.user_id)} 
               nameButton="הוספת שיעור חדש"
               validationRules={lessonValidationRules}
               keys={lessonKeys}

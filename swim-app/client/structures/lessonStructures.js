@@ -8,7 +8,6 @@ export const getTimeDifferenceInMinutes = (startTime, endTime) => {
   return endTotalMin - startTotalMin;
 };
 
-// פונקציות סטטוס
 export const getStatusClass = (status) => {
   switch (status) {
     case 'confirmed': return 'confirmed';
@@ -27,7 +26,6 @@ export const getStatusText = (status) => {
   }
 };
 
-// הגדרת מפתחות השיעור
 export const createLessonKeys = (pools) => [
   {
     key: 'lesson_date',
@@ -93,7 +91,6 @@ export const createLessonKeys = (pools) => [
   }
 ];
 
-// חוקי ולידציה
 export const createLessonValidationRules = () => ({
   lesson_date: {
     required: "תאריך השיעור הוא שדה חובה",
@@ -179,8 +176,8 @@ export const createLessonValidationRules = () => ({
   }
 });
 
-// ערכי ברירת מחדל
-export const defaultLessonValues = {
+
+export const defaultLessonValues = (userId = null) => ({
   lesson_date: '',
   start_time: '',
   end_time: '',
@@ -188,5 +185,6 @@ export const defaultLessonValues = {
   level: '',
   pool_id: '',
   max_participants: '',
-  age_range: ''
-};
+  age_range: '',
+    user_id: userId
+});
