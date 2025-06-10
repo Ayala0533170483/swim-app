@@ -14,7 +14,7 @@ const authRouter = require('./API/authRouter.js');
 // const verifyToken = require('./verifyToken');
 // const teacherRouter = require('./API/teacherRouter.js');
 // const studentRouter = require('./API/studentRouter.js');
-const userslRouter = require('./API/usersRouter.js');
+const usersRouter = require('./API/usersRouter.js');
 const poolsRouter = require('./API/poolsRouter.js');
 //     await pool.query(sql, [table, data, idField, id]);
 
@@ -24,7 +24,7 @@ const poolsRouter = require('./API/poolsRouter.js');
 app.use('/', authRouter);
 // app.use('/teacher', teacherRouter);
 // app.use('/student', studentRouter);
-app.use('/users', userslRouter);
+app.use('/users', usersRouter);
 app.use('/pools', poolsRouter);
 app.use('/lessone', poolsRouter);
 

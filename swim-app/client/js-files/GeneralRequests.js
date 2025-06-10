@@ -4,9 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { refreshToken } from './refreshToken';
 
 export const fetchData = async (typeOfItem, id = "", handleError) => {
-  const url = id
-    ? `http://localhost:3000/${typeOfItem}/${id}`
-    : `http://localhost:3000/${typeOfItem}`;
+  const url = `http://localhost:3000/${typeOfItem}/?${id}`;
 
   const makeRequest = async (token) => {
     return await fetch(url, {

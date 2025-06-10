@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const poolsController = require('../controllers/poolsController');
 
-// נתיב לקבלת כל הבריכות
+
 router.get('/', async (req, res) => {
     try {
         const filters = req.query;

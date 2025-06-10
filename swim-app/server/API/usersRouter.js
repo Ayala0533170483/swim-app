@@ -2,33 +2,22 @@ const express = require('express');
 const router = express.Router();
 const usersController = require('../controllers/usersController');
 
-// GET route
-router.get('/:type/:id?', async (req, res) => {
-    try {
-        const type = req.params.type;
-        const filters = req.query;
-        if (req.params.id) {
-            filters.id = req.params.id;
+
+router.get('/', async (req, res) => {
+       try {
+            const query = { ...req.query };
+            if (query.user_id === 'null' && req.user && req.user.id) {
+                query.user_id = req.user.id;
+            }
+            const items = await usersController.getItems('users', query);
+            res.json(items);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
         }
-        const items = await usersController.getItems(type, filters, id);
-
-        res.json({
-            success: true,
-            data: items
-        });
-
-    } catch (error) {
-        console.error(`Error getting items:`, error);
-        res.status(500).json({
-            success: false,
-            message: `Error loading items`,
-            error: error.message
-        });
-    }
 });
 
-// POST route
-router.post('/:type', async (req, res) => {
+
+router.post('/', async (req, res) => {
     try {
         const type = req.params.type;
         const itemData = req.body;
