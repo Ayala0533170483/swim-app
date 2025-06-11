@@ -1,29 +1,20 @@
 .lesson-card {
   direction: rtl;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: white;
   border-radius: 20px;
   padding: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   box-shadow: 0 10px 30px rgba(0, 102, 204, 0.1);
-  transition: all 0.3s ease;
   border: 2px solid transparent;
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 }
 
-.lesson-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(135deg, #0066cc, #00ccff);
-}
-
 .lesson-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 102, 204, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 102, 204, 0.15);
   border-color: #00ccff;
 }
 
@@ -33,38 +24,23 @@
 }
 
 .lesson-card.lesson-past {
-  border-left: 4px solid #6c757d;
+  border-right: 4px solid #ffc107;
 }
 
 .lesson-card.lesson-past::before {
-  background: linear-gradient(135deg, #6c757d, #adb5bd);
-}
-
-.lesson-status-indicator {
+  content: "שיעור שעבר";
   position: absolute;
   top: 1rem;
   left: 1rem;
-  z-index: 2;
-}
-
-.status-confirmed {
-  background: #28a745;
+  background: #ffc107;
   color: white;
   padding: 0.3rem 0.8rem;
-  border-radius: 15px;
+  border-radius: 12px;
   font-size: 0.8rem;
   font-weight: 600;
 }
 
-.status-pending {
-  background: #ffc107;
-  color: #212529;
-  padding: 0.3rem 0.8rem;
-  border-radius: 15px;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
+/* Header */
 .lesson-header {
   display: flex;
   align-items: center;
@@ -74,19 +50,14 @@
 
 .lesson-icon {
   font-size: 3rem;
-  width: 80px;
-  height: 80px;
   background: linear-gradient(135deg, #e6f3ff, #cce7ff);
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 15px rgba(0, 102, 204, 0.2);
-  transition: all 0.3s ease;
-}
-
-.lesson-card:hover .lesson-icon {
-  transform: scale(1.1) rotate(5deg);
+  border: 2px solid #00ccff;
 }
 
 .lesson-info {
@@ -97,43 +68,38 @@
   color: #0066cc;
   font-size: 1.8rem;
   font-weight: 700;
-  margin: 0 0 1rem 0;
-  line-height: 1.3;
+  margin: 0 0 0.5rem 0;
 }
 
 .lesson-meta {
   display: flex;
   gap: 1rem;
-  align-items: center;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .lesson-date,
 .lesson-time {
-  background: #f8fbff;
-  color: #0066cc;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border: 1px solid #e6f3ff;
+  color: #666;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 .lesson-level {
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 1rem;
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 600;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+/* Details */
 .lesson-details {
   margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: #f8fbff;
-  border-radius: 15px;
-  border: 1px solid #e6f3ff;
 }
 
 .lesson-info-grid {
@@ -146,19 +112,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0;
+  padding: 0.8rem 1.2rem;
+  background: #f8fbff;
+  border-radius: 12px;
+  border-right: 3px solid #0066cc;
 }
 
 .info-label {
+  color: #555;
   font-weight: 600;
-  color: #0066cc;
 }
 
 .info-value {
-  color: #555;
-  font-weight: 500;
+  color: #0066cc;
+  font-weight: 700;
 }
 
+/* Actions */
 .lesson-actions {
   display: flex;
   justify-content: space-between;
@@ -176,7 +146,7 @@
   color: white;
   border: none;
   padding: 1rem 2rem;
-  border-radius: 25px;
+  border-radius: 12px;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
@@ -187,37 +157,45 @@
 .btn-show-lesson:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 102, 204, 0.4);
-  background: linear-gradient(135deg, #0052a3, #0099cc);
 }
 
-/* Modal Styles */
+/* Modal */
 .lesson-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 102, 204, 0.8);
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
   padding: 2rem;
-  animation: fadeIn 0.3s ease-out;
+  backdrop-filter: blur(5px);
 }
 
 .lesson-modal {
-  direction: rtl;
   background: white;
   border-radius: 25px;
-  max-width: 1000px;
+  max-width: 900px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 25px 50px rgba(0, 102, 204, 0.3);
-  animation: slideUp 0.4s ease-out;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .lesson-close-button {
@@ -232,8 +210,8 @@
   border-radius: 50%;
   font-size: 1.2rem;
   cursor: pointer;
-  transition: all 0.3s ease;
   z-index: 10;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -244,19 +222,19 @@
   transform: scale(1.1);
 }
 
+/* Modal Header */
 .lesson-modal-header {
+  padding: 3rem 2rem 2rem;
   background: linear-gradient(135deg, #0066cc, #00ccff);
   color: white;
-  padding: 3rem 2rem 2rem;
   border-radius: 25px 25px 0 0;
   display: flex;
   align-items: center;
   gap: 2rem;
-  position: relative;
 }
 
 .lesson-modal-header.private-lesson {
-  background: linear-gradient(135deg, #6f42c1, #8a63d2);
+  background: linear-gradient(135deg, #28a745, #20c997);
 }
 
 .lesson-modal-header.group-lesson {
@@ -265,18 +243,14 @@
 
 .lesson-modal-icon {
   font-size: 4rem;
-  width: 100px;
-  height: 100px;
   background: rgba(255, 255, 255, 0.2);
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-}
-
-.lesson-modal-info {
-  flex: 1;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .lesson-modal-title {
@@ -288,9 +262,9 @@
 
 .lesson-modal-meta {
   display: flex;
-  gap: 1rem;
-  align-items: center;
+  gap: 1.5rem;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .lesson-modal-date,
@@ -298,36 +272,35 @@
   background: rgba(255, 255, 255, 0.2);
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  font-size: 1rem;
   font-weight: 600;
+  backdrop-filter: blur(10px);
 }
 
 .lesson-modal-level {
-  color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  font-size: 1rem;
   font-weight: 600;
+  color: white;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .lesson-modal-status {
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  font-size: 1rem;
   font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .lesson-modal-status.confirmed {
-  background: #28a745;
-  color: white;
+  background: rgba(40, 167, 69, 0.9);
 }
 
 .lesson-modal-status.pending {
-  background: #ffc107;
-  color: #212529;
+  background: rgba(255, 193, 7, 0.9);
 }
 
+/* Modal Content */
 .lesson-modal-content {
   padding: 2rem;
 }
@@ -345,19 +318,13 @@
 .detail-card {
   background: #f8fbff;
   padding: 2rem;
-  border-radius: 15px;
+  border-radius: 20px;
   border: 2px solid #e6f3ff;
-  transition: all 0.3s ease;
-}
-
-.detail-card:hover {
-  border-color: #cce7ff;
-  box-shadow: 0 5px 15px rgba(0, 102, 204, 0.1);
 }
 
 .detail-card h4 {
   color: #0066cc;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 700;
   margin: 0 0 1.5rem 0;
   text-align: center;
@@ -373,33 +340,25 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 0;
-  border-bottom: 1px solid #e6f3ff;
-}
-
-.detail-item:last-child {
-  border-bottom: none;
+  padding: 0.8rem 1rem;
+  background: white;
+  border-radius: 12px;
+  border-right: 3px solid #0066cc;
 }
 
 .detail-label {
+  color: #555;
   font-weight: 600;
-  color: #0066cc;
-  font-size: 1rem;
 }
 
 .detail-value {
-  color: #555;
-  font-weight: 500;
-  font-size: 1rem;
+  color: #0066cc;
+  font-weight: 700;
 }
 
-.lesson-modal-actions {
-  border-top: 2px solid #e6f3ff;
-  padding-top: 2rem;
-}
-
+/* Participants Section */
 .lesson-participants-section {
-  text-align: center;
+  margin-top: 2rem;
 }
 
 .btn-show-participants {
@@ -407,39 +366,40 @@
   color: white;
   border: none;
   padding: 1rem 2rem;
-  border-radius: 25px;
+  border-radius: 12px;
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
   margin-bottom: 2rem;
 }
 
 .btn-show-participants:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
-  background: linear-gradient(135deg, #218838, #1e7e34);
-}
-
-.lesson-management {
-  margin-top: 2rem;
-}
-
-.lesson-participants-container {
-  margin-top: 2rem;
-  padding: 2rem;
-  background: white;
-  border-radius: 15px;
-  border: 2px solid #e6f3ff;
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
 }
 
 .lesson-participants-container h3 {
   color: #0066cc;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.participants-summary {
   text-align: center;
   margin-bottom: 2rem;
+}
+
+.participants-count {
+  background: linear-gradient(135deg, #e6f3ff, #cce7ff);
+  color: #0066cc;
+  padding: 1rem 2rem;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: inline-block;
 }
 
 .participants-grid {
@@ -449,59 +409,47 @@
 }
 
 .participant-item {
-  background: #f8fbff;
+  background: white;
   padding: 1.5rem;
   border-radius: 15px;
   border: 2px solid #e6f3ff;
   transition: all 0.3s ease;
-  text-align: center;
 }
 
 .participant-item:hover {
   transform: translateY(-3px);
-  border-color: #cce7ff;
-  box-shadow: 0 8px 20px rgba(0, 102, 204, 0.15);
+  border-color: #00ccff;
+  box-shadow: 0 10px 25px rgba(0, 102, 204, 0.15);
 }
 
 .participant-item h4 {
   color: #0066cc;
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0 0 0.5rem 0;
 }
 
 .participant-item p {
   color: #666;
   margin: 0 0 1rem 0;
-  font-size: 0.9rem;
 }
 
 .participant-notes {
-  background: #fff3cd;
-  color: #856404;
+  background: #f8fbff;
+  color: #555;
   padding: 0.5rem 1rem;
   border-radius: 10px;
   font-size: 0.9rem;
-  display: inline-block;
-  border: 1px solid #ffeaa7;
+  display: block;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.no-participants {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1.2rem;
 }
 
-@keyframes slideUp {
-  from { 
-    opacity: 0; 
-    transform: translateY(50px); 
-  }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
-  }
-}
 /* Responsive Design */
 @media (max-width: 768px) {
   .lesson-card {
@@ -514,25 +462,8 @@
     gap: 1rem;
   }
   
-  .lesson-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 2rem;
-  }
-  
-  .lesson-title {
-    font-size: 1.5rem;
-  }
-  
   .lesson-meta {
     justify-content: center;
-    gap: 0.5rem;
-  }
-  
-  .lesson-date,
-  .lesson-time {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
   }
   
   .lesson-info-grid {
@@ -544,140 +475,33 @@
     gap: 1rem;
   }
   
-  .btn-show-lesson {
-    width: 100%;
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-  }
-  
-  .lesson-overlay {
-    padding: 1rem;
-  }
-  
   .lesson-modal {
+    margin: 1rem;
     max-height: 95vh;
   }
   
   .lesson-modal-header {
     flex-direction: column;
     text-align: center;
-    padding: 2rem 1.5rem 1.5rem;
-  }
-  
-  .lesson-modal-icon {
-    width: 80px;
-    height: 80px;
-    font-size: 3rem;
+    padding: 2rem 1.5rem;
   }
   
   .lesson-modal-title {
     font-size: 2rem;
   }
   
-  .lesson-modal-meta {
-    justify-content: center;
-    gap: 0.5rem;
-  }
-  
-  .lesson-modal-content {
-    padding: 1.5rem;
-  }
-  
   .details-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  
-  .detail-card {
-    padding: 1.5rem;
-  }
-  
-  .detail-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-    text-align: right;
   }
   
   .participants-grid {
     grid-template-columns: 1fr;
   }
-  
-  .btn-show-participants {
-    width: 100%;
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-  }
 }
 
 @media (max-width: 480px) {
-  .lesson-card {
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .lesson-status-indicator {
-    position: static;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-  
-  .status-confirmed,
-  .status-pending {
-    display: inline-block;
-    font-size: 0.7rem;
-    padding: 0.2rem 0.6rem;
-  }
-  
-  .lesson-icon {
-    width: 50px;
-    height: 50px;
-    font-size: 1.5rem;
-  }
-  
-  .lesson-title {
-    font-size: 1.3rem;
-  }
-  
-  .lesson-details {
-    padding: 1rem;
-  }
-  
-  .info-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.3rem;
-    padding: 0.3rem 0;
-  }
-  
-  .lesson-close-button {
-    top: 1rem;
-    left: 1rem;
-    width: 35px;
-    height: 35px;
-    font-size: 1rem;
-  }
-  
-  .lesson-modal-header {
-    padding: 2rem 1rem 1rem;
-  }
-  
-  .lesson-modal-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 2rem;
-  }
-  
-  .lesson-modal-title {
-    font-size: 1.5rem;
-  }
-  
-  .lesson-modal-date,
-  .lesson-modal-time,
-  .lesson-modal-level,
-  .lesson-modal-status {
-    font-size: 0.8rem;
-    padding: 0.3rem 0.8rem;
+  .lesson-overlay {
+    padding: 0.5rem;
   }
   
   .lesson-modal-content {
@@ -685,144 +509,11 @@
   }
   
   .detail-card {
-    padding: 1rem;
+    padding: 1.5rem;
   }
   
-  .detail-card h4 {
-    font-size: 1.1rem;
-  }
-  
-  .detail-label,
-  .detail-value {
-    font-size: 0.9rem;
-  }
-  
-  .lesson-participants-container {
-    padding: 1rem;
-  }
-  
-  .lesson-participants-container h3 {
-    font-size: 1.3rem;
-  }
-  
-  .participant-item {
-    padding: 1rem;
-  }
-  
-  .participant-item h4 {
-    font-size: 1rem;
-  }
-  
-  .participant-item p {
-    font-size: 0.8rem;
-  }
-  
-  .participant-notes {
-    font-size: 0.8rem;
-    padding: 0.3rem 0.8rem;
+  .lesson-modal-meta {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }
-
-/* Additional hover effects and animations */
-.lesson-card {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-.lesson-card:nth-child(1) { animation-delay: 0.1s; }
-.lesson-card:nth-child(2) { animation-delay: 0.2s; }
-.lesson-card:nth-child(3) { animation-delay: 0.3s; }
-.lesson-card:nth-child(4) { animation-delay: 0.4s; }
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Special effects for different lesson types */
-.lesson-card[data-lesson-type="private"] .lesson-icon {
-  background: linear-gradient(135deg, #6f42c1, #8a63d2);
-  color: white;
-}
-
-.lesson-card[data-lesson-type="group"] .lesson-icon {
-  background: linear-gradient(135deg, #0066cc, #00ccff);
-  color: white;
-}
-
-/* Pulse animation for pending lessons */
-.status-pending {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
-  }
-}
-
-/* Glow effect for confirmed lessons */
-.status-confirmed {
-  box-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
-}
-
-/* Loading state styles */
-.lesson-card.loading {
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-.lesson-card.loading::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  margin: -10px 0 0 -10px;
-  border: 2px solid #0066cc;
-  border-top: 2px solid transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Print styles */
-@media print {
-  .lesson-overlay,
-  .lesson-actions,
-  .lesson-close-button,
-  .btn-show-participants,
-  .lesson-management {
-    display: none !important;
-  }
-  
-  .lesson-card {
-    box-shadow: none;
-    border: 1px solid #ddd;
-    break-inside: avoid;
-  }
-  
-  .lesson-modal {
-    position: static;
-    box-shadow: none;
-    max-height: none;
-    overflow: visible;
-  }
-}
-

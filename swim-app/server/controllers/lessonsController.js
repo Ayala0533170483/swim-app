@@ -1,12 +1,11 @@
 const service = require('../services/service');
 
-// קבלת כל השיעורים עם פילטרים
 async function getLessons(filters = {}) {
     try {
         console.log('=== Getting lessons ===');
         console.log('Filters received:', JSON.stringify(filters, null, 2));
 
-        const lessons = await service.getItems('lessons', filters);
+        const lessons = await service.get('lessons', filters);
         console.log(`Found ${lessons.length} lessons`);
 
         return lessons;
@@ -88,7 +87,6 @@ async function deleteLesson(lessonId) {
     }
 }
 
-// קבלת שיעורים לפי מורה
 async function getLessonsByTeacher(teacherId) {
     try {
         console.log(`Getting lessons for teacher ID: ${teacherId}`);

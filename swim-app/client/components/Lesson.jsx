@@ -2,15 +2,39 @@ import React, { useState, useContext, createContext, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { fetchData } from "../js-files/GeneralRequests";
 import '../styles/Lesson.css';
-// import { LessonsContext } from "./LessonTest";
 import { userContext } from "./App";
 import Update from "./Update";
-// import Delete from "./DeleteItem";
+// import Delete from "./DeleteItem"; // הסר את ההערה אם יש לך את הקומפוננטה
 import AddItem from "./AddItem";
-// import useHandleDisplay from "./useHandleDisplay";
 import useHandleError from "./useHandleError";
 
 export const LessonContext = createContext();
+
+// הוסף את useHandleDisplay אם אין לך אותו
+const useHandleDisplay = (initialValue) => {
+    const [data, setData] = useState(initialValue);
+
+    const updateData = (updatedItem) => {
+        setData(prevData =>
+            prevData.map(item =>
+                item.id === updatedItem.id ? updatedItem : item
+            )
+        );
+    };
+
+    const deleteData = (id) => {
+        setData(prevData => prevData.filter(item => item.id !== id));
+    };
+
+    const addData = (newItem) => {
+        setData(prevData => [...prevData, newItem]);
+    };
+
+    return [data, setData, updateData, deleteData, addData];
+};
+
+// הוסף את LessonsContext אם אין לך אותו
+const LessonsContext = createContext();
 
 function Lesson({ lesson }) {
     const navigate = useNavigate();
@@ -18,12 +42,20 @@ function Lesson({ lesson }) {
     const [showLesson, setShowLesson] = useState(lessonid == lesson.lesson_id ? true : false);
     const [showParticipants, setShowParticipants] = useState(false);
     const [participants, setParticipants, updateParticipants, deleteParticipants, addParticipants] = useHandleDisplay([]);
-    const { updateLessons, deleteLessons, setDisplayChanged } = useContext(LessonsContext);
+    const lessonsContext = useContext(LessonsContext) || {
+        updateLessons: () => { },
+        deleteLessons: () => { },
+        setDisplayChanged: () => { }
+    };
+    const { updateLessons, deleteLessons, setDisplayChanged } = lessonsContext;
     const { userData } = useContext(userContext);
     const location = useLocation();
     const { handleError } = useHandleError();
-    
+
     const attributes = ["participant_name", "participant_email", "notes"];
+
+    // בדיקה אם המשתמש הנוכחי הוא מורה
+    const isTeacher = userData.type_name === 'teacher';
 
     function showLessonFunction() {
         setShowLesson(true);
@@ -37,7 +69,7 @@ function Lesson({ lesson }) {
                 if (participants.length > 0) {
                     setShowParticipants(true);
                 } else {
-                    let response = await fetchData("lesson-participants", "lesson_id", lesson.lesson_id, handleError);
+                    let response = await fetchData("lesson-participants", `lesson_id=${lesson.lesson_id}`, handleError);
                     if (response) {
                         setParticipants(response);
                         setShowParticipants(true);
@@ -45,24 +77,22 @@ function Lesson({ lesson }) {
                 }
             }
         })();
-    }, [location.pathname, participants]);
+    }, [location.pathname, participants, lesson.lesson_id, lessonid, handleError]);
 
     function navigateToParticipants() {
         navigate(`/users/${id}/lessons/${lesson.lesson_id}/participants`);
     }
 
-    // פונקציה לקבלת אייקון לפי סוג השיעור
     function getLessonIcon(type) {
-        switch(type?.toLowerCase()) {
+        switch (type?.toLowerCase()) {
             case 'private': return '👤';
             case 'group': return '👥';
             default: return '🏊‍♀️';
         }
     }
 
-    // פונקציה לקבלת צבע לפי רמת השיעור
     function getLevelColor(level) {
-        switch(level?.toLowerCase()) {
+        switch (level?.toLowerCase()) {
             case 'beginner': return '#28a745';
             case 'intermediate': return '#ffc107';
             case 'advanced': return '#dc3545';
@@ -70,62 +100,70 @@ function Lesson({ lesson }) {
         }
     }
 
-    // פונקציה לעיצוב תאריך
     function formatDate(dateString) {
         const date = new Date(dateString);
         return date.toLocaleDateString('he-IL');
     }
 
-    // פונקציה לעיצוב שעה
     function formatTime(timeString) {
-        return timeString?.substring(0, 5); // HH:MM
+        return timeString?.substring(0, 5);
     }
 
-    // פונקציה לבדיקה אם השיעור עבר
     function isLessonPast() {
         const lessonDateTime = new Date(`${lesson.lesson_date}T${lesson.start_time}`);
         return lessonDateTime < new Date();
+    }
+
+    // פונקציה לתרגום סוג השיעור
+    function translateLessonType(type) {
+        switch (type?.toLowerCase()) {
+            case 'private': return 'פרטי';
+            case 'group': return 'קבוצתי';
+            default: return 'לא מוגדר';
+        }
+    }
+
+    // פונקציה לתרגום רמה
+    function translateLevel(level) {
+        switch (level?.toLowerCase()) {
+            case 'beginner': return 'מתחיל';
+            case 'intermediate': return 'בינוני';
+            case 'advanced': return 'מתקדם';
+            default: return 'כללי';
+        }
     }
 
     return (
         <>
             {!showLesson && (
                 <div className={`lesson-card ${!lesson.is_active ? 'lesson-inactive' : ''} ${isLessonPast() ? 'lesson-past' : ''}`}>
-                    <div className="lesson-status-indicator">
-                        {lesson.is_confirmed ? (
-                            <span className="status-confirmed">✓ מאושר</span>
-                        ) : (
-                            <span className="status-pending">⏳ ממתין לאישור</span>
-                        )}
-                    </div>
-
                     <div className="lesson-header">
                         <div className="lesson-icon">
                             {getLessonIcon(lesson.lesson_type)}
                         </div>
                         <div className="lesson-info">
                             <h3 className="lesson-title">
-                                שיעור {lesson.lesson_type === 'private' ? 'פרטי' : 'קבוצתי'}
+                                שיעור {translateLessonType(lesson.lesson_type)}
                             </h3>
                             <div className="lesson-meta">
                                 <span className="lesson-date">📅 {formatDate(lesson.lesson_date)}</span>
                                 <span className="lesson-time">
                                     🕐 {formatTime(lesson.start_time)} - {formatTime(lesson.end_time)}
                                 </span>
-                                <span 
+                                <span
                                     className="lesson-level"
                                     style={{ backgroundColor: getLevelColor(lesson.level) }}
                                 >
-                                    {lesson.level || 'כללי'}
+                                    {translateLevel(lesson.level)}
                                 </span>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div className="lesson-details">
                         <div className="lesson-info-grid">
                             <div className="info-item">
-                                <span className="info-label">גיל:</span>
+                                <span className="info-label"> גילאים:</span>
                                 <span className="info-value">{lesson.age_range || 'כל הגילאים'}</span>
                             </div>
                             {lesson.lesson_type === 'group' && (
@@ -138,15 +176,23 @@ function Lesson({ lesson }) {
                                 <span className="info-label">בריכה:</span>
                                 <span className="info-value">בריכה #{lesson.pool_id}</span>
                             </div>
+                            {isTeacher && (
+                                <div className="info-item">
+                                    <span className="info-label">נרשמו:</span>
+                                    <span className="info-value">
+                                        {lesson.num_registered || 0}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     </div>
 
                     <div className="lesson-actions">
                         <div className="lesson-actions-right">
-                            {lesson.teacher_id == userData.id && (
+                            {isTeacher && lesson.teacher_id == userData.id && (
                                 <>
                                     <Update
-                                        item={{ 
+                                        item={{
                                             id: lesson.lesson_id,
                                             lesson_date: lesson.lesson_date,
                                             start_time: lesson.start_time,
@@ -160,6 +206,8 @@ function Lesson({ lesson }) {
                                         updateDisplay={updateLessons}
                                         setDisplayChanged={setDisplayChanged}
                                     />
+                                    {/* הסר את ההערה אם יש לך את הקומפוננטה Delete */}
+                                    {/*
                                     <Delete
                                         id={lesson.lesson_id}
                                         type="lessons"
@@ -167,6 +215,7 @@ function Lesson({ lesson }) {
                                         setDisplayChanged={setDisplayChanged}
                                         dependent="lesson-participants"
                                     />
+                                    */}
                                 </>
                             )}
                         </div>
@@ -197,18 +246,18 @@ function Lesson({ lesson }) {
                             </div>
                             <div className="lesson-modal-info">
                                 <h2 className="lesson-modal-title">
-                                    שיעור {lesson.lesson_type === 'private' ? 'פרטי' : 'קבוצתי'}
+                                    שיעור {translateLessonType(lesson.lesson_type)}
                                 </h2>
                                 <div className="lesson-modal-meta">
                                     <span className="lesson-modal-date">📅 {formatDate(lesson.lesson_date)}</span>
                                     <span className="lesson-modal-time">
                                         🕐 {formatTime(lesson.start_time)} - {formatTime(lesson.end_time)}
                                     </span>
-                                    <span 
+                                    <span
                                         className="lesson-modal-level"
                                         style={{ backgroundColor: getLevelColor(lesson.level) }}
                                     >
-                                        {lesson.level || 'כללי'}
+                                        {translateLevel(lesson.level)}
                                     </span>
                                     <span className={`lesson-modal-status ${lesson.is_confirmed ? 'confirmed' : 'pending'}`}>
                                         {lesson.is_confirmed ? '✓ מאושר' : '⏳ ממתין לאישור'}
@@ -226,12 +275,12 @@ function Lesson({ lesson }) {
                                             <div className="detail-item">
                                                 <span className="detail-label">סוג שיעור:</span>
                                                 <span className="detail-value">
-                                                    {lesson.lesson_type === 'private' ? 'פרטי' : 'קבוצתי'}
+                                                    {translateLessonType(lesson.lesson_type)}
                                                 </span>
                                             </div>
                                             <div className="detail-item">
                                                 <span className="detail-label">רמה:</span>
-                                                <span className="detail-value">{lesson.level || 'כללי'}</span>
+                                                <span className="detail-value">{translateLevel(lesson.level)}</span>
                                             </div>
                                             <div className="detail-item">
                                                 <span className="detail-label">טווח גילאים:</span>
@@ -247,12 +296,37 @@ function Lesson({ lesson }) {
                                                     <span className="detail-value">{lesson.max_participants || 'ללא הגבלה'}</span>
                                                 </div>
                                             )}
+                                            {/* הצגת מספר הנרשמים רק למורים */}
+                                            {isTeacher && (
+                                                <div className="detail-item">
+                                                    <span className="detail-label">מספר נרשמים:</span>
+                                                    <span className="detail-value">
+                                                        {lesson.num_registered || 0}
+                                                        {lesson.lesson_type === 'group' && lesson.max_participants &&
+                                                            ` מתוך ${lesson.max_participants}`
+                                                        }
+                                                    </span>
+                                                </div>
+                                            )}
+                                            {/* הצגת סטטוס פעילות רק למורים */}
+                                            {isTeacher && (
+                                                <div className="detail-item">
+                                                    <span className="detail-label">סטטוס:</span>
+                                                    <span className="detail-value">
+                                                        {lesson.is_active ? 'פעיל' : 'לא פעיל'}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
                                     <div className="detail-card">
                                         <h4>זמן ותאריך</h4>
                                         <div className="detail-items">
+                                            <div className="detail-item">
+                                                <span className="detail-label">תאריך:</span>
+                                                <span className="detail-value">{formatDate(lesson.lesson_date)}</span>
+                                            </div>
                                             <div className="detail-item">
                                                 <span className="detail-label">תאריך:</span>
                                                 <span className="detail-value">{formatDate(lesson.lesson_date)}</span>
@@ -271,6 +345,12 @@ function Lesson({ lesson }) {
                                                     {Math.round((new Date(`1970-01-01T${lesson.end_time}`) - new Date(`1970-01-01T${lesson.start_time}`)) / 60000)} דקות
                                                 </span>
                                             </div>
+                                            <div className="detail-item">
+                                                <span className="detail-label">סטטוס אישור:</span>
+                                                <span className="detail-value">
+                                                    {lesson.is_confirmed ? 'מאושר' : 'ממתין לאישור'}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -283,23 +363,33 @@ function Lesson({ lesson }) {
                                             הצג משתתפים
                                         </button>
                                     )}
-                                    
+
                                     <LessonContext.Provider value={{ updateParticipants, deleteParticipants }}>
                                         <div className="lesson-management">
-                                            {lesson.teacher_id === userData.id && (
+                                            {isTeacher && lesson.teacher_id === userData.id && (
                                                 <AddItem
                                                     keys={attributes}
                                                     type="lesson-participants"
                                                     addDisplay={addParticipants}
-                                                    defaultValues={{ 
-                                                        lesson_id: lesson.lesson_id 
+                                                    defaultValues={{
+                                                        lesson_id: lesson.lesson_id
                                                     }}
                                                 />
                                             )}
-                                            
+
                                             {showParticipants && (
                                                 <div className="lesson-participants-container">
                                                     <h3>משתתפים בשיעור</h3>
+                                                    {isTeacher && (
+                                                        <div className="participants-summary">
+                                                            <span className="participants-count">
+                                                                סה"כ נרשמים: {lesson.num_registered || 0}
+                                                                {lesson.lesson_type === 'group' && lesson.max_participants &&
+                                                                    ` מתוך ${lesson.max_participants}`
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                     <div className="participants-grid">
                                                         {participants.map((participant) => (
                                                             <div key={participant.id} className="participant-item">
@@ -313,6 +403,11 @@ function Lesson({ lesson }) {
                                                             </div>
                                                         ))}
                                                     </div>
+                                                    {participants.length === 0 && (
+                                                        <div className="no-participants">
+                                                            <p>אין משתתפים רשומים לשיעור זה</p>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             )}
                                         </div>
