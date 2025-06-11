@@ -1,6 +1,6 @@
+import { Navigate } from 'react-router-dom';
 import './refreshToken';
 import Cookies from 'js-cookie';
-import { Navigate } from 'react-router-dom';
 import { refreshToken } from './refreshToken';
 
 export const fetchData = async (typeOfItem, id = "", handleError) => {

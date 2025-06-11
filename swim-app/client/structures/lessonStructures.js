@@ -1,4 +1,3 @@
-// פונקציות עזר
 export const getTimeDifferenceInMinutes = (startTime, endTime) => {
   if (!startTime || !endTime) return 0;
   const [startHour, startMin] = startTime.split(':').map(Number);
@@ -6,24 +5,6 @@ export const getTimeDifferenceInMinutes = (startTime, endTime) => {
   const startTotalMin = startHour * 60 + startMin;
   const endTotalMin = endHour * 60 + endMin;
   return endTotalMin - startTotalMin;
-};
-
-export const getStatusClass = (status) => {
-  switch (status) {
-    case 'confirmed': return 'confirmed';
-    case 'pending': return 'pending';
-    case 'cancelled': return 'cancelled';
-    default: return 'pending';
-  }
-};
-
-export const getStatusText = (status) => {
-  switch (status) {
-    case 'confirmed': return 'מאושר';
-    case 'pending': return 'ממתין לאישור';
-    case 'cancelled': return 'מבוטל';
-    default: return 'ממתין לאישור';
-  }
 };
 
 export const createLessonKeys = (pools) => [
@@ -176,7 +157,6 @@ export const createLessonValidationRules = () => ({
   }
 });
 
-
 export const defaultLessonValues = (userId = null) => ({
   lesson_date: '',
   start_time: '',
@@ -186,5 +166,5 @@ export const defaultLessonValues = (userId = null) => ({
   pool_id: '',
   max_participants: '',
   age_range: '',
-    user_id: userId
+  user_id: userId
 });

@@ -174,7 +174,7 @@ function Lesson({ lesson }) {
                             )}
                             <div className="info-item">
                                 <span className="info-label">בריכה:</span>
-                                <span className="info-value">בריכה #{lesson.pool_id}</span>
+                                <span className="info-value">{lesson.pool_name}</span>
                             </div>
                             {isTeacher && (
                                 <div className="info-item">
@@ -219,9 +219,6 @@ function Lesson({ lesson }) {
                                 </>
                             )}
                         </div>
-                        <button className="btn-show-lesson" onClick={showLessonFunction}>
-                            פרטי השיעור
-                        </button>
                     </div>
                 </div>
             )}

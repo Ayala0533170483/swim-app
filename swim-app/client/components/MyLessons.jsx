@@ -3,19 +3,16 @@ import { userContext } from './App';
 import AddItem from './AddItem';
 import { fetchData } from '../js-files/GeneralRequests';
 import useHandleError from './useHandleError';
+import '../styles/MyLessons.css';
 import useHandleDisplay from './useHandleDisplay';
 import Lesson from './Lesson';
 import {
-  getStatusClass,
-  getStatusText,
   createLessonKeys,
   createLessonValidationRules,
   defaultLessonValues
 } from '../structures/lessonStructures';
-import '../styles/MyLessons.css';
 
 export const LessonsContext = React.createContext();
-
 function MyLessons() {
   const { userData } = useContext(userContext);
   const [lessons, setLessons, updateLessons, deleteLessons, addLessons] = useHandleDisplay([]);
@@ -34,6 +31,12 @@ function MyLessons() {
   const lessonValidationRules = useMemo(() => {
     return createLessonValidationRules();
   }, []);
+
+  // פונקציה לקבלת שם הבריכה לפי ID
+  const getPoolName = useCallback((poolId) => {
+    const pool = pools.find(p => p.pool_id === poolId);
+    return pool ? pool.pool_name : `בריכה ${poolId}`;
+  }, [pools]);
 
   useEffect(() => {
     let isMounted = true;
@@ -64,9 +67,8 @@ function MyLessons() {
     return () => {
       isMounted = false;
     };
-  }, []); // רק dependenc
+  }, []);
 
-  // טעינת השיעורים של המורה הנוכחי - שימוש ב-user_id במקום id
   useEffect(() => {
     let isMounted = true;
     const fetchLessons = async () => {
@@ -89,38 +91,10 @@ function MyLessons() {
 
         console.log('Starting to fetch lessons for teacher ID:', userData.user_id);
 
-        const url = `http://localhost:3000/lessons/?${userData.user_id}`;
-        console.log('Fetching URL:', url);
-
-        const response = await fetch(url, {
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
+        const lessonsResponse = await fetchData("lessons", "teacher_id", userData.user_id, handleError);
 
         if (!isMounted) return;
-
-        if (response.ok) {
-          const lessonsResponse = await response.json();
-          console.log('Lessons response:', lessonsResponse);
-
-          if (lessonsResponse && lessonsResponse.success && lessonsResponse.data) {
-            setLessons(lessonsResponse.data);
-            console.log(`✅ Loaded ${lessonsResponse.data.length} lessons for teacher ID: ${userData.user_id}`);
-          } else {
-            console.log('❌ Unexpected response structure:', lessonsResponse);
-            setLessons([]);
-          }
-        } else {
-          console.error('❌ Failed to fetch lessons. Status:', response.status);
-          const errorText = await response.text();
-          console.error('Error response:', errorText);
-          setLessons([]);
-        }
+        setLessons(lessonsResponse.data);
       } catch (error) {
         if (isMounted) {
           console.error('❌ Error fetching lessons:', error);
@@ -138,7 +112,7 @@ function MyLessons() {
     return () => {
       isMounted = false;
     };
-  }, [userData?.user_id]); // שינוי ל-user_id
+  }, [userData?.user_id]);
 
   const handleAddLesson = useCallback((newLesson) => {
     addLessons(newLesson);
@@ -151,7 +125,13 @@ function MyLessons() {
   }
 
   return (
-    <LessonsContext.Provider value={{ updateLessons, deleteLessons, displayChanged, setDisplayChanged }}>
+    <LessonsContext.Provider value={{ 
+      updateLessons, 
+      deleteLessons, 
+      displayChanged, 
+      setDisplayChanged,
+      getPoolName // הוספת הפונקציה לקונטקסט
+    }}>
       <div className="my-lessons-page">
         <div className="container">
           <div className="page-header">
@@ -195,7 +175,11 @@ function MyLessons() {
                 <>
                   <div className="lessons-grid">
                     {lessons.map(lesson => (
-                      <Lesson key={lesson.lesson_id} lesson={lesson} />
+                      <Lesson 
+                        key={lesson.lesson_id} 
+                        lesson={lesson}
+                        pools={pools} // העברת מערך הבריכות
+                      />
                     ))}
                   </div>
                 </>

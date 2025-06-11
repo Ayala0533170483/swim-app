@@ -5,9 +5,21 @@ async function getLessons(filters = {}) {
         console.log('=== Getting lessons ===');
         console.log('Filters received:', JSON.stringify(filters, null, 2));
 
-        const lessons = await service.get('lessons', filters);
+        // השתמש בפונקציה הגנרית
+        const lessons = await service.getWithJoin(
+            'lessons', // טבלה ראשית
+            [
+                {
+                    table: 'pools',
+                    condition: 'lessons.pool_id = pools.pool_id',
+                    type: 'LEFT JOIN'
+                }
+            ], // joins
+            filters, // פילטרים
+            'lessons.*, pools.name as pool_name, pools.city as pool_city' // שדות לבחירה
+        );
+        
         console.log(`Found ${lessons.length} lessons`);
-
         return lessons;
     } catch (error) {
         console.error('=== ERROR getting lessons ===');
@@ -16,6 +28,7 @@ async function getLessons(filters = {}) {
         throw error;
     }
 }
+
 
 // קבלת שיעור לפי ID
 async function getLessonById(lessonId) {

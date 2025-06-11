@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const lessonsController = require('../controllers/lessonsController');
 
-// GET /lessons - קבלת כל השיעורים עם פילטרים
 router.get('/', async (req, res) => {
     try {
         const filters = req.query;
@@ -24,8 +23,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-
-// POST /lessons - יצירת שיעור חדש
 router.post('/', async (req, res) => {
     try {
         const lessonData = req.body;
@@ -48,7 +45,6 @@ router.post('/', async (req, res) => {
     }
 });
 
-// PUT /lessons/:id - עדכון שיעור
 router.put('/:id', async (req, res) => {
     try {
         const lessonId = req.params.id;
@@ -71,7 +67,6 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// DELETE /lessons/:id - מחיקת שיעור
 router.delete('/:id', async (req, res) => {
     try {
         const lessonId = req.params.id;
@@ -92,6 +87,5 @@ router.delete('/:id', async (req, res) => {
         });
     }
 });
-
 
 module.exports = router;
