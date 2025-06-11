@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaPen } from "react-icons/fa";
 import "../styles/Update.css";
 import useHandleError from "./useHandleError";
-import refreshToken from "../js-files/refreshToken";
+import refreshToken from "../js-files/RefreshToken";
 import Cookies from 'js-cookie';
 
 function Update({ userType, item, type, updateDisplay, nameButton, setDisplayChanged = () => { } }) {

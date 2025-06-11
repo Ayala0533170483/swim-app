@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { FaPlus } from "react-icons/fa";
 import "../styles/AddItem.css";
 import useHandleError from "./useHandleError";
-import refreshToken from "../js-files/refreshToken";
+import refreshToken from "../js-files/RefreshToken";
 import Cookies from 'js-cookie';
 
 function AddItem({
@@ -33,19 +33,19 @@ function AddItem({
     });
     const watchedValues = watch();
 
-const sendAddRequest = async (token, data) => {
-    const url = `http://localhost:3000/${type}`;
-    
-    return await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        credentials: 'include',
-        body: JSON.stringify(data),
-    });
-};
+    const sendAddRequest = async (token, data) => {
+        const url = `http://localhost:3000/${type}`;
+
+        return await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                ...(token && { Authorization: `Bearer ${token}` }),
+            },
+            credentials: 'include',
+            body: JSON.stringify(data),
+        });
+    };
 
     const onSubmit = async (data) => {
         let token = Cookies.get("accessToken");

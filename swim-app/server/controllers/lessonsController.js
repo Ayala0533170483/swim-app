@@ -5,7 +5,7 @@ async function getLessons(filters = {}) {
         console.log('=== Getting lessons ===');
         console.log('Filters received:', JSON.stringify(filters, null, 2));
 
-        const lessons = await service.getItems('lessons', filters);
+        const lessons = await service.get('lessons', filters);
         console.log(`Found ${lessons.length} lessons`);
 
         return lessons;

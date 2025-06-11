@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom';
-import './refreshToken';
+import './RefreshToken';
 import Cookies from 'js-cookie';
-import { refreshToken } from './refreshToken';
+import { refreshToken } from './RefreshToken';
 
 export const fetchData = async (typeOfItem, id = "", handleError) => {
   const url = `http://localhost:3000/${typeOfItem}/?${id}`;

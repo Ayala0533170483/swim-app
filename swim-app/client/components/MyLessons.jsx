@@ -91,7 +91,7 @@ function MyLessons() {
 
         console.log('Starting to fetch lessons for teacher ID:', userData.user_id);
 
-        const lessonsResponse = await fetchData("lessons",userData.user_id, handleError);
+        const lessonsResponse = await fetchData("lessons", userData.user_id, handleError);
 
         if (!isMounted) return;
         setLessons(lessonsResponse.data);
@@ -125,10 +125,10 @@ function MyLessons() {
   }
 
   return (
-    <LessonsContext.Provider value={{ 
-      updateLessons, 
-      deleteLessons, 
-      displayChanged, 
+    <LessonsContext.Provider value={{
+      updateLessons,
+      deleteLessons,
+      displayChanged,
       setDisplayChanged,
       getPoolName // הוספת הפונקציה לקונטקסט
     }}>
@@ -175,8 +175,8 @@ function MyLessons() {
                 <>
                   <div className="lessons-grid">
                     {lessons.map(lesson => (
-                      <Lesson 
-                        key={lesson.lesson_id} 
+                      <Lesson
+                        key={lesson.lesson_id}
                         lesson={lesson}
                         pools={pools} // העברת מערך הבריכות
                       />
