@@ -4,22 +4,16 @@ const lessonsController = require('../controllers/lessonsController');
 
 router.get('/', async (req, res) => {
     try {
-        const filters = req.query;
-        const lessons = await lessonsController.getLessons(filters);
+        const query = { ...req.query };
+        if (query.user_id === 'null' && req.user && req.user.id) {
+            query.user_id = req.user.id;
+        }
 
-        res.json({
-            success: true,
-            data: lessons,
-            count: lessons.length
-        });
+        const lessons = await lessonsController.getLessons(query);
 
+        res.json(lessons);
     } catch (error) {
-        console.error('Error getting lessons:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error loading lessons',
-            error: error.message
-        });
+        res.status(500).json({ error: error.message });
     }
 });
 

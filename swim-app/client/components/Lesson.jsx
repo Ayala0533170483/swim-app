@@ -10,7 +10,6 @@ import useHandleError from "./useHandleError";
 
 export const LessonContext = createContext();
 
-// הוסף את useHandleDisplay אם אין לך אותו
 const useHandleDisplay = (initialValue) => {
     const [data, setData] = useState(initialValue);
 
@@ -33,7 +32,6 @@ const useHandleDisplay = (initialValue) => {
     return [data, setData, updateData, deleteData, addData];
 };
 
-// הוסף את LessonsContext אם אין לך אותו
 const LessonsContext = createContext();
 
 function Lesson({ lesson }) {
@@ -54,7 +52,6 @@ function Lesson({ lesson }) {
 
     const attributes = ["participant_name", "participant_email", "notes"];
 
-    // בדיקה אם המשתמש הנוכחי הוא מורה
     const isTeacher = userData.type_name === 'teacher';
 
     function showLessonFunction() {
@@ -114,7 +111,6 @@ function Lesson({ lesson }) {
         return lessonDateTime < new Date();
     }
 
-    // פונקציה לתרגום סוג השיעור
     function translateLessonType(type) {
         switch (type?.toLowerCase()) {
             case 'private': return 'פרטי';
@@ -123,7 +119,6 @@ function Lesson({ lesson }) {
         }
     }
 
-    // פונקציה לתרגום רמה
     function translateLevel(level) {
         switch (level?.toLowerCase()) {
             case 'beginner': return 'מתחיל';

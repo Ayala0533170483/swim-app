@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../controllers/authController');
+const jwt = require('jsonwebtoken');
+const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh-secret';
+const ACCESS_SECRET = process.env.JWT_SECRET || 'access-secret';
 
 router.post('/login', async (req, res) => {
     try {
@@ -70,7 +73,7 @@ router.post('/refresh', (req, res) => {
         }
 
         const newAccessToken = jwt.sign(
-            { id: payload.id, email: payload.email, ip: payload.ip },
+            { id: payload.id, email: payload.email, role: payload.role, ip: payload.ip },
             ACCESS_SECRET,
             { expiresIn: '15m' }
         );

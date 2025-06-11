@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const verifyToken = require('./middleware/verifyToken');
 
 app.use(cors({
     origin: 'http://localhost:5173',
@@ -20,11 +21,9 @@ const lessonesRouter = require('./API/lessonsRouter.js');
 // app.use(verifyToken);
 // כל הבקשות שקשורות ל-auth (login/signup) עוברות בלי varifyToken
 app.use('/', authRouter);
-// app.use('/teacher', teacherRouter);
-// app.use('/student', studentRouter);
-app.use('/users', usersRouter);
-app.use('/pools', poolsRouter);
-app.use('/lessons', lessonesRouter);
+app.use('/users', verifyToken, usersRouter);
+app.use('/pools', verifyToken, poolsRouter);
+app.use('/lessons', verifyToken, lessonesRouter);
 
 const PORT = 3000;
 app.listen(PORT, () => {

@@ -14,9 +14,8 @@ function verifyToken(req, res, next) {
     if (path.includes(req.path)) {
         return next();
     }
-    const token = req.cookies.accessToken;
-    // const authHeader = req.headers['authorization'];
-    // const token = authHeader && authHeader.split(' ')[1];
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
     if (!token) {
         return res.status(401).json({ error: 'Access token required' });
     }

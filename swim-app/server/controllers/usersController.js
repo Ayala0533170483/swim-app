@@ -26,14 +26,9 @@ async function createUser(userData) {
 
 async function getUsers(filters = {}) {
     try {
-        console.log('=== Getting users ===');
-        console.log('Filters received:', JSON.stringify(filters, null, 2));
-
         // טיפול מיוחד עבור user_id ספציפי
         if (filters.user_id) {
-            console.log(`Getting user profile for user_id: ${filters.user_id}`);
             const user = await service.getUserById(filters.user_id);
-
             if (!user) {
                 throw new Error('User not found');
             }

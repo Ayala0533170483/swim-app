@@ -51,7 +51,7 @@ async function login(email, password, ip) {
 
 function createAccessToken(user, ip) {
     return jwt.sign(
-        { id: user.user_id, email: user.email, ip },
+        { id: user.user_id, email: user.email,role: user.type_name, ip },
         SECRET,
         { expiresIn: '15m' }
     );
@@ -59,7 +59,7 @@ function createAccessToken(user, ip) {
 
 function createRefreshToken(user, ip) {
     return jwt.sign(
-        { id: user.user_id, email: user.email, ip },
+        { id: user.user_id, email: user.email,role: user.type_name, ip },
         REFRESH_SECRET,
         { expiresIn: '7d' }
     );

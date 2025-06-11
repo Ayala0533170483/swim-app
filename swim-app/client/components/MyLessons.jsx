@@ -91,7 +91,7 @@ function MyLessons() {
 
         console.log('Starting to fetch lessons for teacher ID:', userData.user_id);
 
-        const lessonsResponse = await fetchData("lessons", "teacher_id", userData.user_id, handleError);
+        const lessonsResponse = await fetchData("lessons",userData.user_id, handleError);
 
         if (!isMounted) return;
         setLessons(lessonsResponse.data);
