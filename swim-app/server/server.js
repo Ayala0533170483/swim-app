@@ -10,20 +10,24 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
-app.set('trust proxy', true); /*Correct IP*/
+app.set('trust proxy', true);
 const authRouter = require('./API/authRouter.js');
 // const verifyToken = require('./verifyToken');
 const usersRouter = require('./API/usersRouter.js');
 const poolsRouter = require('./API/poolsRouter.js');
 const lessonesRouter = require('./API/lessonsRouter.js');
+const messagesRouter = require('./API/messagesRouter.js');
+const branchesRouter = require('./API/branchesRouter.js');
 
 // const varifyToken = require('./controllers/varifyToken.js');
 // app.use(verifyToken);
-// כל הבקשות שקשורות ל-auth (login/signup) עוברות בלי varifyToken
+
 app.use('/', authRouter);
 app.use('/users', verifyToken, usersRouter);
 app.use('/pools', verifyToken, poolsRouter);
 app.use('/lessons', verifyToken, lessonesRouter);
+app.use('/messages', messagesRouter);
+app.use('/branches', branchesRouter);
 
 const PORT = 3000;
 app.listen(PORT, () => {

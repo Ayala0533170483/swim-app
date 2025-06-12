@@ -4,14 +4,12 @@ const lessonsController = require('../controllers/lessonsController');
 
 router.get('/', async (req, res) => {
     try {
-        const query = { ...req.query };
-        if (query.user_id === 'null' && req.user && req.user.id) {
-            query.user_id = req.user.id;
+        let query = { ...req.query };
+        if (query.user_id == null && req.user && req.user.id) {
+            query = { 'user_id': req.user.id };
         }
-
         const lessons = await lessonsController.getLessons(query);
-
-                res.json({ data: lessons });
+        res.json({ data: lessons });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -1,9 +1,9 @@
-const service = require('../services/service');
+const service = require('../services/genericService');
 
 async function getLessons(filters = {}) {
     try {
-        console.log('=== Getting lessons ===');
-        console.log('Filters received:', JSON.stringify(filters, null, 2));
+        // console.log('=== Getting lessons ===');
+        // console.log('Filters received:', JSON.stringify(filters, null, 2));
 
         const lessons = await service.get('lessons', filters);
         console.log(`Found ${lessons.length} lessons`);

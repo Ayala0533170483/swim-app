@@ -4,10 +4,9 @@ import { fetchData } from "../js-files/GeneralRequests";
 import '../styles/Lesson.css';
 import { userContext } from "./App";
 import Update from "./Update";
-// import Delete from "./DeleteItem"; // הסר את ההערה אם יש לך את הקומפוננטה
+// import Delete from "./DeleteItem"; 
 import AddItem from "./AddItem";
 import useHandleError from "./useHandleError";
-
 export const LessonContext = createContext();
 
 const useHandleDisplay = (initialValue) => {

@@ -32,7 +32,6 @@ function MyLessons() {
     return createLessonValidationRules();
   }, []);
 
-  // פונקציה לקבלת שם הבריכה לפי ID
   const getPoolName = useCallback((poolId) => {
     const pool = pools.find(p => p.pool_id === poolId);
     return pool ? pool.pool_name : `בריכה ${poolId}`;
@@ -88,9 +87,7 @@ function MyLessons() {
 
       try {
         if (isMounted) setLoading(true);
-
         console.log('Starting to fetch lessons for teacher ID:', userData.user_id);
-
         const lessonsResponse = await fetchData("lessons", userData.user_id, handleError);
 
         if (!isMounted) return;

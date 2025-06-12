@@ -4,9 +4,9 @@ const usersController = require('../controllers/usersController');
 
 router.get('/', async (req, res) => {
     try {
-        const query = { ...req.query };
-        if (query.user_id === 'null' && req.user && req.user.id) {
-            query.user_id = req.user.id;
+        let query = { ...req.query };
+        if (query.user_id == null && req.user && req.user.id) {
+            query = { 'user_id': req.user.id };
         }
         const users = await usersController.getUsers(query);
         res.json(users);

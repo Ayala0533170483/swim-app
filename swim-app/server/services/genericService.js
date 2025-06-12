@@ -87,6 +87,7 @@ async function getUserById(user_id) {
 //     const [res] = await pool.query('INSERT INTO ?? SET ?', [table, data]);
 //     return { id: res.insertId, ...data };
 // }
+
 async function create(table, data) {
     try {
         console.log(`=== Service.create called ===`);
@@ -114,7 +115,6 @@ async function create(table, data) {
     }
 }
 
-
 async function update(table, id, data) {
     const idField = table === 'users' ? 'user_id' : 'id';
     await pool.query(`UPDATE ?? SET ? WHERE ${idField} = ?`, [table, data, id]);
@@ -130,39 +130,6 @@ async function remove(table, id) {
     await pool.query(`UPDATE ?? SET is_active = 0 WHERE ${idField} = ?`, [table, id]);
 }
 
-async function getWithJoin(mainTable, joins = [], filters = {}, selectFields = '*') {
-    let sql = `SELECT ${selectFields} FROM ${mainTable}`;
-    
-    // הוספת JOIN clauses
-    joins.forEach(join => {
-        sql += ` ${join.type || 'LEFT JOIN'} ${join.table} ON ${join.condition}`;
-    });
-    
-    sql += ` WHERE ${mainTable}.is_active = true`;
-    
-    // הוספת תנאי is_active לטבלאות המחוברות
-    joins.forEach(join => {
-        if (join.checkActive !== false) { // ברירת מחדל true
-            sql += ` AND ${join.table}.is_active = true`;
-        }
-    });
-    
-    const params = [];
-    
-    // הוספת פילטרים
-    for (const key in filters) {
-        if (filters[key] !== undefined && filters[key] !== "") {
-            // אם המפתח כולל נקודה (table.column), השתמש בו כמו שהוא
-            // אחרת, הוסף את שם הטבלה הראשית
-            const fieldName = key.includes('.') ? key : `${mainTable}.${key}`;
-            sql += ` AND ${fieldName} = ?`;
-            params.push(filters[key]);
-        }
-    }
-    
-    const [rows] = await pool.query(sql, params);
-    return rows;
-}
 
 
 module.exports = {
@@ -173,5 +140,4 @@ module.exports = {
     getUserWithPassword,
     createUserWithPasswordHash,
     getUserById,
-    getWithJoin
 };
