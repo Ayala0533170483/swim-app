@@ -1,0 +1,18 @@
+const pool = require('./connection');
+
+async function getLessons(table, filters = {}) {
+    let sql = 'SELECT * FROM lessons JOIN  WHERE is_active = true';
+    const params = [table];
+    for (const key in filters) {
+        if (filters[key] !== undefined && filters[key] !== "") {
+            sql += ` AND ${key} = ?`;
+            params.push(filters[key]);
+        }
+    }
+    const [rows] = await pool.query(sql, params);
+    return rows;
+}
+
+module.exports = {
+    getLessons,
+};

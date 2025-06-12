@@ -1,11 +1,11 @@
-const service = require('../services/genericService');
-
+const genericService = require('../services/genericService');
+const service = require('../services/service');
 async function getLessons(filters = {}) {
     try {
         // console.log('=== Getting lessons ===');
         // console.log('Filters received:', JSON.stringify(filters, null, 2));
 
-        const lessons = await service.get('lessons', filters);
+        const lessons = await service.getLessons('lessons', filters);
         console.log(`Found ${lessons.length} lessons`);
 
         return lessons;
@@ -24,7 +24,7 @@ async function createLesson(lessonData) {
         }
         lessonData.teacher_id = lessonData.user_id;
         delete lessonData.user_id;
-        const result = await service.create('lessons', lessonData);
+        const result = await genericService.create('lessons', lessonData);
 
         return result;
     } catch (error) {
@@ -38,7 +38,7 @@ async function updateLesson(lessonId, updateData) {
         console.log('Update data:', JSON.stringify(updateData, null, 2));
 
         delete updateData.lesson_id;
-        await service.update('lessons', lessonId, updateData);
+        await genericService.update('lessons', lessonId, updateData);
         return { message: 'Lesson updated successfully' };
     } catch (error) {
         throw error;
@@ -47,7 +47,7 @@ async function updateLesson(lessonId, updateData) {
 
 async function deleteLesson(lessonId) {
     try {
-        const result = await service.deleteItem('lessons', lessonId);
+        const result = await genericService.deleteItem('lessons', lessonId);
         return result;
     } catch (error) {
         throw error;
@@ -56,7 +56,7 @@ async function deleteLesson(lessonId) {
 
 async function getLessonsByTeacher(teacherId) {
     try {
-        const lessons = await service.getItems('lessons', { teacher_id: teacherId });
+        const lessons = await genericService.getItems('lessons', { teacher_id: teacherId });
         return lessons;
     } catch (error) {
         throw error;
@@ -65,7 +65,7 @@ async function getLessonsByTeacher(teacherId) {
 
 async function getLessonsByPool(poolId) {
     try {
-        const lessons = await service.getItems('lessons', { pool_id: poolId });
+        const lessons = await genericService.getItems('lessons', { pool_id: poolId });
         return lessons;
     } catch (error) {
         throw error;
