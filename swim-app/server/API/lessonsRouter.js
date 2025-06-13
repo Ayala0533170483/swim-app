@@ -8,7 +8,11 @@ router.get('/', async (req, res) => {
         if (query.user_id == null && req.user && req.user.id) {
             query = { 'user_id': req.user.id };
         }
-        const lessons = await lessonsController.getLessons(query);
+          const filters = {
+            role: req.user.role,  // התפקיד מהטוקן
+            id: req.user.id       // ה-ID מהטוקן
+        };
+        const lessons = await lessonsController.getLessons(filters);
         res.json({ data: lessons });
     } catch (error) {
         res.status(500).json({ error: error.message });

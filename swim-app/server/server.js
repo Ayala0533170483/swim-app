@@ -23,7 +23,7 @@ const branchesRouter = require('./API/branchesRouter.js');
 // app.use(verifyToken);
 
 app.use('/', authRouter);
-app.use('/users', verifyToken, usersRouter);
+app.use('/users',verifyToken, usersRouter);
 app.use('/pools', verifyToken, poolsRouter);
 app.use('/lessons', verifyToken, lessonesRouter);
 app.use('/messages', messagesRouter);

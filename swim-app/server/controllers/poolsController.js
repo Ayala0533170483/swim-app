@@ -1,4 +1,4 @@
-const service = require('../services/service');
+const genericService = require('../services/genericService');
 
 const typeToTableMap = {
     'pools': 'pools',
@@ -13,7 +13,7 @@ async function getItems(type, filters = {}) {
         const tableName = typeToTableMap[type] || 'pools'; // ברירת מחדל לטבלת pools
         
         console.log(`Using table: ${tableName}`);
-        const items = await service.get(tableName, filters);
+        const items = await genericService.get(tableName, filters);
         console.log(`Found ${items.length} items`);
 
         return items;

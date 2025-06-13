@@ -1,4 +1,5 @@
-const service = require('../services/genericService');
+const genericService = require('../services/genericService');
+const service = require('../services/service');
 
 async function createUser(userData) {
     try {
@@ -6,7 +7,7 @@ async function createUser(userData) {
         console.log('User data received:', JSON.stringify(userData, null, 2));
 
         console.log('Calling service.create for users table');
-        const newUser = await service.create('users', userData);
+        const newUser = await genericService.create('users', userData);
 
         // תיקון מפתח ראשי
         if (newUser.id) {
@@ -60,7 +61,7 @@ async function updateUser(id, updateData) {
         delete updateData.id;
         delete updateData.user_id;
 
-        await service.update('users', id, updateData);
+        await genericService.update('users', id, updateData);
 
         console.log('=== User updated successfully ===');
         return { message: 'User updated successfully' };

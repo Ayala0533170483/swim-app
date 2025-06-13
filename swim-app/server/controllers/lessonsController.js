@@ -2,13 +2,44 @@ const genericService = require('../services/genericService');
 const service = require('../services/service');
 async function getLessons(filters = {}) {
     try {
-        // console.log('=== Getting lessons ===');
-        // console.log('Filters received:', JSON.stringify(filters, null, 2));
+        const rawLessons = await service.getLessons(filters);
+        console.log(`Found ${rawLessons.length} lesson records`);
+        const lessonsMap = new Map();
 
-        const lessons = await service.getLessons('lessons', filters);
-        console.log(`Found ${lessons.length} lessons`);
+        rawLessons.forEach(row => {
+            const lessonId = row.lesson_id;
 
-        return lessons;
+              if (!lessonsMap.has(lessonId)) {
+                lessonsMap.set(lessonId, {
+                    lesson_id: row.lesson_id,
+                    teacher_id: row.teacher_id,
+                    pool_id: row.pool_id,
+                    pool_name: row.pool_name,
+                    lesson_date: row.lesson_date,
+                    start_time: row.start_time,
+                    end_time: row.end_time,
+                    lesson_type: row.lesson_type,
+                    max_participants: row.max_participants,
+                    age_range: row.age_range,
+                    level: row.level,
+                    registrations: []
+                });
+            }
+            
+            if (row.registration_id) {
+                lessonsMap.get(lessonId).registrations.push({
+                    registration_id: row.registration_id,
+                    student_id: row.student_id,
+                    name: row.name,
+                    registration_date: row.registration_date,
+                    status: row.status
+                });
+            }
+        });
+        const processedLessons = Array.from(lessonsMap.values());
+        console.log(`Processed into ${processedLessons.length} unique lessons`);
+
+        return processedLessons;
     } catch (error) {
         console.error('=== ERROR getting lessons ===');
         console.error('Error message:', error.message);
@@ -16,6 +47,7 @@ async function getLessons(filters = {}) {
         throw error;
     }
 }
+
 
 async function createLesson(lessonData) {
     try {

@@ -32,11 +32,6 @@ function MyLessons() {
     return createLessonValidationRules();
   }, []);
 
-  const getPoolName = useCallback((poolId) => {
-    const pool = pools.find(p => p.pool_id === poolId);
-    return pool ? pool.pool_name : `בריכה ${poolId}`;
-  }, [pools]);
-
   useEffect(() => {
     let isMounted = true;
     const fetchPools = async () => {
@@ -126,8 +121,8 @@ function MyLessons() {
       updateLessons,
       deleteLessons,
       displayChanged,
-      setDisplayChanged,
-      getPoolName // הוספת הפונקציה לקונטקסט
+      setDisplayChanged
+
     }}>
       <div className="my-lessons-page">
         <div className="container">
@@ -175,7 +170,7 @@ function MyLessons() {
                       <Lesson
                         key={lesson.lesson_id}
                         lesson={lesson}
-                        pools={pools} // העברת מערך הבריכות
+                        pools={pools}
                       />
                     ))}
                   </div>
