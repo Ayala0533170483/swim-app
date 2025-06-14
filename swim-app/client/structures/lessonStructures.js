@@ -63,7 +63,8 @@ export const createLessonKeys = (pools) => [
     key: 'max_participants',
     label: 'מקסימום משתתפים',
     inputType: 'number',
-    placeholder: 'מספר משתתפים'
+    placeholder: 'מספר משתתפים',
+    readonly: true
   },
   {
     key: 'age_range',
@@ -148,8 +149,20 @@ export const createLessonValidationRules = () => ({
   onFieldChange: (key, value, watchedValues, setValue) => {
     if (key === 'lesson_type') {
       if (value === 'private') {
+        const maxParticipantsField = document.getElementById('max_participants');
+        if (maxParticipantsField) {
+          maxParticipantsField.readOnly = true;
+          maxParticipantsField.style.backgroundColor = '#f5f5f5';
+          maxParticipantsField.style.cursor = 'not-allowed';
+        }
         return { max_participants: 1 };
       } else if (value === 'group') {
+        const maxParticipantsField = document.getElementById('max_participants');
+        if (maxParticipantsField) {
+          maxParticipantsField.readOnly = false;
+          maxParticipantsField.style.backgroundColor = '';
+          maxParticipantsField.style.cursor = '';
+        }
         return { max_participants: '' };
       }
     }
@@ -168,3 +181,34 @@ export const defaultLessonValues = (userId = null) => ({
   age_range: '',
   user_id: userId
 });
+
+export const createLessonUpdateConfig = (lesson, pools) => {
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
+  const formatTimeForInput = (timeString) => {
+    if (!timeString) return '';
+    return timeString.substring(0, 5);
+  };
+
+  return {
+    item: {
+      id: lesson.lesson_id,
+      lesson_date: formatDateForInput(lesson.lesson_date),
+      start_time: formatTimeForInput(lesson.start_time),
+      end_time: formatTimeForInput(lesson.end_time),
+      lesson_type: lesson.lesson_type,
+      max_participants: lesson.max_participants,
+      age_range: lesson.age_range,
+      level: lesson.level,
+      pool_id: lesson.pool_id
+    },
+    type: "lessons",
+    nameButton: "עריכת שיעור",
+    keys: createLessonKeys(pools),
+    validationRules: createLessonValidationRules()
+  };
+};

@@ -1,13 +1,24 @@
 import React, { useState, useContext } from "react";
 import '../styles/Lesson.css';
+import '../styles/Update.css';
+import { LessonsContext } from "./MyLessons";
 import { userContext } from "./App";
 import Update from "./Update";
+import { createLessonUpdateConfig } from "../structures/lessonStructures";
 
 function Lesson({ lesson, pools }) {
     const { userData } = useContext(userContext);
+    const { updateLessons } = useContext(LessonsContext);
     const [showParticipants, setShowParticipants] = useState(false);
 
+        console.log('🔍 Lesson component - lesson:', lesson);
+    console.log('🔍 updateLessons from context:', updateLessons);
+    console.log('🔍 isTeacher:', userData?.type_name === 'teacher');
+    console.log('🔍 hasRegistrations:', lesson.registrations && lesson.registrations.length > 0);
+
+
     const isTeacher = userData?.type_name === 'teacher';
+    {console.log('🎯 Rendering Update component for lesson:', lesson.lesson_id)}
     const hasRegistrations = lesson.registrations && lesson.registrations.length > 0;
     const numRegistrations = lesson.registrations ? lesson.registrations.length : 0;
 
@@ -54,6 +65,8 @@ function Lesson({ lesson, pools }) {
         }
     }
 
+    const updateConfig = createLessonUpdateConfig(lesson, pools);
+
     return (
         <div className="lesson-card">
             <div className="lesson-header">
@@ -67,7 +80,7 @@ function Lesson({ lesson, pools }) {
                     <div className="lesson-meta">
                         <span className="lesson-date">📅 {formatDate(lesson.lesson_date)}</span>
                         <span className="lesson-time">
-                            🕐 {formatTime(lesson.start_time)} - {formatTime(lesson.end_time)}
+                            🕐 {formatTime(lesson.end_time)} - {formatTime(lesson.start_time)}
                         </span>
                         <span
                             className="lesson-level"
@@ -112,26 +125,16 @@ function Lesson({ lesson, pools }) {
                         </button>
                     )}
 
-                    {isTeacher && lesson.teacher_id == userData.id && (
+                    {isTeacher && !hasRegistrations && (
                         <Update
-                            item={{
-                                id: lesson.lesson_id,
-                                lesson_date: lesson.lesson_date,
-                                start_time: lesson.start_time,
-                                end_time: lesson.end_time,
-                                lesson_type: lesson.lesson_type,
-                                max_participants: lesson.max_participants,
-                                age_range: lesson.age_range,
-                                level: lesson.level
-                            }}
-                            type="lessons"
-                            updateDisplay={() => { }}
+                            {...updateConfig}
+                            updateDisplay={updateLessons}
                             setDisplayChanged={() => { }}
                         />
+
                     )}
                 </div>
             </div>
-
             {showParticipants && hasRegistrations && (
                 <div className="participants-section">
                     <h4>משתתפים בשיעור:</h4>

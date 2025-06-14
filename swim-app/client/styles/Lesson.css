@@ -192,6 +192,7 @@
     opacity: 0;
     transform: scale(0.9) translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -356,27 +357,28 @@
   font-weight: 700;
 }
 
-/* Participants Section */
 .lesson-participants-section {
   margin-top: 2rem;
 }
 
 .btn-show-participants {
-  background: linear-gradient(135deg, #28a745, #20c997);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: #497fb9;
   color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  border: #2d4763 0.2px solid;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
   transition: all 0.3s ease;
-  margin-bottom: 2rem;
 }
 
 .btn-show-participants:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+  background-color: #4887ca;
+  transform: translateY(-1px);
 }
 
 .lesson-participants-container h3 {
@@ -410,10 +412,12 @@
 
 .participant-item {
   background: white;
+  height: 2vh;
   padding: 1.5rem;
   border-radius: 15px;
   border: 2px solid #e6f3ff;
   transition: all 0.3s ease;
+  
 }
 
 .participant-item:hover {
@@ -455,45 +459,45 @@
   .lesson-card {
     padding: 1.5rem;
   }
-  
+
   .lesson-header {
     flex-direction: column;
     text-align: center;
     gap: 1rem;
   }
-  
+
   .lesson-meta {
     justify-content: center;
   }
-  
+
   .lesson-info-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .lesson-actions {
     flex-direction: column;
     gap: 1rem;
   }
-  
+
   .lesson-modal {
     margin: 1rem;
     max-height: 95vh;
   }
-  
+
   .lesson-modal-header {
     flex-direction: column;
     text-align: center;
     padding: 2rem 1.5rem;
   }
-  
+
   .lesson-modal-title {
     font-size: 2rem;
   }
-  
+
   .details-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .participants-grid {
     grid-template-columns: 1fr;
   }
@@ -503,15 +507,15 @@
   .lesson-overlay {
     padding: 0.5rem;
   }
-  
+
   .lesson-modal-content {
     padding: 1rem;
   }
-  
+
   .detail-card {
     padding: 1.5rem;
   }
-  
+
   .lesson-modal-meta {
     flex-direction: column;
     gap: 0.5rem;

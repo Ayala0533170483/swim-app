@@ -8,11 +8,9 @@ const refreshToken = async () => {
     });
 
     if (!res.ok) {
-        // הרפרש טוקן פג תוקף - נקה הכל
         Cookies.remove("accessToken");
         localStorage.removeItem("currentUser");
         
-        // הפנה להתחברות
         window.location.href = '/login';
         
         throw new Error("Session expired - please login again");

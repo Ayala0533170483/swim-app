@@ -11,6 +11,7 @@ import {
   createLessonValidationRules,
   defaultLessonValues
 } from '../structures/lessonStructures';
+import '../styles/Update.css';
 
 export const LessonsContext = React.createContext();
 function MyLessons() {
@@ -22,7 +23,6 @@ function MyLessons() {
   const { handleError } = useHandleError();
   const isTeacher = userData?.type_name === 'teacher';
 
-  console.log('MyLessons render - userData:', userData);
 
   const lessonKeys = useMemo(() => {
     return createLessonKeys(pools);
@@ -36,9 +36,7 @@ function MyLessons() {
     let isMounted = true;
     const fetchPools = async () => {
       try {
-        console.log('Fetching pools...');
         const poolsResponse = await fetchData('pools', '', handleError);
-        console.log('Pools response:', poolsResponse);
 
         if (!isMounted) return;
 
@@ -66,23 +64,14 @@ function MyLessons() {
   useEffect(() => {
     let isMounted = true;
     const fetchLessons = async () => {
-      console.log('fetchLessons called - userData:', userData);
 
       if (!userData) {
-        console.log('No userData yet');
-        if (isMounted) setLoading(false);
-        return;
-      }
-
-      if (!userData.user_id) {
-        console.log('No userData.user_id:', userData);
         if (isMounted) setLoading(false);
         return;
       }
 
       try {
         if (isMounted) setLoading(true);
-        console.log('Starting to fetch lessons for teacher ID:', userData.user_id);
         const lessonsResponse = await fetchData("lessons", userData.user_id, handleError);
 
         if (!isMounted) return;
@@ -94,7 +83,6 @@ function MyLessons() {
         }
       } finally {
         if (isMounted) {
-          console.log('Setting loading to false');
           setLoading(false);
         }
       }
@@ -110,11 +98,10 @@ function MyLessons() {
     addLessons(newLesson);
   }, [addLessons]);
 
-  console.log('Current state - loading:', loading, 'lessons:', lessons.length, 'userData.user_id:', userData?.user_id);
-
   if (!userData) {
     return <div className="loading">טוען נתוני משתמש...</div>;
   }
+    console.log('updateLessons function:', updateLessons);
 
   return (
     <LessonsContext.Provider value={{

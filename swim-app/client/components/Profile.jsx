@@ -3,6 +3,8 @@ import { fetchData } from "../js-files/GeneralRequests";
 import { userContext } from './App';
 import useHandleError from "./useHandleError";
 import Update from "./Update";
+import { profileFields, profileValidationRules } from '../structures/ProfileStructure';
+
 import "../styles/Profile.css";
 
 function UserProfile() {
@@ -39,7 +41,6 @@ function UserProfile() {
         }
     };
 
-    // פונקציה לעדכון הסטייט המקומי, הלוקל סטורג' והקונטקסט
     const updateProfile = (updatedData) => {
         setUserDetails(prevDetails => ({
             ...prevDetails,
@@ -99,7 +100,10 @@ function UserProfile() {
                         updateDisplay={updateProfile}
                         nameButton="עריכת פרופיל"
                         userType={userData?.type_name}
+                        keys={profileFields}
+                        validationRules={profileValidationRules}
                     />
+
                 </div>
             </div>
         </div>

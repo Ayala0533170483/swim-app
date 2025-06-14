@@ -43,10 +43,10 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        const lessonId = req.params.id;
+        const lesson_id = req.params.id;
         const updateData = req.body;
 
-        const result = await lessonsController.updateLesson(lessonId, updateData);
+        const result = await lessonsController.updateLesson(lesson_id, updateData);
 
         res.json({
             success: true,

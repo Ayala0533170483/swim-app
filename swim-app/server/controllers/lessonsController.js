@@ -9,7 +9,7 @@ async function getLessons(filters = {}) {
         rawLessons.forEach(row => {
             const lessonId = row.lesson_id;
 
-              if (!lessonsMap.has(lessonId)) {
+            if (!lessonsMap.has(lessonId)) {
                 lessonsMap.set(lessonId, {
                     lesson_id: row.lesson_id,
                     teacher_id: row.teacher_id,
@@ -25,7 +25,7 @@ async function getLessons(filters = {}) {
                     registrations: []
                 });
             }
-            
+
             if (row.registration_id) {
                 lessonsMap.get(lessonId).registrations.push({
                     registration_id: row.registration_id,
@@ -68,9 +68,9 @@ async function updateLesson(lessonId, updateData) {
     try {
         console.log(`=== Updating lesson ID: ${lessonId} ===`);
         console.log('Update data:', JSON.stringify(updateData, null, 2));
-
-        delete updateData.lesson_id;
-        await genericService.update('lessons', lessonId, updateData);
+        delete updateData.registrations;
+        delete updateData.id;
+        await genericService.update('lessons', "lesson_id", lessonId, updateData);
         return { message: 'Lesson updated successfully' };
     } catch (error) {
         throw error;
@@ -79,7 +79,7 @@ async function updateLesson(lessonId, updateData) {
 
 async function deleteLesson(lessonId) {
     try {
-        const result = await genericService.deleteItem('lessons', lessonId);
+        const result = await genericService.remove('lessons', lessonId);
         return result;
     } catch (error) {
         throw error;
@@ -88,7 +88,7 @@ async function deleteLesson(lessonId) {
 
 async function getLessonsByTeacher(teacherId) {
     try {
-        const lessons = await genericService.getItems('lessons', { teacher_id: teacherId });
+        const lessons = await genericService.get('lessons', { teacher_id: teacherId });
         return lessons;
     } catch (error) {
         throw error;

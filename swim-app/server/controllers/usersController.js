@@ -61,7 +61,7 @@ async function updateUser(id, updateData) {
         delete updateData.id;
         delete updateData.user_id;
 
-        await genericService.update('users', id, updateData);
+        await genericService.update('users',"user_id", id, updateData);
 
         console.log('=== User updated successfully ===');
         return { message: 'User updated successfully' };

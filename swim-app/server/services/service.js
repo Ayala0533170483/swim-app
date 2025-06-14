@@ -69,40 +69,6 @@ async function getUserById(user_id) {
     return rows[0];
 }
 
-// async function getLessons({ role, id }) {
-//     const sql = `
-//         SELECT 
-//             l.lesson_id,
-//             l.teacher_id,
-//             l.pool_id,
-//             l.lesson_date,
-//             l.start_time,
-//             l.end_time,
-//             l.lesson_type,
-//             l.max_participants,
-//             l.age_range,
-//             l.level,
-//             l.is_active,
-//             l.num_registered,
-//             lr.registration_id,
-//             lr.student_id,
-//             lr.registration_date,
-//             lr.is_active as status,
-//             u.name
-//         FROM lessons l
-//         LEFT JOIN lesson_registrations lr ON l.lesson_id = lr.lesson_id
-//         LEFT JOIN users u ON lr.student_id = u.user_id
-//         WHERE (
-//             (? = 'teacher' AND l.teacher_id = ?) OR
-//             (? = 'student' AND lr.student_id = ? AND lr.is_active = 1)
-//         ) AND l.is_active = 1
-//         ORDER BY l.lesson_id, lr.registration_id`;
-    
-//     const [rows] = await pool.query(sql, [role, id, role, id]);
-//     console.log(`Found ${rows.length} rows for ${role} id: ${id}`);
-    
-//     return rows;
-// }
 async function getLessons({ role, id }) {
     const sql = `
         SELECT 
@@ -139,7 +105,11 @@ async function getLessons({ role, id }) {
     
     return rows;
 }
-
+// async function updatelesson(table, type, id, data) {
+//     // יצירת השאילתה עם placeholder מוגן
+//     const sql = `UPDATE ?? SET ? WHERE ?? = ?`;
+//     await pool.query(sql, [table, data, type, id]);
+// }
 
 module.exports = {
     getLessons,

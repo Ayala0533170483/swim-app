@@ -1,10 +1,9 @@
-/* Edit Button Styles */
-.edit-button {
+ .edit-button {
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 12px 20px;
-    background-color: #668cb4;
+    background-color: #497fb9;
     color: white;
     border: #2d4763 1.2px solid;
     border-radius: 8px;
@@ -15,7 +14,7 @@
 }
 
 .edit-button:hover {
-    background-color: #527caa;
+    background-color: #4887ca;
     transform: translateY(-1px);
 }
 
@@ -97,7 +96,6 @@
     border-color: #bbb;
 }
 
-/* Button Container */
 .button-container {
     display: flex;
     justify-content: center;
@@ -128,7 +126,6 @@
     transform: translateY(0);
 }
 
-/* Secondary Button */
 .btn-secondary {
     background-color: #6c757d;
     color: white;
@@ -151,19 +148,18 @@
     transform: translateY(0);
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .modal {
         width: 95%;
         padding: 15px;
         margin: 10px;
     }
-    
+
     .button-container {
         flex-direction: column;
         gap: 8px;
     }
-    
+
     .btn-primary,
     .btn-secondary {
         width: 100%;

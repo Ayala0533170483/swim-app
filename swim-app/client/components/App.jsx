@@ -12,8 +12,6 @@ import NotFound from './NotFound';
 import MainLayout from './MainLayout';
 import MyLessons from './MyLessons';
 
-
-// בתוך הראוטס:
 export const userContext = createContext();
 
 export default function App() {

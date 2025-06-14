@@ -42,10 +42,11 @@ async function create(table, data) {
     }
 }
 
-async function update(table, id, data) {
-    const idField = table === 'users' ? 'user_id' : 'id';
-    await pool.query(`UPDATE ?? SET ? WHERE ${idField} = ?`, [table, data, id]);
+async function update(table, type, id, data) {
+    const sql = `UPDATE ?? SET ? WHERE ?? = ?`;
+    await pool.query(sql, [table, data, type, id]);
 }
+
 
 async function remove(table, id) {
     const idField = table === 'users' ? 'user_id' : 'id';
