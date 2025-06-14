@@ -77,11 +77,23 @@ async function updateLesson(lessonId, updateData) {
     }
 }
 
+// async function deleteLesson(lessonId) {
+//     try {
+//         const result = await genericService.remove('lessons', lessonId);
+//         return result;
+//     } catch (error) {
+//         throw error;
+//     }
+// }
+
 async function deleteLesson(lessonId) {
     try {
+        console.log(`=== Deleting lesson ID: ${lessonId} ===`);
         const result = await genericService.remove('lessons', lessonId);
+        console.log('Lesson deleted successfully');
         return result;
     } catch (error) {
+        console.error('Error in deleteLesson:', error);
         throw error;
     }
 }

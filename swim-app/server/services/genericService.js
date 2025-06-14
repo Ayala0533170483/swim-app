@@ -49,8 +49,9 @@ async function update(table, type, id, data) {
 
 
 async function remove(table, id) {
-    const idField = table === 'users' ? 'user_id' : 'id';
-    await pool.query(`UPDATE ?? SET is_active = 0 WHERE ${idField} = ?`, [table, id]);
+    const idField = table.endsWith('s') ? table.slice(0, -1) + '_id' : 'id';
+    const sql = `UPDATE ${table} SET is_active = 0 WHERE ${idField} = ?`;
+    await pool.query(sql, [id]);
 }
 
 

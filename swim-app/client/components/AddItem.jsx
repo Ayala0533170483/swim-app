@@ -97,7 +97,6 @@ function AddItem({
     return (
         <>
             <button className="edit-button" onClick={() => setShowAddItem(true)}>
-                <FaPlus className="edit-icon" />
                 {nameButton}
             </button>
 

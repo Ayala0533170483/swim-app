@@ -101,7 +101,6 @@ function MyLessons() {
   if (!userData) {
     return <div className="loading">טוען נתוני משתמש...</div>;
   }
-    console.log('updateLessons function:', updateLessons);
 
   return (
     <LessonsContext.Provider value={{

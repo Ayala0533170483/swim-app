@@ -4,21 +4,17 @@ import '../styles/Update.css';
 import { LessonsContext } from "./MyLessons";
 import { userContext } from "./App";
 import Update from "./Update";
+import Delete from "./DeleteItem";
 import { createLessonUpdateConfig } from "../structures/lessonStructures";
 
 function Lesson({ lesson, pools }) {
     const { userData } = useContext(userContext);
-    const { updateLessons } = useContext(LessonsContext);
+    const { updateLessons, deleteLessons } = useContext(LessonsContext);
     const [showParticipants, setShowParticipants] = useState(false);
 
-        console.log('🔍 Lesson component - lesson:', lesson);
-    console.log('🔍 updateLessons from context:', updateLessons);
-    console.log('🔍 isTeacher:', userData?.type_name === 'teacher');
-    console.log('🔍 hasRegistrations:', lesson.registrations && lesson.registrations.length > 0);
 
 
     const isTeacher = userData?.type_name === 'teacher';
-    {console.log('🎯 Rendering Update component for lesson:', lesson.lesson_id)}
     const hasRegistrations = lesson.registrations && lesson.registrations.length > 0;
     const numRegistrations = lesson.registrations ? lesson.registrations.length : 0;
 
@@ -126,12 +122,19 @@ function Lesson({ lesson, pools }) {
                     )}
 
                     {isTeacher && !hasRegistrations && (
-                        <Update
-                            {...updateConfig}
-                            updateDisplay={updateLessons}
-                            setDisplayChanged={() => { }}
-                        />
-
+                        <>
+                            <Update
+                                {...updateConfig}
+                                updateDisplay={updateLessons}
+                                setDisplayChanged={() => { }}
+                            />
+                            <Delete
+                                id={lesson.lesson_id}
+                                type="lessons"
+                                deleteDisplay={deleteLessons}
+                                nameButton="מחיקת השיעור"
+                            />
+                        </>
                     )}
                 </div>
             </div>

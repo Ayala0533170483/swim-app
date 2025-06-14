@@ -12,8 +12,8 @@ function Update({
     updateDisplay,
     nameButton,
     setDisplayChanged = () => { },
-    keys = null, // רשימת השדות החדשה
-    validationRules = {} // חוקי ולידציה
+    keys = null, 
+    validationRules = {} 
 }) {
     const [showUpdateDetails, setShowUpdateDetails] = useState(false);
     const [updatedItem, setUpdatedItem] = useState(item);
@@ -26,7 +26,6 @@ function Update({
             [key]: value,
         }));
 
-        // נקה שגיאות עבור השדה הנוכחי
         if (errors[key]) {
             setErrors(prev => ({
                 ...prev,
@@ -34,7 +33,6 @@ function Update({
             }));
         }
 
-        // אם יש חוקי ולידציה עם onFieldChange
         if (validationRules.onFieldChange) {
             const updates = validationRules.onFieldChange(key, value, updatedItem, (field, newValue) => {
                 setUpdatedItem(prev => ({
@@ -102,7 +100,6 @@ function Update({
     };
 
     async function updateItem() {
-        // ולידציה לפני שליחה
         if (!validateForm()) {
             return;
         }
@@ -142,7 +139,6 @@ function Update({
         setErrors({});
     };
 
-    // אם יש keys מוגדרים, השתמש בהם, אחרת השתמש בשיטה הישנה
     const fieldsToRender = keys || Object.keys(updatedItem).filter(key => key !== "id").map(key => ({
         key,
         label: key,

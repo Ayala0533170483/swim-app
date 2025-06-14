@@ -14,8 +14,13 @@ export default function useHandleDisplay(initialItems = null) {
     };
 
 
-    const deleteItem = (deleteId) => {
-        setItems((prevItems) => prevItems.filter((item) => item.id !== deleteId));
+     const deleteItem = (deleteId) => {
+        setItems((prevItems) => 
+            prevItems.filter((item) => {
+                const itemId = item.lesson_id || item.id || item.pool_id || item.user_id;
+                return itemId !== deleteId;
+            })
+        );
     };
 
     const addItem = (newItem) => {
