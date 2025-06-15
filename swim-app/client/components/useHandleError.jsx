@@ -2,22 +2,35 @@ import React, { useState } from "react";
 
 export default function useHandleError() {
     const [errors, setError] = useState([]);
+
     const errorTypes = {
-        getError: " fetching data",
-        addError: " adding data to the database",
-        deleteError: "deleteing data ",
-        updateError: "updating data"
+        getError: "קריאת נתונים",
+        addError: "הוספת נתונים",
+        deleteError: "מחיקת נתונים",
+        updateError: "עדכון נתונים"
     }
-    const handleError = (errorType, errorMessage) => {
-        setError((prev) => [...prev, "an error occerred while " + errorTypes[errorType] + " :" + errorMessage]);
-        alert("an error occerred while " + errorTypes[errorType] + ":" + errorMessage.message);
+
+    const handleError = (errorType, error, isServerError = false) => {
+        let errorMessage = "";
+
+        if (isServerError) {
+            // שגיאת שרת (4xx, 5xx)
+            errorMessage = `שגיאת שרת ב${errorTypes[errorType]}, נסה שוב מאוחר יותר`;
+        } else {
+            // שגיאות אחרות (רשת, חיבור)
+            errorMessage = `בעיית חיבור ב${errorTypes[errorType]}, בדוק את החיבור לאינטרנט`;
+        }
+
+        setError((prev) => [...prev, errorMessage]);
+        alert(errorMessage);
     };
-    const clearErrors = () => setError(null);
+
+    const clearErrors = () => setError([]);
     const logErrors = () => {
-        errors.map((error) => {
+        errors.forEach((error) => {
             console.error(error);
-        })
-    }
+        });
+    };
 
     return { handleError, clearErrors, logErrors };
 }

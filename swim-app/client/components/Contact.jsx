@@ -22,10 +22,8 @@ function Contact() {
     setSubmitStatus(null);
 
     try {
-      // כאן נשלח את הפניה לשרת
       console.log('Contact form submitted:', form);
       
-      // סימולציה של שליחה לשרת
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       setSubmitStatus('success');
@@ -194,7 +192,6 @@ function Contact() {
           </div>
         </div>
 
-        {/* סקציית רשתות חברתיות - רק לוגואים */}
         <div className="social-media-section">
           <h2>עקבו אחרינו </h2>
           <div className="social-links">

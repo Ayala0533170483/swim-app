@@ -12,8 +12,8 @@ function Update({
     updateDisplay,
     nameButton,
     setDisplayChanged = () => { },
-    keys = null, 
-    validationRules = {} 
+    keys = null,
+    validationRules = {}
 }) {
     const [showUpdateDetails, setShowUpdateDetails] = useState(false);
     const [updatedItem, setUpdatedItem] = useState(item);
@@ -121,15 +121,11 @@ function Update({
                 setDisplayChanged(true);
                 setErrors({});
             } else {
-                try {
-                    const error = await response.json();
-                    alert(error.error || 'עדכון נכשל');
-                } catch {
-                    alert('עדכון נכשל');
-                }
+                handleError("updateError", null, true); // שגיאת שרת
             }
+
         } catch (ex) {
-            handleError("updateError", ex);
+            handleError("updateError", ex, false);
         }
     }
 

@@ -65,16 +65,10 @@ function AddItem({
                 reset(defaltValues);
                 setShowAddItem(false);
             } else {
-                try {
-                    const error = await response.json();
-                    alert(error.error || 'הוספה נכשלה');
-                } catch {
-                    alert('הוספה נכשלה');
-                }
+              handleError("addError", null, true);
             }
         } catch (error) {
-            console.error('Error adding item:', error);
-            alert('שגיאה בהוספה');
+            handleError("addError", error, false);
         }
     };
 
