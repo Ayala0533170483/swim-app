@@ -153,7 +153,6 @@ function Contact() {
                 />
               </div>
 
-              {/* AddItem מוסתר - רק לשליחה */}
               <AddItem
                 keys={[
                   { key: 'name', label: 'שם מלא', type: 'text' },
@@ -190,7 +189,7 @@ function Contact() {
                   subject: { required: 'נושא הוא שדה חובה' },
                   message: { required: 'הודעה היא שדה חובה' }
                 }}
-                useContactStyle={true} // פרופ חדש שנוסיף
+                useContactStyle={true} 
               />
             </div>
           </div>

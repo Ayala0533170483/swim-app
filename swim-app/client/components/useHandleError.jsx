@@ -14,10 +14,8 @@ export default function useHandleError() {
         let errorMessage = "";
 
         if (isServerError) {
-            // שגיאת שרת (4xx, 5xx)
             errorMessage = `שגיאת שרת ב${errorTypes[errorType]}, נסה שוב מאוחר יותר`;
         } else {
-            // שגיאות אחרות (רשת, חיבור)
             errorMessage = `בעיית חיבור ב${errorTypes[errorType]}, בדוק את החיבור לאינטרנט`;
         }
 
