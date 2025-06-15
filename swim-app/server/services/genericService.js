@@ -1,3 +1,4 @@
+
 const pool = require('./connection');
 
 async function get(table, filters = {}) {
@@ -12,8 +13,6 @@ async function get(table, filters = {}) {
     const [rows] = await pool.query(sql, params);
     return rows;
 }
-
-
 
 async function create(table, data) {
     try {
@@ -47,13 +46,11 @@ async function update(table, type, id, data) {
     await pool.query(sql, [table, data, type, id]);
 }
 
-
 async function remove(table, id) {
-    const idField = table.endsWith('s') ? table.slice(0, -1) + '_id' : 'id';
+    const idField = table === 'contact' ? 'id' : (table.endsWith('s') ? table.slice(0, -1) + '_id' : 'id');
     const sql = `UPDATE ${table} SET is_active = 0 WHERE ${idField} = ?`;
     await pool.query(sql, [id]);
 }
-
 
 
 module.exports = {

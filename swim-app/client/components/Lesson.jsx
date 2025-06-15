@@ -12,8 +12,6 @@ function Lesson({ lesson, pools }) {
     const { updateLessons, deleteLessons } = useContext(LessonsContext);
     const [showParticipants, setShowParticipants] = useState(false);
 
-
-
     const isTeacher = userData?.type_name === 'teacher';
     const hasRegistrations = lesson.registrations && lesson.registrations.length > 0;
     const numRegistrations = lesson.registrations ? lesson.registrations.length : 0;

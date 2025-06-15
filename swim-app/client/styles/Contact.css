@@ -521,3 +521,60 @@ body {
 .contact-submit-btn:active {
   transform: translateY(0);
 }
+/* הוספה לקובץ CSS הקיים */
+
+.contact-submit-section {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.contact-submit-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    min-width: 150px;
+}
+
+.contact-submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.contact-submit-btn:active {
+    transform: translateY(0);
+}
+
+.contact-submit-btn:disabled,
+.contact-submit-btn.submitting {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.contact-submit-btn.submitting {
+    background: linear-gradient(135deg, #999 0%, #666 100%);
+}
+
+/* אנימציה לכפתור בזמן שליחה */
+.contact-submit-btn.submitting::after {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-left: 10px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

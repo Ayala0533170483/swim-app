@@ -2,15 +2,36 @@ const express = require('express');
 const router = express.Router();
 const lessonsController = require('../controllers/lessonsController');
 
+// router.get('/', async (req, res) => {
+//     try {
+//         let query = { ...req.query };
+//         if (query.user_id == null && req.user && req.user.id) {
+//             query = { 'user_id': req.user.id };
+//         }
+//           const filters = {
+//             role: req.user.role,  // התפקיד מהטוקן
+//             id: req.user.id       // ה-ID מהטוקן
+//         };
+//         const lessons = await lessonsController.getLessons(filters);
+//         res.json({ data: lessons });
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// });
 router.get('/', async (req, res) => {
     try {
+        if (Object.keys(req.query).length === 0 ) {
+            const availableLessons = await lessonsController.getAvailableLessons();
+            return res.json({ data: availableLessons });
+        }
+
         let query = { ...req.query };
         if (query.user_id == null && req.user && req.user.id) {
             query = { 'user_id': req.user.id };
         }
-          const filters = {
-            role: req.user.role,  // התפקיד מהטוקן
-            id: req.user.id       // ה-ID מהטוקן
+        const filters = {
+            role: req.user.role,
+            id: req.user.id
         };
         const lessons = await lessonsController.getLessons(filters);
         res.json({ data: lessons });

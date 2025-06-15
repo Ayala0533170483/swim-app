@@ -105,17 +105,45 @@ async function getLessons({ role, id }) {
     
     return rows;
 }
-// async function updatelesson(table, type, id, data) {
-//     // יצירת השאילתה עם placeholder מוגן
-//     const sql = `UPDATE ?? SET ? WHERE ?? = ?`;
-//     await pool.query(sql, [table, data, type, id]);
-// }
+async function getAvailableLessons() {
+    const sql = `
+        SELECT 
+            l.lesson_id,
+            l.teacher_id,
+            l.pool_id,
+            p.name as pool_name,
+            l.lesson_date,
+            l.start_time,
+            l.end_time,
+            l.lesson_type,
+            l.max_participants,
+            l.age_range,
+            l.level,
+            l.is_active,
+            l.num_registered,
+            (l.max_participants - l.num_registered) as available_spots,
+            u.name as teacher_name
+        FROM lessons l
+        LEFT JOIN pools p ON l.pool_id = p.pool_id
+        LEFT JOIN users u ON l.teacher_id = u.user_id
+        WHERE l.is_active = 1 
+        AND l.num_registered < l.max_participants
+        AND l.lesson_date >= CURDATE()
+        ORDER BY l.lesson_date, l.start_time`;
+    
+    const [rows] = await pool.query(sql);
+    console.log(`=== getAvailableLessons SQL executed ===`);
+    console.log(`Found ${rows.length} available lessons in database`);
+    console.log('First few lessons:', rows.slice(0, 3));
+    
+    return rows;
+}
+
 
 module.exports = {
     getLessons,
+    getAvailableLessons,
     getUserWithPassword,
     createUserWithPasswordHash,
     getUserById
 };
-
-

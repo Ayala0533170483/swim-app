@@ -1,38 +1,83 @@
+
 const express = require('express');
 const router = express.Router();
-// const messagesController = require('../controllers/messagesController');
+const messagesController = require('../controllers/messagesController');
 const verifyToken = require('../middleware/verifyToken');
+
 
 router.get('/', verifyToken, async (req, res) => {
     try {
+        console.log('=== GET /contact ===');
         const query = { ...req.query };
+        
         if (query.user_id === 'null' && req.user && req.user.id) {
             query.user_id = req.user.id;
         }
+        
         const messages = await messagesController.getMessages(query);
         res.json({ data: messages });
     } catch (error) {
+        console.error('Error in GET /contact:', error);
         res.status(500).json({ error: error.message });
     }
 });
 
+
 router.post('/', async (req, res) => {
     try {
-        const lessonData = req.body;
+        console.log('=== POST /contact ===');
+        console.log('Request body:', JSON.stringify(req.body, null, 2));
+        
+        const messageData = req.body;
 
-        const newMessage = await messagesController.createMessage(lessonData);
+       
+        if (!messageData.name || !messageData.email || !messageData.subject || !messageData.message) {
+            console.log('Missing fields validation failed');
+            return res.status(400).json({
+                success: false,
+                message: 'חסרים שדות חובה',
+                error: 'שם, אימייל, נושא והודעה הם שדות חובה',
+                received: {
+                    name: !!messageData.name,
+                    email: !!messageData.email,
+                    subject: !!messageData.subject,
+                    message: !!messageData.message
+                }
+            });
+        }
+
+        const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+        if (!emailRegex.test(messageData.email)) {
+            console.log('Email validation failed');
+            return res.status(400).json({
+                success: false,
+                message: 'כתובת אימייל לא תקינה',
+                error: 'אנא הכנס כתובת אימייל תקינה'
+            });
+        }
+        const validSubjects = ['registration', 'schedule', 'prices', 'facilities', 'complaint', 'other'];
+        if (!validSubjects.includes(messageData.subject)) {
+            console.log('Subject validation failed');
+            return res.status(400).json({
+                success: false,
+                message: 'נושא לא תקין',
+                error: 'אנא בחר נושא תקין'
+            });
+        }
+
+        const newMessage = await messagesController.createMessage(messageData);
 
         res.status(201).json({
             success: true,
             data: newMessage,
-            message: 'Message created successfully'
+            message: 'ההודעה נשלחה בהצלחה'
         });
 
     } catch (error) {
-        console.error('Error creating lesson:', error);
+        console.error('Error in POST /contact:', error);
         res.status(500).json({
             success: false,
-            message: 'Error creating lesson',
+            message: 'שגיאה בשליחת ההודעה',
             error: error.message
         });
     }
@@ -40,20 +85,29 @@ router.post('/', async (req, res) => {
 
 router.delete('/:id', verifyToken, async (req, res) => {
     try {
-        const lessonId = req.params.id;
+        console.log('=== DELETE /contact/:id ===');
+        const messageId = req.params.id;
+        console.log('Message ID to delete:', messageId);
 
-        await messagesController.deleteMessage(lessonId);
+        if (!messageId || isNaN(messageId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'מזהה הודעה לא תקין'
+            });
+        }
+
+        await messagesController.deleteMessage(messageId);
 
         res.json({
             success: true,
-            message: 'Message deleted successfully'
+            message: 'ההודעה נמחקה בהצלחה'
         });
 
     } catch (error) {
-        console.error('Error deleting lesson:', error);
+        console.error('Error in DELETE /contact:', error);
         res.status(500).json({
             success: false,
-            message: 'Error deleting lesson',
+            message: 'שגיאה במחיקת ההודעה',
             error: error.message
         });
     }

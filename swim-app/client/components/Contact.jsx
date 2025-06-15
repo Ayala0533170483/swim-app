@@ -17,8 +17,8 @@ function Contact() {
   };
 
   const addContactMessage = (newMessage) => {
+    console.log('Message sent successfully:', newMessage);
     setContactMessages(prev => [...prev, newMessage]);
-    // איפוס הטופס אחרי שליחה מוצלחת
     setForm({ name: '', email: '', phone: '', subject: '', message: '' });
     alert('ההודעה נשלחה בהצלחה! נחזור אליך בהקדם.');
   };
@@ -78,119 +78,121 @@ function Contact() {
             <h2>שלח הודעה</h2>
 
             <div className="contact-form">
-              <div className="form-row">
+              <form>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="name">שם מלא *</label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      className="form-input"
+                      placeholder="הכנס את שמך המלא"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="email">אימייל *</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={form.email}
+                      onChange={handleChange}
+                      className="form-input"
+                      placeholder="your@email.com"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="phone">טלפון</label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={form.phone}
+                      onChange={handleChange}
+                      className="form-input"
+                      placeholder="050-1234567"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="subject">נושא *</label>
+                    <select
+                      id="subject"
+                      name="subject"
+                      value={form.subject}
+                      onChange={handleChange}
+                      className="form-input"
+                    >
+                      <option value="">בחר נושא</option>
+                      <option value="registration">הרשמה לקורסים</option>
+                      <option value="schedule">מידע על לוחות זמנים</option>
+                      <option value="prices">מחירים ותשלומים</option>
+                      <option value="facilities">מתקנים ושירותים</option>
+                      <option value="complaint">תלונה</option>
+                      <option value="other">אחר</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div className="form-group">
-                  <label htmlFor="name">שם מלא *</label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={form.name}
+                  <label htmlFor="message">הודעה *</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={form.message}
                     onChange={handleChange}
-                    className="form-input"
-                    placeholder="הכנס את שמך המלא"
+                    className="form-textarea"
+                    placeholder="כתב את הודעתך כאן..."
+                    rows="6"
                   />
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="email">אימייל *</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    className="form-input"
-                    placeholder="your@email.com"
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="phone">טלפון</label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={form.phone}
-                    onChange={handleChange}
-                    className="form-input"
-                    placeholder="050-1234567"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="subject">נושא *</label>
-                  <select
-                    id="subject"
-                    name="subject"
-                    value={form.subject}
-                    onChange={handleChange}
-                    className="form-input"
-                  >
-                    <option value="">בחר נושא</option>
-                    <option value="registration">הרשמה לקורסים</option>
-                    <option value="schedule">מידע על לוחות זמנים</option>
-                    <option value="prices">מחירים ותשלומים</option>
-                    <option value="facilities">מתקנים ושירותים</option>
-                    <option value="complaint">תלונה</option>
-                    <option value="other">אחר</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="message">הודעה *</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={form.message}
-                  onChange={handleChange}
-                  className="form-textarea"
-                  placeholder="כתב את הודעתך כאן..."
-                  rows="6"
+                <AddItem
+                  keys={[
+                    { key: 'name', label: 'שם מלא', type: 'text' },
+                    { key: 'email', label: 'אימייל', inputType: 'email' },
+                    { key: 'phone', label: 'טלפון', inputType: 'tel' },
+                    {
+                      key: 'subject',
+                      label: 'נושא',
+                      type: 'select',
+                      options: [
+                        { value: 'registration', label: 'הרשמה לקורסים' },
+                        { value: 'schedule', label: 'מידע על לוחות זמנים' },
+                        { value: 'prices', label: 'מחירים ותשלומים' },
+                        { value: 'facilities', label: 'מתקנים ושירותים' },
+                        { value: 'complaint', label: 'תלונה' },
+                        { value: 'other', label: 'אחר' }
+                      ]
+                    },
+                    { key: 'message', label: 'הודעה', type: 'textarea' }
+                  ]}
+                  type="contact"
+                  addDisplay={addContactMessage}
+                  defaltValues={form}
+                  nameButton="שלח הודעה"
+                  validationRules={{
+                    name: { required: 'שם מלא הוא שדה חובה' },
+                    email: {
+                      required: 'אימייל הוא שדה חובה',
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: 'כתובת אימייל לא תקינה'
+                      }
+                    },
+                    subject: { required: 'נושא הוא שדה חובה' },
+                    message: { required: 'הודעה היא שדה חובה' }
+                  }}
+                  useContactStyle={true}
                 />
-              </div>
-
-              <AddItem
-                keys={[
-                  { key: 'name', label: 'שם מלא', type: 'text' },
-                  { key: 'email', label: 'אימייל', inputType: 'email' },
-                  { key: 'phone', label: 'טלפון', inputType: 'tel' },
-                  {
-                    key: 'subject',
-                    label: 'נושא',
-                    type: 'select',
-                    options: [
-                      { value: 'registration', label: 'הרשמה לקורסים' },
-                      { value: 'schedule', label: 'מידע על לוחות זמנים' },
-                      { value: 'prices', label: 'מחירים ותשלומים' },
-                      { value: 'facilities', label: 'מתקנים ושירותים' },
-                      { value: 'complaint', label: 'תלונה' },
-                      { value: 'other', label: 'אחר' }
-                    ]
-                  },
-                  { key: 'message', label: 'הודעה', type: 'textarea' }
-                ]}
-                type="contact"
-                addDisplay={addContactMessage}
-                defaltValues={form}
-                nameButton="שלח הודעה"
-                validationRules={{
-                  name: { required: 'שם מלא הוא שדה חובה' },
-                  email: {
-                    required: 'אימייל הוא שדה חובה',
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'כתובת אימייל לא תקינה'
-                    }
-                  },
-                  subject: { required: 'נושא הוא שדה חובה' },
-                  message: { required: 'הודעה היא שדה חובה' }
-                }}
-                useContactStyle={true} 
-              />
+              </form>
             </div>
           </div>
         </div>
@@ -226,8 +228,7 @@ function Contact() {
 
             <a href="#" className="social-link" target="_blank" rel="noopener noreferrer">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="#000000">
-                <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-
-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z" />
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
               </svg>
             </a>
           </div>
