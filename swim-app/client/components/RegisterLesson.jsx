@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { userContext } from './App';
 import { fetchData } from '../js-files/GeneralRequests';
-// import '../styles/RegisterLesson.css';
+import '../styles/RegisterLesson.css';
 
 function RegisterLesson() {
     const { userData } = useContext(userContext);
