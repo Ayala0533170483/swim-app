@@ -1,26 +1,57 @@
 import React, { useState } from 'react';
 import AddItem from './AddItem';
 import '../styles/Contact.css';
+import contactFormStructure from '../structures/ContactStructure'
+import useHandleError from './useHandleError';
 
 function Contact() {
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: ''
-  });
+  const [form, setForm] = useState(contactFormStructure.defaultValues);
   const [contactMessages, setContactMessages] = useState([]);
+  const [fieldErrors, setFieldErrors] = useState({}); // שגיאות שדות חובה
+  const { handleError } = useHandleError(); // שגיאות מערכת
 
   const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    
+    if (fieldErrors[name] && value.trim() !== '') {
+      setFieldErrors(prev => ({
+        ...prev,
+        [name]: null
+      }));
+    }
   };
 
-  const addContactMessage = (newMessage) => {
-    console.log('Message sent successfully:', newMessage);
-    setContactMessages(prev => [...prev, newMessage]);
-    setForm({ name: '', email: '', phone: '', subject: '', message: '' });
-    alert('ההודעה נשלחה בהצלחה! נחזור אליך בהקדם.');
+  const validateRequiredFields = () => {
+    const errors = {};
+    const requiredFields = contactFormStructure.formFields.filter(field => field.required);
+    
+    requiredFields.forEach(field => {
+      if (!form[field.key] || form[field.key].trim() === '') {
+        errors[field.key] = 'זהו שדה חובה';
+      }
+    });
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const addContactMessage = async (newMessage) => {
+    try {
+      // בדיקת שדות חובה
+      if (!validateRequiredFields()) {
+        return; 
+      }
+
+      console.log('Message sent successfully:', newMessage);
+      setContactMessages(prev => [...prev, newMessage]);
+      setForm(contactFormStructure.defaultValues);
+      setFieldErrors({}); 
+      alert('ההודעה נשלחה בהצלחה! נחזור אליך בהקדם.');
+      
+    } catch (error) {
+      handleError('addError', error, error.response?.status >= 500);
+    }
   };
 
   return (
@@ -88,9 +119,12 @@ function Contact() {
                       name="name"
                       value={form.name}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${fieldErrors.name ? 'error' : ''}`}
                       placeholder="הכנס את שמך המלא"
                     />
+                    {fieldErrors.name && (
+                      <span className="field-error">{fieldErrors.name}</span>
+                    )}
                   </div>
 
                   <div className="form-group">
@@ -101,9 +135,12 @@ function Contact() {
                       name="email"
                       value={form.email}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${fieldErrors.email ? 'error' : ''}`}
                       placeholder="your@email.com"
                     />
+                    {fieldErrors.email && (
+                      <span className="field-error">{fieldErrors.email}</span>
+                    )}
                   </div>
                 </div>
 
@@ -128,7 +165,7 @@ function Contact() {
                       name="subject"
                       value={form.subject}
                       onChange={handleChange}
-                      className="form-input"
+                      className={`form-input ${fieldErrors.subject ? 'error' : ''}`}
                     >
                       <option value="">בחר נושא</option>
                       <option value="registration">הרשמה לקורסים</option>
@@ -138,6 +175,9 @@ function Contact() {
                       <option value="complaint">תלונה</option>
                       <option value="other">אחר</option>
                     </select>
+                    {fieldErrors.subject && (
+                      <span className="field-error">{fieldErrors.subject}</span>
+                    )}
                   </div>
                 </div>
 
@@ -148,49 +188,24 @@ function Contact() {
                     name="message"
                     value={form.message}
                     onChange={handleChange}
-                    className="form-textarea"
+                    className={`form-textarea ${fieldErrors.message ? 'error' : ''}`}
                     placeholder="כתב את הודעתך כאן..."
                     rows="6"
                   />
+                  {fieldErrors.message && (
+                    <span className="field-error">{fieldErrors.message}</span>
+                  )}
                 </div>
 
                 <AddItem
-                  keys={[
-                    { key: 'name', label: 'שם מלא', type: 'text' },
-                    { key: 'email', label: 'אימייל', inputType: 'email' },
-                    { key: 'phone', label: 'טלפון', inputType: 'tel' },
-                    {
-                      key: 'subject',
-                      label: 'נושא',
-                      type: 'select',
-                      options: [
-                        { value: 'registration', label: 'הרשמה לקורסים' },
-                        { value: 'schedule', label: 'מידע על לוחות זמנים' },
-                        { value: 'prices', label: 'מחירים ותשלומים' },
-                        { value: 'facilities', label: 'מתקנים ושירותים' },
-                        { value: 'complaint', label: 'תלונה' },
-                        { value: 'other', label: 'אחר' }
-                      ]
-                    },
-                    { key: 'message', label: 'הודעה', type: 'textarea' }
-                  ]}
-                  type="contact"
+                  keys={contactFormStructure.formFields}
+                  type={contactFormStructure.settings.submitType}
                   addDisplay={addContactMessage}
                   defaltValues={form}
-                  nameButton="שלח הודעה"
-                  validationRules={{
-                    name: { required: 'שם מלא הוא שדה חובה' },
-                    email: {
-                      required: 'אימייל הוא שדה חובה',
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: 'כתובת אימייל לא תקינה'
-                      }
-                    },
-                    subject: { required: 'נושא הוא שדה חובה' },
-                    message: { required: 'הודעה היא שדה חובה' }
-                  }}
-                  useContactStyle={true}
+                  nameButton={contactFormStructure.submitButton.text}
+                  validationRules={contactFormStructure.validationRules}
+                  useContactStyle={contactFormStructure.settings.useContactStyle}
+                  fieldErrors={fieldErrors}
                 />
               </form>
             </div>
