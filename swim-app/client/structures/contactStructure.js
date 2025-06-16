@@ -1,7 +1,5 @@
-// ContactStructure.js - מבנה נתונים עבור טופס יצירת קשר
 
 export const contactFormStructure = {
-  // ערכי ברירת מחדל לטופס
   defaultValues: {
     name: '',
     email: '',
@@ -10,7 +8,6 @@ export const contactFormStructure = {
     message: ''
   },
 
-  // הגדרת שדות הטופס
   formFields: [
     {
       key: 'name',
@@ -19,7 +16,7 @@ export const contactFormStructure = {
       inputType: 'text',
       placeholder: 'הכנס את שמך המלא',
       required: true,
-      gridColumn: 1 // עמודה ראשונה בשורה
+      gridColumn: 1
     },
     {
       key: 'email',
@@ -28,7 +25,7 @@ export const contactFormStructure = {
       inputType: 'email',
       placeholder: 'your@email.com',
       required: true,
-      gridColumn: 2 // עמודה שנייה בשורה
+      gridColumn: 2,
     },
     {
       key: 'phone',
@@ -37,7 +34,7 @@ export const contactFormStructure = {
       inputType: 'tel',
       placeholder: '050-1234567',
       required: false,
-      gridColumn: 1 // עמודה ראשונה בשורה
+      gridColumn: 1
     },
     {
       key: 'subject',
@@ -45,7 +42,7 @@ export const contactFormStructure = {
       type: 'select',
       placeholder: 'בחר נושא',
       required: true,
-      gridColumn: 2, // עמודה שנייה בשורה
+      gridColumn: 2,
       options: [
         { value: '', label: 'בחר נושא' },
         { value: 'registration', label: 'הרשמה לקורסים' },
@@ -63,11 +60,10 @@ export const contactFormStructure = {
       placeholder: 'כתב את הודעתך כאן...',
       required: true,
       rows: 6,
-      fullWidth: true // תופס את כל הרוחב
+      fullWidth: true
     }
   ],
 
-  // חוקי ולידציה
   validationRules: {
     name: {
       required: 'שם מלא הוא שדה חובה',
@@ -113,21 +109,18 @@ export const contactFormStructure = {
     }
   },
 
-  // הגדרות כפתור השליחה
   submitButton: {
     text: 'שלח הודעה',
     loadingText: 'שולח...',
     className: 'contact-submit-btn'
   },
 
-  // הודעות מערכת
   messages: {
     success: 'ההודעה נשלחה בהצלחה! נחזור אליך בהקדם.',
     error: 'אירעה שגיאה בשליחת ההודעה. אנא נסה שוב.',
     validationError: 'אנא מלא את כל השדות הנדרשים'
   },
 
-  // הגדרות נוספות
   settings: {
     resetFormAfterSubmit: true,
     showSuccessAlert: true,
@@ -137,5 +130,4 @@ export const contactFormStructure = {
   }
 };
 
-// ייצוא ברירת מחדל
 export default contactFormStructure;

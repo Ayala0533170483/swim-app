@@ -2,26 +2,11 @@ const express = require('express');
 const router = express.Router();
 const lessonsController = require('../controllers/lessonsController');
 
-// router.get('/', async (req, res) => {
-//     try {
-//         let query = { ...req.query };
-//         if (query.user_id == null && req.user && req.user.id) {
-//             query = { 'user_id': req.user.id };
-//         }
-//           const filters = {
-//             role: req.user.role,  // התפקיד מהטוקן
-//             id: req.user.id       // ה-ID מהטוקן
-//         };
-//         const lessons = await lessonsController.getLessons(filters);
-//         res.json({ data: lessons });
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// });
 router.get('/', async (req, res) => {
     try {
-        if (Object.keys(req.query).length === 0 ) {
-            const availableLessons = await lessonsController.getAvailableLessons();
+        if (Object.keys(req.query).length === 0) {
+            const studentId = req.user.id; // לקיחת ה-ID מהטוקן
+            const availableLessons = await lessonsController.getAvailableLessons(studentId);
             return res.json({ data: availableLessons });
         }
 
@@ -37,6 +22,29 @@ router.get('/', async (req, res) => {
         res.json({ data: lessons });
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+router.post('/register', async (req, res) => {
+    try {
+        const registrationData = {
+            lesson_id: req.body.lesson_id,
+            student_id: req.body.student_id || req.user.id
+        };
+
+        const newRegistration = await lessonsController.registerToLesson(registrationData);
+
+        res.status(201).json({
+            success: true,
+            data: newRegistration,
+            message: '🎉 נרשמת בהצלחה לשיעור!'
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
     }
 });
 
@@ -61,6 +69,33 @@ router.post('/', async (req, res) => {
         });
     }
 });
+
+router.post('/register', async (req, res) => {
+    try {
+        const registrationData = {
+            lesson_id: req.body.lesson_id,
+            student_id: req.body.student_id || req.user.id
+        };
+
+        const newRegistration = await lessonsController.registerToLesson(registrationData);
+
+        res.status(201).json({
+            success: true,
+            data: newRegistration,
+            message: 'נרשמת בהצלחה לשיעור!'
+        });
+
+    } catch (error) {
+        console.error('Error registering to lesson:', error);
+        res.status(500).json({
+            success: false,
+            message: 'שגיאה ברישום לשיעור',
+            error: error.message
+        });
+    }
+});
+
+
 
 router.put('/:id', async (req, res) => {
     try {

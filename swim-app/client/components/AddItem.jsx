@@ -43,10 +43,9 @@ function AddItem({
             "Content-Type": "application/json"
         };
         
-        // רק אם זה לא טופס יצירת קשר, הוסף טוקן
-        if (type !== 'contact' && token) {
+      
             headers.Authorization = `Bearer ${token}`;
-        }
+   
 
         return await fetch(url, {
             method: "POST",
@@ -80,10 +79,6 @@ function AddItem({
                 reset(defaltValues);
                 setShowAddItem(false);
                 
-        
-                if (useContactStyle) {
-                    alert('ההודעה נשלחה בהצלחה! נחזור אליך בהקדם.');
-                }
             } else {
                 const errorData = await response.json().catch(() => ({}));
                 console.error('Error response:', errorData);

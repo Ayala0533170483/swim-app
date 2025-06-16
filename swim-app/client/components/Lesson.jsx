@@ -2,17 +2,26 @@ import React, { useState, useContext } from "react";
 import '../styles/Lesson.css';
 import '../styles/Update.css';
 import { LessonsContext } from "./MyLessons";
+import { RegisterLessonsContext } from "./RegisterLesson";
 import { userContext } from "./App";
 import Update from "./Update";
+import AddItem from "./AddItem";
 import Delete from "./DeleteItem";
 import { createLessonUpdateConfig } from "../structures/lessonStructures";
 
-function Lesson({ lesson, pools }) {
+function Lesson({ lesson, pools, mode = "view" }) {
     const { userData } = useContext(userContext);
-    const { updateLessons, deleteLessons } = useContext(LessonsContext);
+
+    const lessonsContext = useContext(LessonsContext);
+    const registerContext = useContext(RegisterLessonsContext);
+
+    const { updateLessons, deleteLessons } = lessonsContext || {};
+    const { addRegistration } = registerContext || {};
+
     const [showParticipants, setShowParticipants] = useState(false);
 
     const isTeacher = userData?.type_name === 'teacher';
+    const isRegisterMode = mode === 'register';
     const hasRegistrations = lesson.registrations && lesson.registrations.length > 0;
     const numRegistrations = lesson.registrations ? lesson.registrations.length : 0;
 
@@ -88,55 +97,91 @@ function Lesson({ lesson, pools }) {
 
             <div className="lesson-details">
                 <div className="lesson-info-grid">
-
                     <div className="info-item">
                         <span className="info-label">בריכה:</span>
                         <span className="info-value">{lesson.pool_name}</span>
                     </div>
-                    {isTeacher && (
+
+                    {isRegisterMode ? (
                         <>
+                            <div className="info-item">
+                                <span className="info-label">מורה:</span>
+                                <span className="info-value">{lesson.teacher_name}</span>
+                            </div>
                             <div className="info-item">
                                 <span className="info-label">טווח גילאים:</span>
                                 <span className="info-value">{lesson.age_range || 'כל הגילאים'}</span>
                             </div>
                             <div className="info-item">
-                                <span className="info-label">מספר נרשמים:</span>
-                                <span className="info-value">{numRegistrations}</span>
+                                <span className="info-label">מקומות פנויים:</span>
+                                <span className="info-value available-spots">
+                                    {lesson.available_spots} מתוך {lesson.max_participants}
+                                </span>
                             </div>
                         </>
+                    ) : (
+                        isTeacher && (
+                            <>
+                                <div className="info-item">
+                                    <span className="info-label">טווח גילאים:</span>
+                                    <span className="info-value">{lesson.age_range || 'כל הגילאים'}</span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="info-label">מספר נרשמים:</span>
+                                    <span className="info-value">{numRegistrations}</span>
+                                </div>
+                            </>
+                        )
                     )}
                 </div>
             </div>
 
             <div className="lesson-actions">
-                <div className="lesson-actions-right">
-                    {isTeacher && hasRegistrations && (
-                        <button
-                            onClick={() => setShowParticipants(!showParticipants)}
-                            className="btn-show-participants"
-                        >
-                            {showParticipants ? 'הסתר משתתפים' : `הצג משתתפים `}
-                        </button>
-                    )}
+                {isRegisterMode ? (
+                    <AddItem
+                        type="lessons/register"
+                        addDisplay={addRegistration}
+                        defaltValues={{
+                            lesson_id: lesson.lesson_id,
+                            student_id: userData?.user_id,
+                            action: "register"
+                        }}
+                        nameButton="הצטרף לשיעור"
+                        keys={[]}
+                        validationRules={{}}
+                        useContactStyle={true}
+                    />
+                ) : (
+                    <div className="lesson-actions-right">
+                        {isTeacher && hasRegistrations && (
+                            <button
+                                onClick={() => setShowParticipants(!showParticipants)}
+                                className="btn-show-participants"
+                            >
+                                {showParticipants ? 'הסתר משתתפים' : `הצג משתתפים `}
+                            </button>
+                        )}
 
-                    {isTeacher && !hasRegistrations && (
-                        <>
-                            <Update
-                                {...updateConfig}
-                                updateDisplay={updateLessons}
-                                setDisplayChanged={() => { }}
-                            />
-                            <Delete
-                                id={lesson.lesson_id}
-                                type="lessons"
-                                deleteDisplay={deleteLessons}
-                                nameButton="מחיקת השיעור"
-                            />
-                        </>
-                    )}
-                </div>
+                        {isTeacher && !hasRegistrations && (
+                            <>
+                                <Update
+                                    {...updateConfig}
+                                    updateDisplay={updateLessons}
+                                    setDisplayChanged={() => { }}
+                                />
+                                <Delete
+                                    id={lesson.lesson_id}
+                                    type="lessons"
+                                    deleteDisplay={deleteLessons}
+                                    nameButton="מחיקת השיעור"
+                                />
+                            </>
+                        )}
+                    </div>
+                )}
             </div>
-            {showParticipants && hasRegistrations && (
+
+            {!isRegisterMode && showParticipants && hasRegistrations && (
                 <div className="participants-section">
                     <h4>משתתפים בשיעור:</h4>
                     <div className="participants-list">
