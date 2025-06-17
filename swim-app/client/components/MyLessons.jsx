@@ -2,9 +2,9 @@ import React, { useContext, useState, useEffect, useMemo, useCallback } from 're
 import { userContext } from './App';
 import AddItem from './AddItem';
 import { fetchData } from '../js-files/GeneralRequests';
-import useHandleError from './useHandleError';
+import useHandleError from '../hooks/useHandleError';
 import '../styles/MyLessons.css';
-import useHandleDisplay from './useHandleDisplay';
+import useHandleDisplay from '../hooks/useHandleDisplay';
 import Lesson from './Lesson';
 import {
   createLessonKeys,

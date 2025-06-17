@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaPen } from "react-icons/fa";
 import "../styles/Update.css";
-import useHandleError from "./useHandleError";
+import useHandleError from "../hooks/useHandleError";
 import refreshToken from "../js-files/RefreshToken";
 import Cookies from 'js-cookie';
 
@@ -121,7 +121,7 @@ function Update({
                 setDisplayChanged(true);
                 setErrors({});
             } else {
-                handleError("updateError", null, true); 
+                handleError("updateError", null, true);
             }
 
         } catch (ex) {

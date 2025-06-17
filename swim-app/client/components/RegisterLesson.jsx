@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { userContext } from './App';
 import { fetchData } from '../js-files/GeneralRequests';
-import useHandleError from './useHandleError';
+import useHandleError from '../hooks/useHandleError';
 import Lesson from './Lesson';
 import '../styles/RegisterLesson.css';
 
@@ -13,27 +13,27 @@ function RegisterLesson() {
     const [pools, setPools] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+
     const [successMessage, setSuccessMessage] = useState('');
-    
+
     const [filter, setFilter] = useState({
         lessonType: 'all',
         level: 'all',
         poolId: 'all'
     });
-    const { handleError } = useHandleError(); 
+    const { handleError } = useHandleError();
 
     const handleRegistrationSuccess = (registrationData) => {
         console.log('Registration successful:', registrationData);
-        
+
         if (registrationData && registrationData.lesson_id) {
-            setAvailableLessons(prev => 
+            setAvailableLessons(prev =>
                 prev.filter(lesson => lesson.lesson_id !== registrationData.lesson_id)
             );
         }
-        
+
         setSuccessMessage('🎉 הרישום לשיעור בוצע בהצלחה!');
-        
+
         setTimeout(() => {
             setSuccessMessage('');
         }, 4000);
@@ -75,16 +75,16 @@ function RegisterLesson() {
                 setLoading(true);
                 setError(null);
                 console.log('Loading available lessons...');
-                
+
                 const response = await fetchData('lessons', '', handleError);
                 console.log('Response from server:', response);
-                
+
                 if (!isMounted) return;
-                
+
                 const lessons = response?.data || response || [];
                 setAvailableLessons(lessons);
                 console.log('Available lessons loaded:', lessons.length);
-                
+
             } catch (err) {
                 if (isMounted) {
                     console.error('Error loading lessons:', err);
@@ -147,9 +147,9 @@ function RegisterLesson() {
                 <div className="filters-section">
                     <div className="filter-group">
                         <label>סוג שיעור:</label>
-                        <select 
-                            value={filter.lessonType} 
-                            onChange={(e) => setFilter({...filter, lessonType: e.target.value})}
+                        <select
+                            value={filter.lessonType}
+                            onChange={(e) => setFilter({ ...filter, lessonType: e.target.value })}
                         >
                             <option value="all">הכל</option>
                             <option value="group">קבוצתי</option>
@@ -159,9 +159,9 @@ function RegisterLesson() {
 
                     <div className="filter-group">
                         <label>רמה:</label>
-                        <select 
-                            value={filter.level} 
-                            onChange={(e) => setFilter({...filter, level: e.target.value})}
+                        <select
+                            value={filter.level}
+                            onChange={(e) => setFilter({ ...filter, level: e.target.value })}
                         >
                             <option value="all">הכל</option>
                             <option value="beginner">מתחיל</option>
@@ -176,8 +176,8 @@ function RegisterLesson() {
                         <div className="no-lessons">
                             <h3>אין שיעורים זמינים</h3>
                             <p>
-                                {availableLessons.length === 0 ? 
-                                    'אין שיעורים זמינים כרגע' : 
+                                {availableLessons.length === 0 ?
+                                    'אין שיעורים זמינים כרגע' :
                                     'אין שיעורים התואמים לפילטרים שנבחרו'
                                 }
                             </p>

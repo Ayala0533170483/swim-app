@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import AddItem from './AddItem';
 import '../styles/Contact.css';
 import contactFormStructure from '../structures/ContactStructure'
-import useHandleError from './useHandleError';
-import { userContext } from './App'; // ודא שהנתיב נכון
+import useHandleError from '../hooks/useHandleError';
+import { userContext } from './App';
 
 function Contact() {
   const [form, setForm] = useState(contactFormStructure.defaultValues);
@@ -11,7 +11,6 @@ function Contact() {
   const [fieldErrors, setFieldErrors] = useState({});
   const { handleError } = useHandleError();
 
-  // קבלת פרטי המשתמש המחובר
   const { userData } = useContext(userContext);
 
 
@@ -73,19 +72,17 @@ function Contact() {
         return;
       }
 
-      // הוספת user_id אם המשתמש מחובר
       const currentUser = userData || (localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')) : null);
 
       const messageData = {
         ...newMessage,
-        full_name: newMessage.name, // התאמה לשם העמודה בטבלה
+        full_name: newMessage.name,
         ...(currentUser && { user_id: currentUser.user_id || currentUser.id })
       };
 
       console.log('Message sent successfully:', messageData);
       setContactMessages(prev => [...prev, messageData]);
 
-      // איפוס הטופס - אבל שמירה על הפרטים האישיים אם מחובר
       if (currentUser) {
         setForm({
           ...contactFormStructure.defaultValues,
@@ -157,7 +154,7 @@ function Contact() {
                 <div className="method-details">
                   <h3>WhatsApp</h3>
                   <p>050-1234567</p>
-                  <span>זמין 24/7</span>
+                  <span>זמין 24/6</span>
                 </div>
               </div>
             </div>

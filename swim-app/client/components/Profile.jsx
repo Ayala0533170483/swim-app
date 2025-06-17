@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { fetchData } from "../js-files/GeneralRequests";
 import { userContext } from './App';
-import useHandleError from "./useHandleError";
+import useHandleError from "../hooks/useHandleError";
 import Update from "./Update";
 import { profileFields, profileValidationRules } from '../structures/ProfileStructure';
 
 import "../styles/Profile.css";
 
 function UserProfile() {
-    const { userData, setUserData } = useContext(userContext); 
+    const { userData, setUserData } = useContext(userContext);
     const [userDetails, setUserDetails] = useState(null);
     const [loading, setLoading] = useState(true);
     const { handleError } = useHandleError();

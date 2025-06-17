@@ -64,7 +64,6 @@ function About() {
             </div>
             <div className="about-image">
               <div className="image-placeholder">
-                {/* <img src={teem} alt="teem" /> */}
               </div>
             </div>
           </div>
@@ -157,4 +156,3 @@ function About() {
 }
 
 export default About;
-

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaPlus } from "react-icons/fa";
 import "../styles/AddItem.css";
-import useHandleError from "./useHandleError";
+import useHandleError from "../hooks/useHandleError";
 import refreshToken from "../js-files/RefreshToken";
 import Cookies from 'js-cookie';
 
@@ -42,7 +42,9 @@ function AddItem({
             "Content-Type": "application/json"
         };
 
+
         headers.Authorization = `Bearer ${token}`;
+
 
         return await fetch(url, {
             method: "POST",
@@ -62,8 +64,7 @@ function AddItem({
             console.log('Submitting data:', data);
             let response = await sendAddRequest(token, data);
 
-            // רק אם זה לא הודעת קשר, נסה לרענן טוקן במקרה של 401/403
-            if ((response.status === 401 || response.status === 403) && type !== 'messages') {
+            if (response.status === 401 || response.status === 403) {
                 token = await refreshToken();
                 response = await sendAddRequest(token, data);
             }

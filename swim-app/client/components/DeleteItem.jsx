@@ -1,6 +1,6 @@
 import React, { useContext } from "react"
 import { FaTrash } from "react-icons/fa";
-import useHandleError from "./useHandleError";
+import useHandleError from "../hooks/useHandleError";
 import refreshToken from "../js-files/RefreshToken";
 import Cookies from 'js-cookie';
 
@@ -62,11 +62,11 @@ function Delete({ id, type, deleteDisplay, setDisplayChanged = () => { }, depend
                 deleteDisplay(id);
                 setDisplayChanged(true);
             } else {
-                    handleError("deleteError", null, true);
+                handleError("deleteError", null, true);
 
             }
         } catch (error) {
-             handleError("deleteError", error, false);
+            handleError("deleteError", error, false);
         }
     }
 
