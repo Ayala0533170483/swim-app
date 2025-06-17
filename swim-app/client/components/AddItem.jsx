@@ -42,9 +42,7 @@ function AddItem({
             "Content-Type": "application/json"
         };
 
-
         headers.Authorization = `Bearer ${token}`;
-
 
         return await fetch(url, {
             method: "POST",
@@ -64,7 +62,8 @@ function AddItem({
             console.log('Submitting data:', data);
             let response = await sendAddRequest(token, data);
 
-            if (response.status === 401 || response.status === 403) {
+            // רק אם זה לא הודעת קשר, נסה לרענן טוקן במקרה של 401/403
+            if ((response.status === 401 || response.status === 403) && type !== 'messages') {
                 token = await refreshToken();
                 response = await sendAddRequest(token, data);
             }

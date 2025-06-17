@@ -1,19 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import AddItem from './AddItem';
 import '../styles/Contact.css';
 import contactFormStructure from '../structures/ContactStructure'
 import useHandleError from './useHandleError';
+import { userContext } from './App'; // ודא שהנתיב נכון
 
 function Contact() {
   const [form, setForm] = useState(contactFormStructure.defaultValues);
   const [contactMessages, setContactMessages] = useState([]);
-  const [fieldErrors, setFieldErrors] = useState({}); // שגיאות שדות חובה
-  const { handleError } = useHandleError(); // שגיאות מערכת
+  const [fieldErrors, setFieldErrors] = useState({});
+  const { handleError } = useHandleError();
+
+  // קבלת פרטי המשתמש המחובר
+  const { userData } = useContext(userContext);
+
+
+  useEffect(() => {
+    if (userData) {
+      console.log('User is logged in:', userData);
+      setForm(prev => ({
+        ...prev,
+        name: userData.name || userData.full_name || '',
+        email: userData.email || ''
+      }));
+    } else {
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        try {
+          const user = JSON.parse(storedUser);
+          console.log('User from localStorage:', user);
+          setForm(prev => ({
+            ...prev,
+            name: user.name || user.full_name || '',
+            email: user.email || ''
+          }));
+        } catch (error) {
+          console.error('Error parsing stored user:', error);
+        }
+      }
+    }
+  }, [userData]);
 
   const handleChange = e => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-    
+
     if (fieldErrors[name] && value.trim() !== '') {
       setFieldErrors(prev => ({
         ...prev,
@@ -25,7 +56,7 @@ function Contact() {
   const validateRequiredFields = () => {
     const errors = {};
     const requiredFields = contactFormStructure.formFields.filter(field => field.required);
-    
+
     requiredFields.forEach(field => {
       if (!form[field.key] || form[field.key].trim() === '') {
         errors[field.key] = 'זהו שדה חובה';
@@ -38,21 +69,43 @@ function Contact() {
 
   const addContactMessage = async (newMessage) => {
     try {
-      // בדיקת שדות חובה
       if (!validateRequiredFields()) {
-        return; 
+        return;
       }
 
-      console.log('Message sent successfully:', newMessage);
-      setContactMessages(prev => [...prev, newMessage]);
-      setForm(contactFormStructure.defaultValues);
-      setFieldErrors({}); 
+      // הוספת user_id אם המשתמש מחובר
+      const currentUser = userData || (localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')) : null);
+
+      const messageData = {
+        ...newMessage,
+        full_name: newMessage.name, // התאמה לשם העמודה בטבלה
+        ...(currentUser && { user_id: currentUser.user_id || currentUser.id })
+      };
+
+      console.log('Message sent successfully:', messageData);
+      setContactMessages(prev => [...prev, messageData]);
+
+      // איפוס הטופס - אבל שמירה על הפרטים האישיים אם מחובר
+      if (currentUser) {
+        setForm({
+          ...contactFormStructure.defaultValues,
+          name: currentUser.name || currentUser.full_name || '',
+          email: currentUser.email || ''
+        });
+      } else {
+        setForm(contactFormStructure.defaultValues);
+      }
+
+      setFieldErrors({});
       alert('ההודעה נשלחה בהצלחה! נחזור אליך בהקדם.');
-      
+
     } catch (error) {
       handleError('addError', error, error.response?.status >= 500);
     }
   };
+
+  const isUserLoggedIn = userData || localStorage.getItem('currentUser');
+  const currentUser = userData || (localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')) : null);
 
   return (
     <div className="contact-page">
@@ -60,6 +113,11 @@ function Contact() {
         <div className="contact-header">
           <h1>צור קשר</h1>
           <p>נשמח לשמוע ממך! צור איתנו קשר בכל שאלה או בקשה</p>
+          {isUserLoggedIn && currentUser && (
+            <div className="user-info-banner">
+              <p>שלום {currentUser.name || currentUser.full_name}! </p>
+            </div>
+          )}
         </div>
 
         <div className="contact-content">
@@ -119,8 +177,9 @@ function Contact() {
                       name="name"
                       value={form.name}
                       onChange={handleChange}
-                      className={`form-input ${fieldErrors.name ? 'error' : ''}`}
+                      className={`form-input ${fieldErrors.name ? 'error' : ''} ${isUserLoggedIn ? 'auto-filled' : ''}`}
                       placeholder="הכנס את שמך המלא"
+                      readOnly={isUserLoggedIn}
                     />
                     {fieldErrors.name && (
                       <span className="field-error">{fieldErrors.name}</span>
@@ -135,8 +194,9 @@ function Contact() {
                       name="email"
                       value={form.email}
                       onChange={handleChange}
-                      className={`form-input ${fieldErrors.email ? 'error' : ''}`}
+                      className={`form-input ${fieldErrors.email ? 'error' : ''} ${isUserLoggedIn ? 'auto-filled' : ''}`}
                       placeholder="your@email.com"
+                      readOnly={isUserLoggedIn}
                     />
                     {fieldErrors.email && (
                       <span className="field-error">{fieldErrors.email}</span>
@@ -230,7 +290,8 @@ function Contact() {
                     <stop offset="100%" stopColor="#fcb045" />
                   </linearGradient>
                 </defs>
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441
+.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
               </svg>
             </a>
 

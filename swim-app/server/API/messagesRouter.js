@@ -4,10 +4,9 @@ const router = express.Router();
 const messagesController = require('../controllers/messagesController');
 const verifyToken = require('../middleware/verifyToken');
 
-
 router.get('/', verifyToken, async (req, res) => {
     try {
-        console.log('=== GET /contact ===');
+        console.log('=== GET /messages ===');
         const query = { ...req.query };
         
         if (query.user_id === 'null' && req.user && req.user.id) {
@@ -17,28 +16,32 @@ router.get('/', verifyToken, async (req, res) => {
         const messages = await messagesController.getMessages(query);
         res.json({ data: messages });
     } catch (error) {
-        console.error('Error in GET /contact:', error);
+        console.error('Error in GET /messages:', error);
         res.status(500).json({ error: error.message });
     }
 });
 
-
 router.post('/', async (req, res) => {
     try {
-        console.log('=== POST /contact ===');
+        console.log('=== POST /messages ===');
         console.log('Request body:', JSON.stringify(req.body, null, 2));
         
         const messageData = req.body;
 
-       
-        if (!messageData.name || !messageData.email || !messageData.subject || !messageData.message) {
+        if (messageData.name && !messageData.full_name) {
+            messageData.full_name = messageData.name;
+            delete messageData.name;
+        }
+
+    
+        if (!messageData.full_name || !messageData.email || !messageData.subject || !messageData.message) {
             console.log('Missing fields validation failed');
             return res.status(400).json({
                 success: false,
                 message: 'חסרים שדות חובה',
                 error: 'שם, אימייל, נושא והודעה הם שדות חובה',
                 received: {
-                    name: !!messageData.name,
+                    full_name: !!messageData.full_name,
                     email: !!messageData.email,
                     subject: !!messageData.subject,
                     message: !!messageData.message
@@ -46,6 +49,7 @@ router.post('/', async (req, res) => {
             });
         }
 
+       
         const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
         if (!emailRegex.test(messageData.email)) {
             console.log('Email validation failed');
@@ -55,6 +59,7 @@ router.post('/', async (req, res) => {
                 error: 'אנא הכנס כתובת אימייל תקינה'
             });
         }
+
         const validSubjects = ['registration', 'schedule', 'prices', 'facilities', 'complaint', 'other'];
         if (!validSubjects.includes(messageData.subject)) {
             console.log('Subject validation failed');
@@ -74,7 +79,7 @@ router.post('/', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error in POST /contact:', error);
+        console.error('Error in POST /messages:', error);
         res.status(500).json({
             success: false,
             message: 'שגיאה בשליחת ההודעה',
@@ -85,7 +90,7 @@ router.post('/', async (req, res) => {
 
 router.delete('/:id', verifyToken, async (req, res) => {
     try {
-        console.log('=== DELETE /contact/:id ===');
+        console.log('=== DELETE /messages/:id ===');
         const messageId = req.params.id;
         console.log('Message ID to delete:', messageId);
 
@@ -104,7 +109,7 @@ router.delete('/:id', verifyToken, async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error in DELETE /contact:', error);
+        console.error('Error in DELETE /messages:', error);
         res.status(500).json({
             success: false,
             message: 'שגיאה במחיקת ההודעה',

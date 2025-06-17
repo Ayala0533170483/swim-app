@@ -37,16 +37,17 @@ function UserDashboard() {
       case "teacher":
         return [
           { path: `/${usernameForUrl}/my-lessons`, label: 'השיעורים שלי' },
-          //   { path: `/${usernameForUrl}/pending-requests`, label: 'בקשות ממתינות'},
+          { path: `/${usernameForUrl}/requests`, label: 'בקשות ממתינות' },
           { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
         ];
       case "admin":
         return [
           { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' },
-            { path: `/${usernameForUrl}/students`, label: 'ניהול תלמידים' },
-            { path: `/${usernameForUrl}/teachers`, label: 'ניהול מורים'},
-            { path: `/${usernameForUrl}/pools`, label: 'ניהול בריכות' },
-                { path: `/${usernameForUrl}/`, label: 'ניהול בריכות' },
+          { path: `/${usernameForUrl}/teachers`, label: 'ניהול מורים' },
+          { path: `/${usernameForUrl}/students`, label: 'ניהול תלמידים' },
+          { path: `/${usernameForUrl}/pools`, label: 'ניהול בריכות' },
+          { path: `/${usernameForUrl}/management`, label: 'ניהול כללי' }
+
         ];
       default:
         return [{ path: '/profile', label: 'הפרופיל שלי' }];

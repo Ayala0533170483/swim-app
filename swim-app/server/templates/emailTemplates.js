@@ -120,7 +120,7 @@ const createLessonConfirmationTemplate = (studentName, lessonData) => {
     <body>
         <div class="container">
             <div class="header">
-                <h1><span class="emoji">🏊‍♀️</span>swimwise<span class="emoji">🏊‍♂️</span></h1>
+                <h1><span class="emoji">🏊‍♀️</span>SwimWise<span class="emoji">🏊‍♂️</span></h1>
             </div>
             <div class="content">
                 <div class="greeting">שלום ${studentName},</div>
