@@ -1,106 +1,633 @@
 .errorContainer {
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #f8fbff 0%, #e6f3ff 50%, #d1e9fc 100%);
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 5vw;
+  padding: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  direction: rtl;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* אפקט גלים ברקע */
+.errorContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(0, 102, 204, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 204, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(102, 217, 255, 0.1) 0%, transparent 50%);
+  animation: waveBackground 20s ease-in-out infinite;
+  z-index: 0;
 }
 
 .errorContent {
   text-align: center;
   padding: 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 30px;
+  box-shadow: 
+    0 20px 60px rgba(0, 102, 204, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: slideInUp 1s ease-out;
+  box-sizing: border-box;
 }
 
 .errorAnimation {
   position: relative;
   height: 200px;
-  margin: 2rem 0;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
+/* עיצוב 404 מדהים */
 .error404 {
   font-size: 80px;
-  font-weight: bold;
-  color: #2d3748;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 0;
-  animation: float 6s ease-in-out infinite;
-}
-
-.errorGhost {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 100px;
-}
-
-.errorGhostBody {
-  width: 60px;
-  height: 80px;
-  background: #fff;
-  border-radius: 50% 50% 0 0;
+  font-weight: 900;
+  background: linear-gradient(135deg, #0066cc, #00ccff, #66d9ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
   position: relative;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  animation: float 6s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite, shimmer 3s ease-in-out infinite;
+  text-shadow: 0 10px 30px rgba(0, 102, 204, 0.3);
+  filter: drop-shadow(0 5px 15px rgba(0, 102, 204, 0.2));
+  line-height: 1;
 }
 
-.errorGhostEyes {
+.error404::before {
+  content: '404';
   position: absolute;
-  left: 50%;
-  top: 30%;
-  transform: translateX(-50%);
-  width: 30px;
-  height: 10px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.errorGhostEyes::before,
-.errorGhostEyes::after {
-  content: "";
-  width: 8px;
-  height: 8px;
-  background: #2d3748;
-  border-radius: 50%;
-}
-
-.errorGhostWaves {
-  position: absolute;
-  bottom: -10px;
+  top: 0;
   left: 0;
-  right: 0;
-  height: 20px;
-  background: radial-gradient(circle at 50% 100%, transparent 12px, #fff 13px);
-  background-size: 20px 20px;
-  animation: waves 2s linear infinite;
+  background: linear-gradient(135deg, rgba(0, 102, 204, 0.1), rgba(0, 204, 255, 0.1));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: float 4s ease-in-out infinite reverse;
+  z-index: -1;
+  transform: translate(3px, 3px);
 }
 
-.error {
-  position: fixed;
+/* בריכה אנימטיבית - רחבה יותר פי 1.4 */
+.swimming-pool {
+  width: 210px; /* הוגדל מ-150px ל-210px (150 * 1.4) */
+  height: 98px; /* הוגדל מ-70px ל-98px (70 * 1.4) */
+  background: linear-gradient(135deg, #0066cc, #00ccff);
+  border-radius: 56px; /* הוגדל מ-40px ל-56px (40 * 1.4) */
+  position: relative;
+  margin: 1rem auto 0;
+  box-shadow: 
+    0 8px 25px rgba(0, 102, 204, 0.3),
+    inset 0 3px 10px rgba(255, 255, 255, 0.2);
+  animation: poolWaves 3s ease-in-out infinite;
+}
+
+.swimming-pool::before {
+  content: '';
+  position: absolute;
+  top: 11px; /* הוגדל מ-8px ל-11px */
+  left: 21px; /* הוגדל מ-15px ל-21px */
+  right: 21px; /* הוגדל מ-15px ל-21px */
+  height: 3px; /* הוגדל מ-2px ל-3px */
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50px;
+  animation: waterRipple 2s ease-in-out infinite;
+}
+
+.swimming-pool::after {
+  content: '';
+  position: absolute;
+  top: 21px; /* הוגדל מ-15px ל-21px */
+  left: 28px; /* הוגדל מ-20px ל-28px */
+  right: 28px; /* הוגדל מ-20px ל-28px */
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50px;
+  animation: waterRipple 2s ease-in-out infinite 0.5s;
+}
+
+/* שחיין אנימטיבי */
+.swimmer {
+  position: absolute;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  margin: 6vw;
+  left: -35px; /* הוגדל מ-25px ל-35px */
+  transform: translateY(-50%);
+  font-size: 2.1rem; /* הוגדל מ-1.5rem ל-2.1rem (1.5 * 1.4) */
+  animation: swimming 4s linear infinite;
+}
+
+/* כותרות וטקסט */
+.error-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0066cc;
+  margin: 1rem 0 0.5rem 0;
+  animation: fadeInUp 1s ease-out 0.3s both;
+  line-height: 1.2;
+}
+
+.error-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+  animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+.error-message {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 1.5rem;
+  animation: fadeInUp 1s ease-out 0.7s both;
+  line-height: 1.3;
+}
+
+/* כפתורים מעוצבים - רחבים יותר פי 1.5 */
+.error-actions {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeInUp 1s ease-out 0.9s both;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  padding: 0.8rem 2.25rem; /* הוגדל מ-1.5rem ל-2.25rem (1.5 * 1.5) */
+  border: none;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  min-width: 180px; /* רוחב מינימלי גדול יותר */
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btnPrimary {
+  background: linear-gradient(135deg, #0066cc, #00ccff);
+  color: white;
+  box-shadow: 0 6px 20px rgba(0, 102, 204, 0.3);
+}
+
+.btnPrimary:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(0, 102, 204, 0.4);
+}
+
+.btnSecondary {
+  background: rgba(255, 255, 255, 0.9);
+  color: #0066cc;
+  border: 2px solid #0066cc;
+  box-shadow: 0 6px 20px rgba(0, 102, 204, 0.1);
+}
+
+.btnSecondary:hover {
+  background: #0066cc;
+  color: white;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(0, 102, 204, 0.3);
+}
+
+/* אייקונים */
+.btn-icon {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.btn:hover .btn-icon {
+  transform: scale(1.1);
+}
+
+.error-tip {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: #999;
+  line-height: 1.2;
+}
+
+/* אנימציות */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0);
+  0%, 100% {
+    transform: translateY(0px);
   }
-
   50% {
-    transform: translateY(-20px);
+    transform: translateY(-10px);
   }
 }
 
-@keyframes waves {
-  0% {
-    background-position: 0 0;
+@keyframes shimmer {
+  0%, 100% {
+    filter: drop-shadow(0 5px 15px rgba(0, 102, 204, 0.2));
   }
+  50% {
+    filter: drop-shadow(0 8px 25px rgba(0, 204, 255, 0.4));
+  }
+}
 
-  100% {
-    background-position: 20px 0;
+@keyframes poolWaves {
+  0%, 100% {
+    transform: scaleY(1);
   }
+  50% {
+    transform: scaleY(1.05);
+  }
+}
+
+@keyframes waterRipple {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scaleX(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scaleX(1.05);
+  }
+}
+
+@keyframes swimming {
+  0% {
+    left: -35px; /* הוגדל מ-25px ל-35px */
+  }
+  100% {
+    left: calc(100% + 35px); /* הוגדל מ-25px ל-35px */
+  }
+}
+
+@keyframes waveBackground {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* בועות צפות */
+.floating-bubbles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bubble {
+  position: absolute;
+  background: rgba(0, 204, 255, 0.1);
+  border-radius: 50%;
+  animation: bubbleFloat 8s infinite linear;
+}
+
+.bubble:nth-child(1) {
+  left: 10%;
+  width: 15px;
+  height: 15px;
+  animation-delay: 0s;
+}
+
+.bubble:nth-child(2) {
+  left: 25%;
+  width: 12px;
+  height: 12px;
+  animation-delay: 2s;
+}
+
+.bubble:nth-child(3) {
+  left: 40%;
+  width: 18px;
+  height: 18px;
+  animation-delay: 4s;
+}
+
+.bubble:nth-child(4) {
+  left: 60%;
+  width: 14px;
+  height: 14px;
+  animation-delay: 6s;
+}
+
+.bubble:nth-child(5) {
+  left: 75%;
+  width: 16px;
+  height: 16px;
+  animation-delay: 1s;
+}
+
+.bubble:nth-child(6) {
+  left: 90%;
+  width: 13px;
+  height: 13px;
+  animation-delay: 3s;
+}
+
+@keyframes bubbleFloat {
+  0% {
+    bottom: -30px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    bottom: 100vh;
+    opacity: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .errorContent {
+    padding: 1.5rem;
+    max-width: 90%;
+  }
+  
+  .error404 {
+    font-size: 60px;
+  }
+  
+  .error-title {
+    font-size: 1.5rem;
+  }
+  
+  .error-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .error-message {
+    font-size: 0.8rem;
+  }
+  
+  .swimming-pool {
+    width: 180px; /* 120 * 1.4 */
+    height: 60px; /* 60 * 1.4 */
+    border-radius: 42px;
+  }
+  
+  .swimmer {
+    font-size: 1.4rem; /* 1.2 * 1.4 */
+    left: -30px;
+  }
+  
+  .error-actions {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  
+  .btn {
+    width: 100%;
+    max-width: 300px; /*
+    max-width: 300px; /* הוגדל מ-200px ל-300px */
+    padding: 0.7rem 1.8rem; /* הוגדל מ-1.2rem ל-1.8rem (1.2 * 1.5) */
+    font-size: 0.9rem;
+    min-width: 240px; /* הוגדל מ-160px ל-240px */
+  }
+  
+  .errorAnimation {
+    height: 160px;
+  }
+  
+  .swimming-pool::before {
+    top: 9px;
+    left: 17px;
+    right: 17px;
+    height: 2px;
+  }
+  
+  .swimming-pool::after {
+    top: 17px;
+    left: 23px;
+    right: 23px;
+  }
+  
+  @keyframes swimming {
+    0% {
+      left: -30px;
+    }
+    100% {
+      left: calc(100% + 30px);
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .errorContainer {
+    padding: 0.5rem;
+  }
+  
+  .errorContent {
+    padding: 1.2rem;
+  }
+  
+  .error404 {
+    font-size: 50px;
+  }
+  
+  .error-title {
+    font-size: 1.3rem;
+  }
+  
+  .errorAnimation {
+    height: 140px;
+    margin: 0.5rem 0;
+  }
+  
+  .swimming-pool {
+    width: 160px; /* 100 * 1.4 */
+    height: 50px; /* 50 * 1.4 */
+    border-radius: 35px;
+  }
+  
+  .swimmer {
+    font-size: 1.4rem; /* 1.0 * 1.4 */
+    left: -25px;
+  }
+  
+  .btn {
+    padding: 0.6rem 1.5rem; /* הוגדל מ-1rem ל-1.5rem (1 * 1.5) */
+    font-size: 0.85rem;
+    min-width: 200px; /* הוגדל מ-133px ל-200px */
+  }
+  
+  .error-tip {
+    font-size: 0.75rem;
+  }
+  
+  .swimming-pool::before {
+    top: 8px;
+    left: 14px;
+    right: 14px;
+    height: 2px;
+  }
+  
+  .swimming-pool::after {
+    top: 14px;
+    left: 20px;
+    right: 20px;
+  }
+  
+  @keyframes swimming {
+    0% {
+      left: -25px;
+    }
+    100% {
+      left: calc(100% + 25px);
+    }
+  }
+}
+
+@media (max-height: 600px) {
+  .errorContent {
+    max-height: 95vh;
+    padding: 1rem;
+  }
+  
+  .errorAnimation {
+    height: 120px;
+    margin: 0.5rem 0;
+  }
+  
+  .error404 {
+    font-size: 50px;
+  }
+  
+  .error-title {
+    font-size: 1.4rem;
+    margin: 0.5rem 0;
+  }
+  
+  .error-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .error-message {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  
+  .error-actions {
+    margin-bottom: 0.5rem;
+  }
+  
+  .btn {
+    padding: 0.6rem 1.8rem; /* הוגדל מ-1rem ל-1.8rem (1.2 * 1.5) */
+    font-size: 0.85rem;
+    min-width: 150px; /* הוגדל מ-100px ל-150px */
+  }
+  
+  .error-tip {
+    font-size: 0.7rem;
+    margin-top: 0.5rem;
+  }
+  
+  .swimming-pool {
+    width: 175px; /* 120 * 1.4 */
+    height: 60px; /* 60 * 1.4 */
+    border-radius: 42px;
+  }
+  
+  .swimmer {
+    font-size: 1.4rem; /* 1.0 * 1.4 */
+    left: -28px;
+  }
+  
+  .swimming-pool::before {
+    top: 7px;
+    left: 17px;
+    right: 17px;
+    height: 2px;
+  }
+  
+  .swimming-pool::after {
+    top: 14px;
+    left: 23px;
+    right: 23px;
+  }
+  
+  @keyframes swimming {
+    0% {
+      left: -28px;
+    }
+    100% {
+      left: calc(100% + 28px);
+    }
+  }
+}
+
+/* מניעת גלילה גלובלית כשהדף פתוח */
+body.no-scroll {
+  overflow: hidden;
+  height: 100vh;
 }
