@@ -38,14 +38,13 @@ function AddItem({
     const sendAddRequest = async (token, data) => {
         const url = `http://localhost:3000/${type}`;
 
-        // אל תשלח טוקן עבור טופס יצירת קשר
         const headers = {
             "Content-Type": "application/json"
         };
-        
-      
-            headers.Authorization = `Bearer ${token}`;
-   
+
+
+        headers.Authorization = `Bearer ${token}`;
+
 
         return await fetch(url, {
             method: "POST",
@@ -57,7 +56,7 @@ function AddItem({
 
     const onSubmit = async (data) => {
         if (isSubmitting) return;
-        
+
         setIsSubmitting(true);
         let token = Cookies.get("accessToken");
 
@@ -73,16 +72,16 @@ function AddItem({
             if (response.ok) {
                 const result = await response.json();
                 console.log('Success response:', result);
-                
+
                 addDisplay(result.data || result);
                 setDisplayChanged(true);
                 reset(defaltValues);
                 setShowAddItem(false);
-                
+
             } else {
                 const errorData = await response.json().catch(() => ({}));
                 console.error('Error response:', errorData);
-                
+
                 if (useContactStyle) {
                     alert(errorData.message || 'שגיאה בשליחת ההודעה. אנא נסה שוב.');
                 } else {
@@ -91,7 +90,7 @@ function AddItem({
             }
         } catch (error) {
             console.error('Network error:', error);
-            
+
             if (useContactStyle) {
                 alert('שגיאת רשת. אנא בדוק את החיבור לאינטרנט ונסה שוב.');
             } else {
@@ -121,20 +120,18 @@ function AddItem({
     if (useContactStyle) {
         return (
             <div className="contact-submit-section">
-                <button 
-                    type="button" 
+                <button
+                    type="button"
                     className={`contact-submit-btn ${isSubmitting ? 'submitting' : ''}`}
                     onClick={() => {
-                        // קח את הנתונים מהטופס הרגיל
                         const formData = new FormData(document.querySelector('.contact-form form') || document.createElement('form'));
                         const data = {};
                         for (let [key, value] of formData.entries()) {
                             data[key] = value;
                         }
-                        
-                        // אם אין נתונים מהטופס, קח מה-watchedValues
+
                         const finalData = Object.keys(data).length > 0 ? data : watchedValues;
-                        
+
                         console.log('Contact form data:', finalData);
                         onSubmit(finalData);
                     }}
@@ -224,16 +221,16 @@ function AddItem({
                             ))}
 
                             <div className="button-container">
-                                <button 
-                                    type="submit" 
+                                <button
+                                    type="submit"
                                     className="btn-primary"
                                     disabled={isSubmitting}
                                 >
                                     {isSubmitting ? 'מוסיף...' : 'הוספה'}
                                 </button>
-                                <button 
-                                    type="button" 
-                                    onClick={handleCancel} 
+                                <button
+                                    type="button"
+                                    onClick={handleCancel}
                                     className="btn-primary"
                                     disabled={isSubmitting}
                                 >

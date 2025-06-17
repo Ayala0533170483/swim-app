@@ -4,10 +4,8 @@ import '../styles/HomePage.css';
 const HomePage = () => {
     return (
         <div className="homepage">
-            {/* Hero Section - רק וידאו וכותרת */}
             <section className="hero-section">
                 <div className="hero-video-container">
-                    {/* כאן תוסיף וידאו בהמשך */}
                     <div className="hero-video-placeholder"></div>
                     <div className="hero-overlay"></div>
                     <div className="hero-content">
@@ -16,10 +14,8 @@ const HomePage = () => {
                 </div>
             </section>
 
-            {/* Content Section - כל השאר */}
             <section className="content-section">
                 <div className="container">
-                    {/* Steps Section */}
                     <div className="steps-container">
                         <p className="steps-subtitle">למד לשחות עם המורים הטובים ביותר במתקנים המתקדמים</p>
                         <div className="hero-steps">
@@ -39,11 +35,10 @@ const HomePage = () => {
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
             </section>
 
-            {/* Features Section */}
             <section className="features-section">
                 <div className="container">
                     <h2 className="section-title">למה לבחור בנו?</h2>
@@ -67,7 +62,6 @@ const HomePage = () => {
                 </div>
             </section>
 
-            {/* Stats Section */}
             <section className="stats-section">
                 <div className="container">
                     <div className="stats-grid">

@@ -8,7 +8,7 @@ import { profileFields, profileValidationRules } from '../structures/ProfileStru
 import "../styles/Profile.css";
 
 function UserProfile() {
-    const { userData, setUserData } = useContext(userContext); // הוספת setUserData
+    const { userData, setUserData } = useContext(userContext); 
     const [userDetails, setUserDetails] = useState(null);
     const [loading, setLoading] = useState(true);
     const { handleError } = useHandleError();

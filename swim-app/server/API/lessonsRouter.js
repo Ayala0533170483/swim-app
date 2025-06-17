@@ -5,7 +5,7 @@ const lessonsController = require('../controllers/lessonsController');
 router.get('/', async (req, res) => {
     try {
         if (Object.keys(req.query).length === 0) {
-            const studentId = req.user.id; // לקיחת ה-ID מהטוקן
+            const studentId = req.user.id; 
             const availableLessons = await lessonsController.getAvailableLessons(studentId);
             return res.json({ data: availableLessons });
         }
@@ -29,7 +29,7 @@ router.post('/register', async (req, res) => {
     try {
         const registrationData = {
             lesson_id: req.body.lesson_id,
-            student_id: req.body.student_id || req.user.id
+            student_id: req.user.id
         };
 
         const newRegistration = await lessonsController.registerToLesson(registrationData);
@@ -69,33 +69,6 @@ router.post('/', async (req, res) => {
         });
     }
 });
-
-router.post('/register', async (req, res) => {
-    try {
-        const registrationData = {
-            lesson_id: req.body.lesson_id,
-            student_id: req.body.student_id || req.user.id
-        };
-
-        const newRegistration = await lessonsController.registerToLesson(registrationData);
-
-        res.status(201).json({
-            success: true,
-            data: newRegistration,
-            message: 'נרשמת בהצלחה לשיעור!'
-        });
-
-    } catch (error) {
-        console.error('Error registering to lesson:', error);
-        res.status(500).json({
-            success: false,
-            message: 'שגיאה ברישום לשיעור',
-            error: error.message
-        });
-    }
-});
-
-
 
 router.put('/:id', async (req, res) => {
     try {

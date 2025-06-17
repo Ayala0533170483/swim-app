@@ -121,7 +121,7 @@ function Update({
                 setDisplayChanged(true);
                 setErrors({});
             } else {
-                handleError("updateError", null, true); // שגיאת שרת
+                handleError("updateError", null, true); 
             }
 
         } catch (ex) {

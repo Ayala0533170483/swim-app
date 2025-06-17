@@ -8,7 +8,6 @@ function UserDashboard() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // סגירת התפריט כשלוחצים מחוץ לו
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -22,39 +21,36 @@ function UserDashboard() {
     };
   }, []);
 
-  // פונקציה לקבלת תפריט לפי סוג משתמש
   const getUserMenuItems = () => {
     if (!userData) return [];
 
     const usernameForUrl = userData.name.toLowerCase().replace(/\s+/g, '-');
 
     switch (userData.type_name) {
-      case "student": // תלמיד
+      case "student":
         return [
           { path: `/${usernameForUrl}/my-lessons`, label: 'השיעורים שלי' },
           { path: `/${usernameForUrl}/register-lesson`, label: 'רישום לשיעור חדש' },
           { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
 
         ];
-      case "teacher": // מורה
+      case "teacher":
         return [
           { path: `/${usernameForUrl}/my-lessons`, label: 'השיעורים שלי' },
           //   { path: `/${usernameForUrl}/pending-requests`, label: 'בקשות ממתינות'},
-            { path: `/${usernameForUrl}`, label: 'הפרופיל שלי'}
+          { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
         ];
-      case "admin": // מנהל מערכת
+      case "admin":
         return [
           { path: `/${usernameForUrl}/admin`, label: 'ניהול מערכת' },
           { path: `/${usernameForUrl}/register-lesson`, label: 'רישום לשיעור חדש' },
-          //   { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
-          //   { path: `/${usernameForUrl}/students`, label: 'ניהול תלמידים', icon: '👥' },
+          { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
+          //   { path: `/${usernameForUrl}/students`, label: 'ניהול תלמידים' },
           //   { path: `/${usernameForUrl}/teachers`, label: 'ניהול מורים'},
           //   { path: `/${usernameForUrl}/pools`, label: 'ניהול בריכות' },
-          //   { path: `/${usernameForUrl}/general`, label: 'ניהול כללי', icon: '⚙️' },
-            { path: `/${usernameForUrl}`, label: 'הפרופיל שלי', icon: '👤' }
         ];
       default:
-        return [{ path: '/profile', label: 'הפרופיל שלי', icon: '👤' }];
+        return [{ path: '/profile', label: 'הפרופיל שלי' }];
     }
   };
 

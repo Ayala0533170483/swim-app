@@ -29,7 +29,7 @@ export default function App() {
                     <Route path="signup" element={<Signup />} />
                     <Route path="/my-lessons" element={<MyLessons />} />
                     <Route path=":username/my-lessons" element={<MyLessons />} />
-                                  <Route path=":username/register-lesson" element={<RegisterLesson />} />
+                    <Route path=":username/register-lesson" element={<RegisterLesson />} />
                     <Route path=":username" element={<Profile />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
