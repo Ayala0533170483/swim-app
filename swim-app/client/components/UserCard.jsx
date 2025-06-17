@@ -3,7 +3,6 @@ import '../styles/UserCard.css';
 
 function UserCard({ user, userType }) {
   const handleCardClick = () => {
-    // בהמשך נוסיף כאן לוגיקה לצפייה בשיעורים
     console.log(`Clicked on ${user.name}`);
   };
 
