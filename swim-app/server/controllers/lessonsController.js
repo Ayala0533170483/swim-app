@@ -21,7 +21,8 @@ async function getMyLessons(filters = {}) {
                     end_time: row.end_time,
                     lesson_type: row.lesson_type,
                     max_participants: row.max_participants,
-                    age_range: row.age_range,
+                    min_age: row.min_age,
+                    max_age: row.max_age,
                     level: row.level,
                     registrations: []
                 });

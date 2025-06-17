@@ -67,10 +67,18 @@ export const createLessonKeys = (pools) => [
     readonly: true
   },
   {
-    key: 'age_range',
-    label: 'טווח גילאים',
-    placeholder: 'לדוגמה: 6-12'
+    key: 'min_age',
+    label: 'גיל מינימום',
+    inputType: 'number',
+    placeholder: 'גיל מינימום'
+  },
+  {
+    key: 'max_age',
+    label: 'גיל מקסימום',
+    inputType: 'number',
+    placeholder: 'גיל מקסימום'
   }
+
 ];
 
 export const createLessonValidationRules = () => ({
@@ -139,13 +147,31 @@ export const createLessonValidationRules = () => ({
       return true;
     }
   },
-  age_range: {
-    required: "טווח גילאים הוא שדה חובה",
-    minLength: {
-      value: 3,
-      message: "טווח גילאים חייב להכיל לפחות 3 תווים"
+  min_age: {
+    required: "גיל מינימום הוא שדה חובה",
+    validate: (value) => {
+      const age = parseInt(value);
+      if (isNaN(age) || age < 3 || age > 80) {
+        return "גיל מינימום חייב להיות בין 3 ל-80";
+      }
+      return true;
     }
   },
+  max_age: {
+    required: "גיל מקסימום הוא שדה חובה",
+    validate: (value, { min_age }) => {
+      const maxAge = parseInt(value);
+      const minAge = parseInt(min_age);
+      if (isNaN(maxAge) || maxAge < 3 || maxAge > 80) {
+        return "גיל מקסימום חייב להיות בין 3 ל-80";
+      }
+      if (!isNaN(minAge) && maxAge <= minAge) {
+        return "גיל מקסימום חייב להיות גדול מהגיל המינימום";
+      }
+      return true;
+    }
+  },
+
   onFieldChange: (key, value, watchedValues, setValue) => {
     if (key === 'lesson_type') {
       if (value === 'private') {
@@ -178,7 +204,8 @@ export const defaultLessonValues = (userId = null) => ({
   level: '',
   pool_id: '',
   max_participants: '',
-  age_range: '',
+  min_age: '',
+  max_age: '',
   user_id: userId
 });
 
@@ -202,7 +229,8 @@ export const createLessonUpdateConfig = (lesson, pools) => {
       end_time: formatTimeForInput(lesson.end_time),
       lesson_type: lesson.lesson_type,
       max_participants: lesson.max_participants,
-      age_range: lesson.age_range,
+      min_age: lesson.min_age,
+      max_age: lesson.max_age,
       level: lesson.level,
       pool_id: lesson.pool_id
     },

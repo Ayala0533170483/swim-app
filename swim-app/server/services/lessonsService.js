@@ -1,7 +1,7 @@
 const pool = require('./connection');
 
 async function getMyLessons({ role, id }) {
-    const sql = `
+  const sql = `
         SELECT 
             l.lesson_id,
             l.teacher_id,
@@ -12,7 +12,8 @@ async function getMyLessons({ role, id }) {
             l.end_time,
             l.lesson_type,
             l.max_participants,
-            l.age_range,
+            l.min_age,
+            l.max_age,
             l.level,
             l.is_active,
             l.num_registered,
@@ -31,14 +32,14 @@ async function getMyLessons({ role, id }) {
         ) AND l.is_active = 1
         ORDER BY l.lesson_id, lr.registration_id`;
 
-    const [rows] = await pool.query(sql, [role, id, role, id]);
-    console.log(`Found ${rows.length} rows for ${role} id: ${id}`);
+  const [rows] = await pool.query(sql, [role, id, role, id]);
+  console.log(`Found ${rows.length} rows for ${role} id: ${id}`);
 
-    return rows;
+  return rows;
 }
 
 async function getAvailableLessons(studentId) {
-    const sql = `
+  const sql = `
         SELECT 
             l.lesson_id,
             l.teacher_id,
@@ -66,8 +67,8 @@ async function getAvailableLessons(studentId) {
         AND lr.registration_id IS NULL
         ORDER BY l.lesson_date, l.start_time`;
 
-    const [rows] = await pool.query(sql, [studentId]);
-    return rows;
+  const [rows] = await pool.query(sql, [studentId]);
+  return rows;
 }
 
 async function registerStudentToLesson(lessonId, studentId) {
@@ -125,7 +126,7 @@ async function registerStudentToLesson(lessonId, studentId) {
 
 
 module.exports = {
-    getMyLessons,
-    getAvailableLessons,
-    registerStudentToLesson
+  getMyLessons,
+  getAvailableLessons,
+  registerStudentToLesson
 };

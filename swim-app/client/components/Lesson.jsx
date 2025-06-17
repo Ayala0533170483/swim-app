@@ -42,6 +42,14 @@ function Lesson({ lesson, pools, mode = "view" }) {
         }
     }
 
+    function formatAgeRange(minAge, maxAge) {
+        if (!minAge && !maxAge) return 'כל הגילאים';
+        if (!minAge) return `עד גיל ${maxAge}`;
+        if (!maxAge) return `מגיל ${minAge}`;
+        return `${minAge}-${maxAge}`;
+    }
+
+
     function formatDate(dateString) {
         const date = new Date(dateString);
         return date.toLocaleDateString('he-IL');
@@ -110,7 +118,8 @@ function Lesson({ lesson, pools, mode = "view" }) {
                             </div>
                             <div className="info-item">
                                 <span className="info-label">טווח גילאים:</span>
-                                <span className="info-value">{lesson.age_range || 'כל הגילאים'}</span>
+                                <span className="info-value">{formatAgeRange(lesson.min_age, lesson.max_age)}</span>
+
                             </div>
                             <div className="info-item">
                                 <span className="info-label">מקומות פנויים:</span>
@@ -124,7 +133,8 @@ function Lesson({ lesson, pools, mode = "view" }) {
                             <>
                                 <div className="info-item">
                                     <span className="info-label">טווח גילאים:</span>
-                                    <span className="info-value">{lesson.age_range || 'כל הגילאים'}</span>
+                                    <span className="info-value">{formatAgeRange(lesson.min_age, lesson.max_age)}</span>
+
                                 </div>
                                 <div className="info-item">
                                     <span className="info-label">מספר נרשמים:</span>
