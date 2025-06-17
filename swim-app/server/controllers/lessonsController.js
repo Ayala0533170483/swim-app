@@ -1,9 +1,9 @@
 const genericService = require('../services/genericService');
 const lessonsService = require('../services/lessonsService');
 
-async function getLessons(filters = {}) {
+async function getMyLessons(filters = {}) {
     try {
-        const rawLessons = await lessonsService.getLessons(filters);
+        const rawLessons = await lessonsService.getMyLessons(filters);
         console.log(`Found ${rawLessons.length} lesson records`);
         const lessonsMap = new Map();
 
@@ -118,7 +118,7 @@ async function deleteLesson(lessonId) {
 
 
 module.exports = {
-    getLessons,
+    getMyLessons,
     getAvailableLessons,
     createLesson,
     updateLesson

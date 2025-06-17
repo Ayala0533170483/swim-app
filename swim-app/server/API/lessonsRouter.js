@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
             role: req.user.role,
             id: req.user.id
         };
-        const lessons = await lessonsController.getLessons(filters);
+        const lessons = await lessonsController.getMyLessons(filters);
         res.json({ data: lessons });
     } catch (error) {
         res.status(500).json({ error: error.message });

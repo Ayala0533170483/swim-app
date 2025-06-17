@@ -42,12 +42,11 @@ function UserDashboard() {
         ];
       case "admin":
         return [
-          { path: `/${usernameForUrl}/admin`, label: 'ניהול מערכת' },
-          { path: `/${usernameForUrl}/register-lesson`, label: 'רישום לשיעור חדש' },
-          { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
-          //   { path: `/${usernameForUrl}/students`, label: 'ניהול תלמידים' },
-          //   { path: `/${usernameForUrl}/teachers`, label: 'ניהול מורים'},
-          //   { path: `/${usernameForUrl}/pools`, label: 'ניהול בריכות' },
+          { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' },
+            { path: `/${usernameForUrl}/students`, label: 'ניהול תלמידים' },
+            { path: `/${usernameForUrl}/teachers`, label: 'ניהול מורים'},
+            { path: `/${usernameForUrl}/pools`, label: 'ניהול בריכות' },
+                { path: `/${usernameForUrl}/`, label: 'ניהול בריכות' },
         ];
       default:
         return [{ path: '/profile', label: 'הפרופיל שלי' }];

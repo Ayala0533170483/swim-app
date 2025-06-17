@@ -1,6 +1,6 @@
 const pool = require('./connection');
 
-async function getLessons({ role, id }) {
+async function getMyLessons({ role, id }) {
     const sql = `
         SELECT 
             l.lesson_id,
@@ -125,7 +125,7 @@ async function registerStudentToLesson(lessonId, studentId) {
 
 
 module.exports = {
-    getLessons,
+    getMyLessons,
     getAvailableLessons,
     registerStudentToLesson
 };

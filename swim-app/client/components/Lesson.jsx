@@ -115,7 +115,7 @@ function Lesson({ lesson, pools, mode = "view" }) {
                             <div className="info-item">
                                 <span className="info-label">מקומות פנויים:</span>
                                 <span className="info-value available-spots">
-                                    {lesson.available_spots} מתוך {lesson.max_participants}
+                                    {lesson.available_spots}
                                 </span>
                             </div>
                         </>
