@@ -23,13 +23,15 @@ async function getUsers(filters = {}) {
             if (!user) {
                 throw new Error('User not found');
             }
-
             return [user];
         }
 
-        const users = await usersService.get('users', filters);
+        if (filters.type) {
+            return await usersService.getAllUsersByType(filters.type);
+        }
 
-        return users;
+        return await genericService.get('users', filters);
+
     } catch (error) {
         throw error;
     }
@@ -64,3 +66,4 @@ module.exports = {
     updateUser,
     deleteUser
 };
+

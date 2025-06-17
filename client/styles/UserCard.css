@@ -1,0 +1,225 @@
+.user-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 102, 204, 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.user-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #0066cc, #00ccff);
+}
+
+.user-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 102, 204, 0.2);
+  border-color: #00ccff;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.user-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0066cc, #00ccff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.user-card:hover .user-avatar {
+  transform: scale(1.1);
+}
+
+.avatar-icon {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.user-details {
+  flex: 1;
+}
+
+.user-name {
+  color: #0066cc;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  transition: color 0.3s ease;
+}
+
+.user-card:hover .user-name {
+  color: #0052a3;
+}
+
+.user-email {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0 0 0.5rem 0;
+  transition: color 0.3s ease;
+}
+
+.user-card:hover .user-email {
+  color: #333;
+}
+
+.user-type {
+  background: linear-gradient(135deg, #e6f3ff, #cce7ff);
+  color: #0066cc;
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.user-card:hover .user-type {
+  background: linear-gradient(135deg, #0066cc, #00ccff);
+  color: white;
+  transform: scale(1.05);
+}
+
+.user-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.user-card:hover .user-actions {
+  opacity: 1;
+  transform: translateX(-5px);
+}
+
+.click-hint {
+  color: #0066cc;
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.arrow-icon {
+  color: #0066cc;
+  font-size: 1.5rem;
+  font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+.user-card:hover .arrow-icon {
+  transform: translateX(-3px);
+  animation: bounce 0.6s ease-in-out;
+}
+
+/* אנימציות */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateX(-3px);
+  }
+  40% {
+    transform: translateX(-8px);
+  }
+  60% {
+    transform: translateX(-5px);
+  }
+}
+
+/* עיצוב מיוחד לסוגי משתמשים */
+.user-card.student-card .user-avatar {
+  background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.user-card.teacher-card .user-avatar {
+  background: linear-gradient(135deg, #6f42c1, #e83e8c);
+}
+
+.user-card.student-card::before {
+  background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.user-card.teacher-card::before {
+  background: linear-gradient(135deg, #6f42c1, #e83e8c);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .user-card {
+    padding: 1.5rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .user-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .user-actions {
+    flex-direction: row;
+    gap: 1rem;
+  }
+  
+  .click-hint {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-card {
+    padding: 1rem;
+  }
+  
+  .user-avatar {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .avatar-icon {
+    font-size: 1.5rem;
+  }
+  
+  .user-name {
+    font-size: 1.2rem;
+  }
+  
+  .user-email {
+    font-size: 1rem;
+  }
+}

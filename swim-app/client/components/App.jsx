@@ -12,6 +12,7 @@ import NotFound from './NotFound';
 import MainLayout from './MainLayout';
 import MyLessons from './MyLessons';
 import RegisterLesson from './RegisterLesson';
+import UserManagement from './UserManagement';
 export const userContext = createContext();
 
 export default function App() {
@@ -30,6 +31,8 @@ export default function App() {
                     <Route path="/my-lessons" element={<MyLessons />} />
                     <Route path=":username/my-lessons" element={<MyLessons />} />
                     <Route path=":username/register-lesson" element={<RegisterLesson />} />
+                    <Route path=":username/students" element={<UserManagement userType="students" />} />
+                    <Route path=":username/teachers" element={<UserManagement userType="teachers" />} />
                     <Route path=":username" element={<Profile />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />

@@ -69,8 +69,28 @@ async function getUserById(user_id) {
     return rows[0];
 }
 
+async function getAllUsersByType(typeName) {
+    const type = typeName.endsWith('s') ? typeName.slice(0, -1) : typeName;
+
+    const sql = `
+        SELECT 
+            u.user_id,
+            u.name,
+            u.email,
+            u.is_active,
+            ut.type_name
+        FROM users AS u
+        LEFT JOIN user_types AS ut ON u.type_id = ut.type_id
+        WHERE ut.type_name = ? AND u.is_active = 1
+        ORDER BY u.name
+    `;
+    const [rows] = await pool.query(sql, [type]);
+    return rows;
+}
+
 module.exports = {
     getUserWithPassword,
     createUserWithPasswordHash,
-    getUserById
+    getUserById,
+    getAllUsersByType
 };

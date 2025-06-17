@@ -22,7 +22,7 @@ const messagesRouter = require('./api/messagesRouter.js');
 const branchesRouter = require('./api/branchesRouter.js');
 
 app.use('/', authRouter);
-app.use('/users', verifyToken, usersRouter);
+app.use('/users',  usersRouter);
 app.use('/pools', verifyToken, poolsRouter);
 app.use('/lessons', verifyToken, lessonesRouter);
 app.use('/registerLessons',verifyToken, registerLessonsRouter)

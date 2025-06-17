@@ -1,0 +1,127 @@
+.user-management-page {
+  direction: rtl;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f8fbff;
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  padding: 3rem 0;
+  background: linear-gradient(135deg, #0066cc, #00ccff);
+  color: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 102, 204, 0.3);
+}
+
+.page-header h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.page-header p {
+  font-size: 1.3rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #0066cc;
+  padding: 4rem 0;
+  font-weight: 600;
+}
+
+.error-message {
+  background: #ffe6e6;
+  color: #ff4757;
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid #ffcccc;
+  font-weight: 600;
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.no-users {
+  background: white;
+  padding: 4rem 2rem;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 102, 204, 0.1);
+  border: 2px dashed #cce7ff;
+}
+
+.no-users h3 {
+  color: #0066cc;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.no-users p {
+  color: #666;
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+.users-section {
+  margin-top: 2rem;
+}
+
+.users-count {
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 102, 204, 0.1);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.users-count span {
+  color: #0066cc;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-header h1 {
+    font-size: 2.2rem;
+  }
+  
+  .page-header {
+    padding: 2rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .page-header {
+    padding: 1.5rem 1rem;
+  }
+  
+  .page-header h1 {
+    font-size: 1.8rem;
+  }
+}
