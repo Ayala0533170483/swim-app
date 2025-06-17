@@ -8,14 +8,14 @@ const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh-secret';
 
 async function signup(userData, ip) {
     try {
-        const existingUser = await service.getUserWithPassword(userData.email);
+        const existingUser = await usersService.getUserWithPassword(userData.email);
         if (existingUser) {
             throw new Error('Email already in use');
         }
 
         const saltRounds = 10;
         const password_hash = await bcrypt.hash(userData.password, saltRounds);
-        const newUser = await service.createUserWithPasswordHash(userData, password_hash);
+        const newUser = await usersService.createUserWithPasswordHash(userData, password_hash);
         const accessToken = createAccessToken(newUser, ip);
         const refreshToken = createRefreshToken(newUser, ip);
 

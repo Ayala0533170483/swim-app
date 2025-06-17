@@ -98,15 +98,6 @@ async function deleteLesson(lessonId) {
     }
 }
 
-// async function getLessonsByTeacher(teacherId) {
-//     try {
-//         const lessons = await genericService.get('lessons', { teacher_id: teacherId });
-//         return lessons;
-//     } catch (error) {
-//         throw error;
-//     }
-// }
-
 // async function getLessonsByPool(poolId) {
 //     try {
 //         const lessons = await genericService.getItems('lessons', { pool_id: poolId });
@@ -122,8 +113,8 @@ module.exports = {
     getMyLessons,
     getAvailableLessons,
     createLesson,
-    updateLesson
-    // deleteLesson,
+    updateLesson,
+   deleteLesson 
     // getLessonsByTeacher,
     // getLessonsByPool,
 
