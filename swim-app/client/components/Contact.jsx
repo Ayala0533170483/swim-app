@@ -212,7 +212,6 @@ function Contact() {
           </div>
         </div>
 
-        {/* סקציית רשתות חברתיות */}
         <div className="social-media-section">
           <h2>עקבו אחרינו</h2>
           <div className="social-links">

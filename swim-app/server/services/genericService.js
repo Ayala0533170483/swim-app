@@ -27,10 +27,13 @@ async function create(table, data) {
     }
 }
 
-async function update(table, type, id, data) {
+async function update(table, id, data) {
+    const singularTable = table.endsWith('s') ? table.slice(0, -1) : table;
+    const primaryKey = `${singularTable}_id`;
     const sql = `UPDATE ?? SET ? WHERE ?? = ?`;
-    await pool.query(sql, [table, data, type, id]);
+    await pool.query(sql, [table, data, primaryKey, id]);
 }
+
 
 async function remove(table, id) {
     const idField = table === 'contact' ? 'id' : (table.endsWith('s') ? table.slice(0, -1) + '_id' : 'id');

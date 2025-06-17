@@ -1,5 +1,5 @@
 const genericService = require('../services/genericService');
-const service = require('../services/service');
+const usersService = require('../services/usersService');
 
 async function createUser(userData) {
     try {
@@ -19,15 +19,15 @@ async function createUser(userData) {
 async function getUsers(filters = {}) {
     try {
         if (filters.user_id) {
-            const user = await service.getUserById(filters.user_id);
+            const user = await usersService.getUserById(filters.user_id);
             if (!user) {
                 throw new Error('User not found');
             }
 
-            return [user]; 
+            return [user];
         }
 
-        const users = await service.get('users', filters);
+        const users = await usersService.get('users', filters);
 
         return users;
     } catch (error) {
@@ -40,7 +40,7 @@ async function updateUser(id, updateData) {
         delete updateData.id;
         delete updateData.user_id;
 
-        await genericService.update('users',"user_id", id, updateData);
+        await genericService.update('users', id, updateData);
 
         return { message: 'User updated successfully' };
     } catch (error) {
@@ -51,7 +51,7 @@ async function updateUser(id, updateData) {
 async function deleteUser(id) {
     try {
 
-        await service.remove('users', id);
+        await genericService.remove('users', id);
         return { message: 'User deleted successfully' };
     } catch (error) {
         throw error;

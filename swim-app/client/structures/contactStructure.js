@@ -125,7 +125,7 @@ export const contactFormStructure = {
     resetFormAfterSubmit: true,
     showSuccessAlert: true,
     enableAutoSave: false,
-    submitType: 'contact',
+    submitType: 'messages',
     useContactStyle: true
   }
 };

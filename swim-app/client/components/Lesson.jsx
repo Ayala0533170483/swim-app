@@ -139,7 +139,7 @@ function Lesson({ lesson, pools, mode = "view" }) {
             <div className="lesson-actions">
                 {isRegisterMode ? (
                     <AddItem
-                        type="lessons/register"
+                        type="registerLessons"
                         addDisplay={addRegistration}
                         defaltValues={{
                             lesson_id: lesson.lesson_id,

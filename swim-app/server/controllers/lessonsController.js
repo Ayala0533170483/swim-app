@@ -1,9 +1,9 @@
 const genericService = require('../services/genericService');
-const service = require('../services/service');
+const lessonsService = require('../services/lessonsService');
 
 async function getLessons(filters = {}) {
     try {
-        const rawLessons = await service.getLessons(filters);
+        const rawLessons = await lessonsService.getLessons(filters);
         console.log(`Found ${rawLessons.length} lesson records`);
         const lessonsMap = new Map();
 
@@ -51,7 +51,7 @@ async function getLessons(filters = {}) {
 
 async function getAvailableLessons(studentId) {
     try {
-        const availableLessons = await service.getAvailableLessons(studentId);
+        const availableLessons = await lessonsService.getAvailableLessons(studentId);
         console.log(`Found ${availableLessons.length} available lessons`);
         return availableLessons;
     } catch (error) {
@@ -78,24 +78,24 @@ async function updateLesson(lessonId, updateData) {
     try {
         delete updateData.registrations;
         delete updateData.id;
-        await genericService.update('lessons', "lesson_id", lessonId, updateData);
+        await genericService.update('lessons', lessonId, updateData);
         return { message: 'Lesson updated successfully' };
     } catch (error) {
         throw error;
     }
 }
 
-// async function deleteLesson(lessonId) {
-//     try {
-//         console.log(`=== Deleting lesson ID: ${lessonId} ===`);
-//         const result = await genericService.remove('lessons', lessonId);
-//         console.log('Lesson deleted successfully');
-//         return result;
-//     } catch (error) {
-//         console.error('Error in deleteLesson:', error);
-//         throw error;
-//     }
-// }
+async function deleteLesson(lessonId) {
+    try {
+        console.log(`=== Deleting lesson ID: ${lessonId} ===`);
+        const result = await genericService.remove('lessons', lessonId);
+        console.log('Lesson deleted successfully');
+        return result;
+    } catch (error) {
+        console.error('Error in deleteLesson:', error);
+        throw error;
+    }
+}
 
 // async function getLessonsByTeacher(teacherId) {
 //     try {
@@ -115,29 +115,15 @@ async function updateLesson(lessonId, updateData) {
 //     }
 // }
 
-async function registerToLesson(registrationData) {
-    try {
-        console.log('Registering student to lesson:', registrationData);
-        
-        const result = await service.registerStudentToLesson(
-            registrationData.lesson_id,
-            registrationData.student_id
-        );
 
-        return result;
-    } catch (error) {
-        console.error('Error in registerToLesson:', error);
-        throw error;
-    }
-}
 
 module.exports = {
     getLessons,
     getAvailableLessons,
     createLesson,
-    updateLesson,
+    updateLesson
     // deleteLesson,
     // getLessonsByTeacher,
     // getLessonsByPool,
-    registerToLesson 
+
 };

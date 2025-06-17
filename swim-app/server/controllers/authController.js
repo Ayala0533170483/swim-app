@@ -1,4 +1,4 @@
-const service = require('../services/service');
+const usersService = require('../services/usersService');
 const { log } = require('../utils/logger');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -29,7 +29,7 @@ async function signup(userData, ip) {
 
 async function login(email, password, ip) {
     try {
-        const user = await service.getUserWithPassword(email);
+        const user = await usersService.getUserWithPassword(email);
         if (!user) {
             throw new Error('שגיאת שרת,נסה שוב');
         }
@@ -65,7 +65,6 @@ function createRefreshToken(user, ip) {
     );
 }
 
-
 async function refreshAccessToken(refreshToken, ip) {
     try {
         const decoded = jwt.verify(refreshToken, REFRESH_SECRET);
@@ -73,7 +72,7 @@ async function refreshAccessToken(refreshToken, ip) {
             throw new Error('IP mismatch');
         }
 
-        const user = await service.getUserById(decoded.id);
+        const user = await usersService.getUserById(decoded.id);
         if (!user || !user.is_active) {
             throw new Error('User not found');
         }
@@ -89,3 +88,4 @@ async function refreshAccessToken(refreshToken, ip) {
 
 module.exports = { signup, login, refreshAccessToken };
 
+//קש 
