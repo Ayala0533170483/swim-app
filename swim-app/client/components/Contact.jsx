@@ -13,7 +13,6 @@ function Contact() {
 
   const { userData } = useContext(userContext);
 
-
   useEffect(() => {
     if (userData) {
       console.log('User is logged in:', userData);
@@ -22,23 +21,9 @@ function Contact() {
         name: userData.name || userData.full_name || '',
         email: userData.email || ''
       }));
-    } else {
-      const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
-        try {
-          const user = JSON.parse(storedUser);
-          console.log('User from localStorage:', user);
-          setForm(prev => ({
-            ...prev,
-            name: user.name || user.full_name || '',
-            email: user.email || ''
-          }));
-        } catch (error) {
-          console.error('Error parsing stored user:', error);
-        }
-      }
     }
   }, [userData]);
+
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -72,22 +57,20 @@ function Contact() {
         return;
       }
 
-      const currentUser = userData || (localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')) : null);
-
       const messageData = {
         ...newMessage,
         full_name: newMessage.name,
-        ...(currentUser && { user_id: currentUser.user_id || currentUser.id })
+        ...(userData && { user_id: userData.user_id || userData.id })
       };
 
       console.log('Message sent successfully:', messageData);
       setContactMessages(prev => [...prev, messageData]);
 
-      if (currentUser) {
+      if (userData) {
         setForm({
           ...contactFormStructure.defaultValues,
-          name: currentUser.name || currentUser.full_name || '',
-          email: currentUser.email || ''
+          name: userData.name || userData.full_name || '',
+          email: userData.email || ''
         });
       } else {
         setForm(contactFormStructure.defaultValues);
@@ -101,8 +84,9 @@ function Contact() {
     }
   };
 
-  const isUserLoggedIn = userData || localStorage.getItem('currentUser');
-  const currentUser = userData || (localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')) : null);
+
+  const isUserLoggedIn = userData;
+  const currentUser = userData;
 
   return (
     <div className="contact-page">
@@ -176,7 +160,7 @@ function Contact() {
                       onChange={handleChange}
                       className={`form-input ${fieldErrors.name ? 'error' : ''} ${isUserLoggedIn ? 'auto-filled' : ''}`}
                       placeholder="הכנס את שמך המלא"
-                      readOnly={isUserLoggedIn}
+                      readOnly={userData}
                     />
                     {fieldErrors.name && (
                       <span className="field-error">{fieldErrors.name}</span>
@@ -193,7 +177,7 @@ function Contact() {
                       onChange={handleChange}
                       className={`form-input ${fieldErrors.email ? 'error' : ''} ${isUserLoggedIn ? 'auto-filled' : ''}`}
                       placeholder="your@email.com"
-                      readOnly={isUserLoggedIn}
+                      readOnly={userData}
                     />
                     {fieldErrors.email && (
                       <span className="field-error">{fieldErrors.email}</span>
