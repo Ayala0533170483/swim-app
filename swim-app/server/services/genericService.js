@@ -1,4 +1,3 @@
-
 const pool = require('./connection');
 
 async function get(table, filters = {}) {
@@ -18,9 +17,9 @@ async function create(table, data) {
     try {
         data.is_active ??= 1;
         const [res] = await pool.query('INSERT INTO ?? SET ?', [table, data]);
-
-        const result = { id: res.insertId, ...data };
-
+        
+        // החזר עם contact_id כי זה השדה הראשי בטבלה
+        const result = { contact_id: res.insertId, id: res.insertId, ...data };
         return result;
     } catch (error) {
         throw error;
@@ -28,19 +27,25 @@ async function create(table, data) {
 }
 
 async function update(table, id, data) {
-    const singularTable = table.endsWith('s') ? table.slice(0, -1) : table;
-    const primaryKey = `${singularTable}_id`;
-    const sql = `UPDATE ?? SET ? WHERE ?? = ?`;
-    await pool.query(sql, [table, data, primaryKey, id]);
+    try {
+        // השדה הראשי בטבלת contact הוא contact_id
+        const idField = table === 'contact' ? 'contact_id' : 
+                       (table.endsWith('s') ? table.slice(0, -1) + '_id' : 'id');
+        
+        const sql = `UPDATE ${table} SET ? WHERE ${idField} = ?`;
+        const [result] = await pool.query(sql, [data, id]);
+        return result;
+    } catch (error) {
+        throw error;
+    }
 }
 
-
 async function remove(table, id) {
-    const idField = table === 'contact' ? 'id' : (table.endsWith('s') ? table.slice(0, -1) + '_id' : 'id');
+    const idField = table === 'contact' ? 'contact_id' : 
+                   (table.endsWith('s') ? table.slice(0, -1) + '_id' : 'id');
     const sql = `UPDATE ${table} SET is_active = 0 WHERE ${idField} = ?`;
     await pool.query(sql, [id]);
 }
-
 
 module.exports = {
     get,

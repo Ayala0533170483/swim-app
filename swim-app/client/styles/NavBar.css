@@ -30,29 +30,9 @@
   position: relative;
 }
 
-.navbar-logo {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  transition: transform 0.3s ease;
-}
-
-.navbar-logo:hover {
-  transform: scale(1.05);
-}
-
 .navbar-logo img {
   height: 50px;
   width: auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 102, 204, 0.2);
-  transition: all 0.3s ease;
-  animation: float 6s ease-in-out infinite;
-}
-
-.navbar-logo img:hover {
-  box-shadow: 0 8px 24px rgba(0, 102, 204, 0.3);
-  transform: rotate(5deg);
 }
 
 .navbar-logo h1 {
@@ -230,6 +210,7 @@
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0px);

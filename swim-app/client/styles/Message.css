@@ -1,0 +1,327 @@
+.messages-container {
+  direction: rtl;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.messages-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.messages-header h1 {
+  color: #0066cc;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.messages-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.messages-stats span {
+  background: #f8fbff;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  color: #0066cc;
+  font-weight: 600;
+}
+
+.messages-filters {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.filter-btn {
+  padding: 0.8rem 1.5rem;
+  border: 2px solid #0066cc;
+  background: white;
+  color: #0066cc;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  background: #f0f8ff;
+}
+
+.filter-btn.active {
+  background: #0066cc;
+  color: white;
+}
+
+.messages-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+.message-card {
+  background: white;
+  border: 2px solid #e6f3ff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 102, 204, 0.1);
+}
+
+.message-card.pending {
+  border-right: 4px solid #ffc107;
+}
+
+.message-card.handled {
+  border-right: 4px solid #28a745;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.sender-name {
+  color: #0066cc;
+  font-size: 1.2rem;
+  margin: 0 0 0.3rem 0;
+  font-weight: 700;
+}
+
+.sender-email {
+  color: #666;
+  margin: 0 0 0.3rem 0;
+  font-size: 0.9rem;
+}
+
+.sender-phone {
+  color: #666;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.status-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status-badge.pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.handled {
+  background: #d4edda;
+  color: #155724;
+}
+
+.message-content {
+  margin-bottom: 1.5rem;
+}
+
+.message-subject,
+.message-text,
+.message-date {
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+}
+
+.message-subject strong,
+.message-text strong,
+.message-date strong {
+  color: #333;
+}
+
+.message-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-show-full {
+  background: #17a2b8;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.btn-show-full:hover {
+  background: #138496;
+}
+
+.message-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.message-modal {
+  background: white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+  color: #0066cc;
+  margin: 0;
+}
+
+.close-button {
+  background: #dc3545;
+  color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.modal-content {
+  padding: 1.5rem;
+}
+
+.modal-field {
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.modal-field strong {
+  color: #333;
+}
+
+.message-full-text p {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 0.5rem 0 0 0;
+  line-height: 1.6;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #0066cc;
+  padding: 4rem 0;
+  font-weight: 600;
+}
+
+.no-messages {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 12px;
+  border: 2px dashed #cce7ff;
+}
+
+.no-messages h3 {
+  color: #0066cc;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.no-messages p {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .messages-container {
+    padding: 1rem;
+  }
+  
+  .messages-header h1 {
+    font-size: 2rem;
+  }
+  
+  .messages-stats {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .messages-filters {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .filter-btn {
+    padding: 0.6rem 1rem;
+  }
+  
+  .messages-list {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .message-card {
+    padding: 1rem;
+  }
+  
+  .message-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .message-actions {
+    justify-content: center;
+  }
+  
+  .message-modal {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .modal-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .messages-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .sender-name {
+    font-size: 1rem;
+  }
+  
+  .message-actions {
+    flex-direction: column;
+  }
+  
+  .btn-show-full {
+    width: 100%;
+  }
+}

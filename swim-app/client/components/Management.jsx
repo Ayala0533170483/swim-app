@@ -1,0 +1,61 @@
+import React, { useState } from 'react';
+import Messages from './Messages';
+import '../styles/Management.css';
+
+function Management() {
+  const [activeSection, setActiveSection] = useState('overview');
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'messages':
+        return <Messages />;
+      case 'overview':
+      default:
+        return (
+          <div className="management-overview">
+            <h2>ניהול כללי</h2>
+            <div className="management-options">
+              <div 
+                className="management-card"
+                onClick={() => setActiveSection('messages')}
+              >
+                <h3>הודעות צור קשר</h3>
+                <p>צפייה וניהול הודעות מלקוחות</p>
+              </div>
+              
+              <div className="management-card disabled">
+                <h3>שליחת הודעות</h3>
+                <p>שליחת הודעות לכל המשתמשים</p>
+                <span className="coming-soon">בקרוב</span>
+              </div>
+              
+              <div className="management-card disabled">
+                <h3>דוחות</h3>
+                <p>דוחות פעילות ונתונים</p>
+                <span className="coming-soon">בקרוב</span>
+              </div>
+            </div>
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div className="management-container">
+      {activeSection !== 'overview' && (
+        <div className="back-navigation">
+          <button 
+            className="back-btn"
+            onClick={() => setActiveSection('overview')}
+          >
+            ← חזור לניהול כללי
+          </button>
+        </div>
+      )}
+      
+      {renderContent()}
+    </div>
+  );
+}
+
+export default Management;

@@ -8,11 +8,11 @@ router.get('/', verifyToken, async (req, res) => {
     try {
         console.log('=== GET /messages ===');
         const query = { ...req.query };
-        
+
         if (query.user_id === 'null' && req.user && req.user.id) {
             query.user_id = req.user.id;
         }
-        
+
         const messages = await messagesController.getMessages(query);
         res.json({ data: messages });
     } catch (error) {
@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
     try {
         console.log('=== POST /messages ===');
         console.log('Request body:', JSON.stringify(req.body, null, 2));
-        
+
         const messageData = req.body;
 
         if (messageData.name && !messageData.full_name) {
@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
             delete messageData.name;
         }
 
-    
+
         if (!messageData.full_name || !messageData.email || !messageData.subject || !messageData.message) {
             console.log('Missing fields validation failed');
             return res.status(400).json({
@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
             });
         }
 
-       
+
         const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
         if (!emailRegex.test(messageData.email)) {
             console.log('Email validation failed');
@@ -87,6 +87,38 @@ router.post('/', async (req, res) => {
         });
     }
 });
+
+// הוסף את זה לפני module.exports
+router.put('/:id', verifyToken, async (req, res) => {
+    try {
+        console.log('=== PUT /messages/:id ===');
+        const messageId = req.params.id;
+        const updateData = req.body;
+
+        if (!messageId || isNaN(messageId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'מזהה הודעה לא תקין'
+            });
+        }
+
+        await messagesController.updateMessage(messageId, updateData);
+
+        res.json({
+            success: true,
+            message: 'ההודעה עודכנה בהצלחה'
+        });
+
+    } catch (error) {
+        console.error('Error in PUT /messages/:id:', error);
+        res.status(500).json({
+            success: false,
+            message: 'שגיאה בעדכון ההודעה',
+            error: error.message
+        });
+    }
+});
+
 
 router.delete('/:id', verifyToken, async (req, res) => {
     try {

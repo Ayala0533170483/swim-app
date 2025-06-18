@@ -23,9 +23,7 @@ function UserManagement({ userType }) {
       
       const data = await fetchData(`users`,userType, handleError);
       
-      // סינון רק משתמשים פעילים
-      const activeUsers = data.filter(user => user.is_active === 1);
-      setUsers(activeUsers);
+      setUsers(data);
       
     } catch (err) {
       console.error('Error loading users:', err);
@@ -61,7 +59,7 @@ function UserManagement({ userType }) {
   }
 
   const pageTitle = userType === 'students' ? 'ניהול תלמידים' : 'ניהול מורים';
-  const emptyMessage = userType === 'students' ? 'אין תלמידים פעילים במערכת' : 'אין מורים פעילים במערכת';
+  const emptyMessage = userType === 'students' ? 'אין תלמידים במערכת' : 'אין מורים במערכת';
 
   return (
     <div className="user-management-page">
@@ -79,7 +77,8 @@ function UserManagement({ userType }) {
         ) : (
           <div className="users-section">
             <div className="users-count">
-              <span>נמצאו {users.length} {userType === 'students' ? 'תלמידים' : 'מורים'} פעילים</span>
+            <span>נמצאו {users.length} {userType === 'students' ? 'תלמידים' : 'מורים'}</span>
+
             </div>
             
             <div className="users-list">
