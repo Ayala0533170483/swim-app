@@ -13,7 +13,10 @@ function Update({
     nameButton,
     setDisplayChanged = () => { },
     keys = null,
-    validationRules = {}
+    validationRules = {},
+    // 🎯 2 אופציות חדשות כמו שעשית
+    directUpdateData = null, // הנתונים לעדכון ישיר
+    renderAs = null // מה לרנדר במקום עיפרון
 }) {
     const [showUpdateDetails, setShowUpdateDetails] = useState(false);
     const [updatedItem, setUpdatedItem] = useState(item);
@@ -88,19 +91,25 @@ function Update({
     };
 
     const sendUpdateRequest = async (token) => {
+        // 🎯 אם יש directUpdateData - השתמש בו, אחרת updatedItem
+        const dataToSend = directUpdateData ? 
+            { ...item, ...directUpdateData } : 
+            { ...item, ...updatedItem };
+
         return await fetch(`http://localhost:3000/${type}/${item.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
+                ...(token && { Authorization: `Bearer ${token}` }),
             },
             credentials: 'include',
-            body: JSON.stringify({ ...item, ...updatedItem }),
+            body: JSON.stringify(dataToSend),
         });
     };
 
     async function updateItem() {
-        if (!validateForm()) {
+        // 🎯 אם זה עדכון ישיר - דלג על ולידציה
+        if (!directUpdateData && !validateForm()) {
             return;
         }
 
@@ -109,23 +118,26 @@ function Update({
         try {
             let response = await sendUpdateRequest(token);
 
-            if (response.status === 401 || response.status === 403) {
+            if (response.status === 401) {
                 token = await refreshToken();
                 response = await sendUpdateRequest(token);
             }
 
             if (response.ok) {
-                const updatedData = { ...item, ...updatedItem };
+                const updatedData = directUpdateData ? 
+                    { ...item, ...directUpdateData } : 
+                    { ...item, ...updatedItem };
+                
                 updateDisplay(updatedData);
                 setShowUpdateDetails(false);
                 setDisplayChanged(true);
                 setErrors({});
             } else {
-                handleError("updateError", null, true);
+                throw new Error("Failed to update item.");
             }
 
         } catch (ex) {
-            handleError("updateError", ex, false);
+            handleError("updateError", ex);
         }
     }
 
@@ -141,91 +153,51 @@ function Update({
         type: 'input'
     }));
 
+    // 🎯 אם יש directUpdateData - זה מצב עדכון ישיר
+    if (directUpdateData) {
+        return (
+            <div onClick={updateItem} style={{ cursor: 'pointer', display: 'inline-block' }}>
+                {renderAs || <span>עדכן</span>}
+            </div>
+        );
+    }
+
+    // 🎯 אחרת - מצב רגיל עם עיפרון
     return (
         <>
-            <button className="edit-button" onClick={() => setShowUpdateDetails(true)}>
-                <FaPen className="edit-icon" />
-                {nameButton}
-            </button>
+            <FaPen className="edit-icon" onClick={() => setShowUpdateDetails(true)} />
 
             {showUpdateDetails && (
                 <div className="overlay">
                     <div className="modal">
-                        <h2 className="modal-title">{nameButton}</h2>
-                        <div className="form-container">
-                            {fieldsToRender.map((field) => (
-                                <div key={field.key} className="form-field">
-                                    <label htmlFor={field.key} className="field-label">
-                                        {field.label}:
-                                    </label>
-
-                                    {field.type === 'select' ? (
-                                        <>
-                                            <select
-                                                id={field.key}
-                                                value={updatedItem[field.key] || ''}
-                                                className="field-input"
-                                                onChange={(e) => handleInputChange(field.key, e.target.value)}
-                                            >
-                                                <option value="">{field.placeholder || `בחר ${field.label}`}</option>
-                                                {field.options?.map(option => (
-                                                    <option key={option.value} value={option.value}>
-                                                        {option.label}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            {errors[field.key] && (
-                                                <span className="error-message">
-                                                    {errors[field.key]}
-                                                </span>
-                                            )}
-                                        </>
-                                    ) : field.type === 'textarea' ? (
-                                        <>
-                                            <textarea
-                                                id={field.key}
-                                                value={updatedItem[field.key] || ''}
-                                                placeholder={field.placeholder || field.label}
-                                                className="field-input"
-                                                rows={field.rows || 3}
-                                                onChange={(e) => handleInputChange(field.key, e.target.value)}
-                                            />
-                                            {errors[field.key] && (
-                                                <span className="error-message">
-                                                    {errors[field.key]}
-                                                </span>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <input
-                                                id={field.key}
-                                                type={field.inputType || 'text'}
-                                                value={updatedItem[field.key] || ''}
-                                                placeholder={field.placeholder || field.label}
-                                                className="field-input"
-                                                min={field.min}
-                                                max={field.max}
-                                                step={field.step}
-                                                onChange={(e) => handleInputChange(field.key, e.target.value)}
-                                            />
-                                            {errors[field.key] && (
-                                                <span className="error-message">
-                                                    {errors[field.key]}
-                                                </span>
-                                            )}
-                                        </>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                        <div className="button-container">
-                            <button onClick={updateItem} className="btn-primary">
-                                עריכה
-                            </button>
-                            <button onClick={handleCancel} className="btn-primary">
-                                ביטול
-                            </button>
+                        <h2>Edit {type}</h2>
+                        {fieldsToRender.map((field) => (
+                            <div key={field.key} style={{ marginBottom: "10px" }}>
+                                <label htmlFor={field.key} style={{ display: "block", fontWeight: "bold" }}>
+                                    {field.label || field.key}:
+                                </label>
+                                <input
+                                    id={field.key}
+                                    value={updatedItem[field.key] || ''}
+                                    placeholder={field.key}
+                                    onChange={(e) => handleInputChange(field.key, e.target.value)}
+                                    style={{
+                                        width: "100%",
+                                        padding: "8px",
+                                        border: "1px solid #ccc",
+                                        borderRadius: "4px",
+                                    }}
+                                />
+                                {errors[field.key] && (
+                                    <span className="error-message">
+                                        {errors[field.key]}
+                                    </span>
+                                )}
+                            </div>
+                        ))}
+                        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+                            <button onClick={updateItem} className="btn-primary">Update</button>
+                            <button onClick={handleCancel} className="btn-primary">Cancel</button>
                         </div>
                     </div>
                 </div>

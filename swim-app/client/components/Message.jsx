@@ -84,15 +84,21 @@ function Message({ message, onUpdate, onDelete }) {
                         הצג מלא
                     </button>
 
+
                     <Update
                         item={message}
                         type="messages"
                         updateDisplay={onUpdate}
-                        nameButton="עדכן סטטוס"
-                        keys={messageFields}
-                        validationRules={validationRules}
+                        directUpdateData={{ is_handled: message.is_handled ? 0 : 1 }}
+                        renderAs={
+                            <button
+                                className={`status-toggle-btn ${message.is_handled ? 'handled' : 'pending'}`}
+                                title={message.is_handled ? 'סמן כלא מטופל' : 'סמן כמטופל'}
+                            >
+                                {message.is_handled ? 'סמן כלא מטופל' : 'סמן כמטופל'}
+                            </button>
+                        }
                     />
-
                     <DeleteItem
                         id={message.id}
                         type="messages"
