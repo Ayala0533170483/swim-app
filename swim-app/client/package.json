@@ -17,9 +17,11 @@
   },
   "dependencies": {
     "js-cookie": "^3.0.5",
+    "leaflet": "^1.9.4",
     "prop-types": "^15.8.1",
     "react-hook-form": "^7.56.4",
     "react-icons": "^5.5.0",
+    "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.6.1"
   }
 }

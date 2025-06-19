@@ -1,41 +1,104 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Branch from './Branch';
+import BranchesMap from './BranchesMap';
+import useHandleError from '../hooks/useHandleError';
+import useHandleDisplay from '../hooks/useHandleDisplay';
 import '../styles/Branches.css';
 
 function BranchesPage() {
   const [selectedBranch, setSelectedBranch] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const branches = [
-    {
-      id: 1,
-      name: "סניף תל אביב",
-      address: "רחוב הירקון 123, תל אביב",
-      phone: "03-1234567",
-      email: "telaviv@swimschool.co.il",
-      hours: "ראשון-חמישי: 06:00-22:00, שישי: 06:00-16:00, שבת: 08:00-20:00",
-      facilities: ["בריכה אולימפית", "בריכת ילדים", "ג'קוזי", "סאונה", "חדר כושר"],
-      image: "tel-aviv-branch.jpg"
-    },
-    {
-      id: 2,
-      name: "סניף חיפה",
-      address: "שדרות בן גוריון 456, חיפה",
-      phone: "04-7654321",
-      email: "haifa@swimschool.co.il",
-      hours: "ראשון-חמישי: 06:00-22:00, שישי: 06:00-15:00, שבת: 08:00-20:00",
-      facilities: ["בריכה אולימפית", "בריכת ילדים", "ג'קוזי", "חדר כושר"],
-      image: "haifa-branch.jpg"
-    },
-    {
-      id: 3,
-      name: "סניף ירושלים",
-      address: "רחוב יפו 789, ירושלים",
-      phone: "02-9876543",
-      email: "jerusalem@swimschool.co.il",
-      hours: "ראשון-חמישי: 06:00-22:00, שישי: 06:00-14:00, שבת: 20:00-23:00",
-      facilities: ["בריכה אולימפית", "בריכת ילדים", "סאונה", "חדר כושר", "מגרש כדורמים"],
-      image: "jerusalem-branch.jpg"
+  const { handleError, clearErrors } = useHandleError();
+  const [branches, setBranches, updateBranch, deleteBranch, addBranch] = useHandleDisplay([]);
+
+  const fetchBranches = async () => {
+    try {
+      setLoading(true);
+      clearErrors();
+
+      const response = await fetch('http://localhost:3000/branches', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        handleError('getError', new Error(`Server error: ${response.status}`), true);
+        return;
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        setBranches(result.data);
+      } else {
+        handleError('getError', new Error(result.error || 'Unknown error'), true);
+      }
+
+    } catch (error) {
+      console.error('Network error:', error);
+      handleError('getError', error, false);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchBranches();
+  }, []);
+
+  const handleBranchSelect = (branchId) => {
+    setSelectedBranch(selectedBranch === branchId ? null : branchId);
+  };
+
+  if (loading) {
+    return (
+      <div className="branches-page">
+        <div className="container">
+          <div className="branches-header">
+            <h1>הסניפים שלנו</h1>
+            <p>מצא את הסניף הקרוב אליך והצטרף למשפחת השחייה שלנו</p>
+          </div>
+
+          {/* רשימת הסניפים קודם */}
+          <div className="branches-grid">
+            {branches.map((branch) => (
+              <Branch
+                key={branch.pool_id}
+                branch={branch}
+                isSelected={selectedBranch === branch.pool_id}
+                onSelect={handleBranchSelect}
+              />
+            ))}
+          </div>
+
+          {/* המפה אחרי הרשימה */}
+          <div className="map-section">
+            <h2>מפת הסניפים</h2>
+            <BranchesMap
+              branches={branches}
+              selectedBranch={selectedBranch}
+              onBranchSelect={handleBranchSelect}
+            />
+          </div>
+        </div>
+      </div>
+    );
+
+  }
+
+  if (!branches || branches.length === 0) {
+    return (
+      <div className="branches-page">
+        <div className="container">
+          <div className="no-branches">אין סניפים זמינים כרגע</div>
+          <button onClick={fetchBranches} className="btn-primary">
+            נסה שוב
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="branches-page">
@@ -45,75 +108,29 @@ function BranchesPage() {
           <p>מצא את הסניף הקרוב אליך והצטרף למשפחת השחייה שלנו</p>
         </div>
 
+
+        {/* רשימת הסניפים */}
         <div className="branches-grid">
           {branches.map((branch) => (
-            <div 
-              key={branch.id} 
-              className={`branch-card ${selectedBranch === branch.id ? 'selected' : ''}`}
-              onClick={() => setSelectedBranch(selectedBranch === branch.id ? null : branch.id)}
-            >
-              <div className="branch-image">
-                <div className="image-placeholder">
-                  🏊‍♂️ תמונת הסניף
-                </div>
-              </div>
-              
-              <div className="branch-content">
-                <h2 className="branch-name">{branch.name}</h2>
-                
-                <div className="branch-info">
-                  <div className="info-item">
-                    <span className="info-icon">📍</span>
-                    <span className="info-text">{branch.address}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-icon">📞</span>
-                    <span className="info-text">{branch.phone}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-icon">✉️</span>
-                    <span className="info-text">{branch.email}</span>
-                  </div>
-                  
-                  <div className="info-item">
-                    <span className="info-icon">🕒</span>
-                    <span className="info-text">{branch.hours}</span>
-                  </div>
-                </div>
-
-                {selectedBranch === branch.id && (
-                  <div className="branch-details">
-                    <h3>מתקנים זמינים:</h3>
-                    <div className="facilities-list">
-                      {branch.facilities.map((facility, index) => (
-                        <span key={index} className="facility-tag">
-                          {facility}
-                        </span>
-                      ))}
-                    </div>
-                    
-                    <div className="branch-actions">
-                      <button className="btn-primary">הזמן שיעור ניסיון</button>
-                      <button className="btn-secondary">הוראות הגעה</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            <Branch
+              key={branch.pool_id}
+              branch={branch}
+              isSelected={selectedBranch === branch.pool_id}
+              onSelect={handleBranchSelect}
+            />
           ))}
         </div>
 
+        {/* המפה */}
         <div className="map-section">
           <h2>מפת הסניפים</h2>
-          <div className="map-placeholder">
-            <div className="map-content">
-              🗺️ כאן תוצג מפה אינטראקטיבית עם מיקום כל הסניפים
-              <p>ניתן להוסיף Google Maps או מפה אחרת</p>
-            </div>
-          </div>
+          <BranchesMap
+            branches={branches}
+            selectedBranch={selectedBranch}
+            onBranchSelect={handleBranchSelect}
+          />
         </div>
+
       </div>
     </div>
   );

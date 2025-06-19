@@ -1,26 +1,30 @@
 const express = require('express');
 const router = express.Router();
-// const branchesController = require('../controllers/branchesController');
+const branchesController = require('../controllers/branchesController'); 
 const verifyToken = require('../middleware/verifyToken');
 
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const query = { ...req.query };
-        if (query.user_id === 'null' && req.user && req.user.id) {
-            query.user_id = req.user.id;
-        }
         const branches = await branchesController.getBranches(query);
-        res.json({ data: branches });
+        res.json({ 
+            success: true,
+            data: branches 
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error fetching branches:', error);
+        res.status(500).json({ 
+            success: false,
+            error: error.message 
+        });
     }
 });
 
-router.post('/', async (req, res) => {
+// POST - ליצור בריכה חדשה (רק למנהלים)
+router.post('/', verifyToken, async (req, res) => {
     try {
-        const lessonData = req.body;
-
-        const newBranch = await branchesController.createBranch(lessonData);
+        const branchData = req.body;
+        const newBranch = await branchesController.createBranch(branchData);
 
         res.status(201).json({
             success: true,
@@ -29,20 +33,44 @@ router.post('/', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error creating lesson:', error);
+        console.error('Error creating branch:', error);
         res.status(500).json({
             success: false,
-            message: 'Error creating lesson',
+            message: 'Error creating branch',
             error: error.message
         });
     }
 });
 
+// PUT - לעדכון בריכה (רק למנהלים)
+router.put('/:id', verifyToken, async (req, res) => {
+    try {
+        const branchId = req.params.id;
+        const branchData = req.body;
+
+        const updatedBranch = await branchesController.updateBranch(branchId, branchData);
+
+        res.json({
+            success: true,
+            data: updatedBranch,
+            message: 'Branch updated successfully'
+        });
+
+    } catch (error) {
+        console.error('Error updating branch:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating branch',
+            error: error.message
+        });
+    }
+});
+
+// DELETE - למחיקת בריכה (רק למנהלים)
 router.delete('/:id', verifyToken, async (req, res) => {
     try {
-        const lessonId = req.params.id;
-
-        await branchesController.deleteBranch(lessonId);
+        const branchId = req.params.id;
+        await branchesController.deleteBranch(branchId);
 
         res.json({
             success: true,
@@ -50,10 +78,10 @@ router.delete('/:id', verifyToken, async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error deleting lesson:', error);
+        console.error('Error deleting branch:', error);
         res.status(500).json({
             success: false,
-            message: 'Error deleting lesson',
+            message: 'Error deleting branch',
             error: error.message
         });
     }

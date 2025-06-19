@@ -68,10 +68,7 @@ body {
   box-shadow: 0 20px 40px rgba(0, 102, 204, 0.3);
 }
 
-.branch-image {
-  height: 200px;
-  overflow: hidden;
-}
+
 
 .image-placeholder {
   width: 100%;
@@ -133,6 +130,7 @@ body {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -206,12 +204,7 @@ body {
   transform: translateY(-2px);
 }
 
-.map-section {
-  background: white;
-  padding: 3rem;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 102, 204, 0.1);
-}
+
 
 .map-section h2 {
   color: #0066cc;
@@ -245,20 +238,445 @@ body {
   font-weight: normal;
 }
 
-/* Responsive */
+/* הוסף בסוף הקובץ */
+
+.map-section {
+  margin: 2rem 0;
+}
+
+
+
+.map-popup {
+  text-align: center;
+  min-width: 200px;
+}
+
+.map-popup h3 {
+  margin: 0 0 0.5rem 0;
+  color: #0066cc;
+}
+
+.map-popup p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.popup-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.btn-small {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-small.btn-primary {
+  background-color: #0066cc;
+  color: white;
+}
+
+.btn-small.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-small:hover {
+  opacity: 0.8;
+}
+
+/* הוסף בסוף הקובץ */
+
+.map-section {
+  margin: 3rem 0 2rem 0;
+  padding-top: 2rem;
+  border-top: 2px solid #e9ecef;
+}
+
+.map-container {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin: 1rem 0;
+  position: relative;
+}
+
+
+/* סטיילים לטולטיפ */
+.map-tooltip {
+  text-align: center;
+  min-width: 200px;
+  font-family: inherit;
+  background: white;
+  border-radius: 8px;
+  padding: 0.5rem;
+}
+
+.map-tooltip h4 {
+  margin: 0 0 0.5rem 0;
+  color: #0066cc;
+  font-size: 1rem;
+}
+
+.map-tooltip p {
+  margin: 0.3rem 0;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.tooltip-actions {
+  margin: 0.8rem 0 0.5rem 0;
+}
+
+.tooltip-hint {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #eee;
+}
+
+.tooltip-hint small {
+  color: #6c757d;
+  font-size: 0.75rem;
+}
+
+.btn-small {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+/* הוסף בסוף הקובץ */
+
+.map-section {
+    margin: 3rem 0 2rem 0;
+    padding-top: 2rem;
+    border-top: 2px solid #e9ecef;
+}
+
+.map-container {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin: 1rem 0;
+    position: relative;
+}
+
+.map-instructions {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* פופאפ מותאם */
+.leaflet-popup-content-wrapper {
+    background: white !important;
+    border-radius: 12px !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15) !important;
+    border: 2px solid #0066cc !important;
+}
+
+.leaflet-popup-tip {
+    background: white !important;
+    border: 2px solid #0066cc !important;
+    border-top: none !important;
+    border-right: none !important;
+}
+
+.leaflet-popup-content {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.map-popup {
+    text-align: center;
+    min-width: 220px;
+    font-family: inherit;
+    padding: 1rem;
+}
+
+.map-popup h4 {
+    margin: 0 0 0.5rem 0;
+    color: #0066cc;
+    font-size: 1rem;
+}
+
+.map-popup p {
+    margin: 0.3rem 0;
+    font-size: 0.85rem;
+    text-align: right;
+}
+
+.popup-actions {
+    margin: 0.8rem 0 0.2rem 0;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-small {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.btn-small.btn-primary {
+    background-color: #0066cc;
+    color: white;
+}
+
+.btn-small.btn-secondary {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-small:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* אנימציה לכרטיסי הסניפים */
+.branch-card {
+    transition: all 0.3s ease;
+}
+
+.branch-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+
+.btn-small.btn-secondary {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-small:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* אנימציה לכרטיסי הסניפים */
+.branch-card {
+  transition: all 0.3s ease;
+}
+
+.branch-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* סטיילים מותאמים לטולטיפ של Leaflet */
+.leaflet-tooltip {
+  background-color: white !important;
+  border: 2px solid #0066cc !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.leaflet-tooltip-top:before {
+  border-top-color: #0066cc !important;
+}
+
+.branch-image {
+    position: relative;
+    height: 200px;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 12px 12px 0 0;
+    background-color: #f8f9fa;
+}
+
+.branch-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+
+
+.branch-card:hover .branch-img {
+    transform: scale(1.05);
+}
+
+.image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* אם התמונה לא נטענת */
+.branch-img[style*="display: none"] + .image-placeholder {
+    display: flex !important;
+}
+
+/* הוסף בסוף הקובץ */
+
+.map-section {
+    margin: 3rem 0 2rem 0;
+    padding-top: 2rem;
+    border-top: 2px solid #e9ecef;
+}
+
+.map-container {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin: 1rem 0;
+    position: relative;
+}
+
+.map-instructions {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* סטיילים לטולטיפ */
+.map-tooltip {
+    text-align: center;
+    min-width: 200px;
+    font-family: inherit;
+    background: white;
+    border-radius: 8px;
+    padding: 0.8rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.map-tooltip h4 {
+    margin: 0 0 0.5rem 0;
+    color: #0066cc;
+    font-size: 1rem;
+}
+
+.map-tooltip p {
+    margin: 0.3rem 0;
+    font-size: 0.85rem;
+    text-align: right;
+}
+
+.tooltip-actions {
+    margin: 0.8rem 0 0.5rem 0;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.tooltip-hint {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #eee;
+}
+
+.tooltip-hint small {
+    color: #6c757d;
+    font-size: 0.75rem;
+}
+
+.btn-small {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.btn-small.btn-primary {
+    background-color: #0066cc;
+    color: white;
+}
+
+.btn-small.btn-secondary {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-small:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* אנימציה לכרטיסי הסניפים */
+.branch-card {
+    transition: all 0.3s ease;
+}
+
+.branch-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* סטיילים מותאמים לטולטיפ של Leaflet */
+.leaflet-tooltip {
+    background-color: white !important;
+    border: 2px solid #0066cc !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    pointer-events: auto !important; /* חשוב! מאפשר לחיצה על הטולטיפ */
+}
+
+.leaflet-tooltip-top:before {
+    border-top-color: #0066cc !important;
+}
+
+/* טולטיפ קבוע (כשסניף נבחר) */
+.leaflet-tooltip-permanent {
+    pointer-events: auto !important;
+}
+
+
 @media (max-width: 768px) {
   .branches-header h1 {
     font-size: 2.2rem;
   }
-  
+
   .branches-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .branch-actions {
     flex-direction: column;
   }
-  
+
   .btn-primary,
   .btn-secondary {
     min-width: auto;
