@@ -4,8 +4,15 @@ import useHandleError from "../hooks/useHandleError";
 import refreshToken from "../js-files/RefreshToken";
 import Cookies from 'js-cookie';
 
-
-function Delete({ id, type, deleteDisplay, setDisplayChanged = () => { }, dependent, nameButton = "" }) {
+function Delete({ 
+    id, 
+    type, 
+    deleteDisplay, 
+    setDisplayChanged = () => { }, 
+    dependent, 
+    nameButton = "", // 🎯 הפרמטר הזה כבר קיים
+    text = "" // 🎯 נוסיף גם text כאופציה נוספת
+}) {
     const { handleError } = useHandleError();
 
     const sendDeleteRequest = async (token, url) => {
@@ -63,17 +70,19 @@ function Delete({ id, type, deleteDisplay, setDisplayChanged = () => { }, depend
                 setDisplayChanged(true);
             } else {
                 handleError("deleteError", null, true);
-
             }
         } catch (error) {
             handleError("deleteError", error, false);
         }
     }
 
+    // 🎯 קביעת הטקסט שיוצג
+    const displayText = nameButton || text || "";
+
     return (
         <button className="edit-button delete-variant" onClick={deleteItem}>
             <FaTrash className="edit-icon" />
-            {nameButton}
+            {displayText} {/* 🎯 הצגת הטקסט */}
         </button>
     )
 }

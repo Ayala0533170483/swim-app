@@ -16,7 +16,7 @@ function UserCard({ user, userType }) {
             {userType === 'students' ? '🏊‍♂️' : '👨‍🏫'}
           </span>
         </div>
-        
+
         <div className="user-details">
           <h3 className="user-name">{user.name}</h3>
           <p className="user-email">{user.email}</p>
@@ -25,10 +25,9 @@ function UserCard({ user, userType }) {
           </span>
         </div>
       </div>
-      
+
       <div className="user-actions">
-        <span className="click-hint">לחץ לפרטים נוספים</span>
-        <span className="arrow-icon">←</span>
+        <span className="click-hint">פרטים נוספים</span>
       </div>
     </div>
   );

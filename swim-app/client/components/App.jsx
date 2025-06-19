@@ -12,7 +12,7 @@ import NotFound from './NotFound';
 import MainLayout from './MainLayout';
 import MyLessons from './MyLessons';
 import RegisterLesson from './RegisterLesson';
-import UserManagement from './UserManagement';
+import UserManagement from './ItemManagement ';
 import Management from './Management';
 export const userContext = createContext();
 
@@ -34,7 +34,7 @@ export default function App() {
                     <Route path=":username/register-lesson" element={<RegisterLesson />} />
                     <Route path=":username/students" element={<UserManagement userType="students" />} />
                     <Route path=":username/teachers" element={<UserManagement userType="teachers" />} />
-
+                    <Route path=":username/pools" element={<UserManagement userType="pools" />} />
                     <Route path=":username/management" element={<Management />} />
                     <Route path=":username" element={<Profile />} />
                 </Route>

@@ -97,7 +97,7 @@
 }
 
 .user-card:hover .user-type {
-  background: linear-gradient(135deg, #0066cc, #00ccff);
+  /* background: linear-gradient(135deg, #0066cc, #00ccff); */
   color: white;
   transform: scale(1.05);
 }
@@ -215,3 +215,268 @@
     font-size: 1rem;
   }
 }
+
+
+
+
+
+/* הוספה לקובץ הקיים */
+.pool-card {
+  border-left: 4px solid #007bff;
+}
+
+.pool-address, .pool-phone {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 2px 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+/* הוספה לקובץ הקיים */
+
+.pool-card {
+  border-left: 4px solid #007bff;
+  transition: all 0.3s ease;
+}
+
+.pool-card.expanded {
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+}
+
+.expanded-details {
+  padding: 15px;
+  border-top: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+  margin-top: 10px;
+  border-radius: 0 0 8px 8px;
+}
+
+.pool-details h4 {
+  margin: 0 0 15px 0;
+  color: #495057;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #495057;
+  min-width: 80px;
+  margin-left: 10px;
+}
+
+.detail-value {
+  flex: 1;
+  text-align: right;
+  color: #6c757d;
+  word-break: break-word;
+}
+
+.no-additional-details {
+  color: #6c757d;
+  font-style: italic;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
+}
+
+.arrow-icon {
+  transition: transform 0.3s ease;
+  font-size: 1.2rem;
+}
+
+.arrow-icon.expanded {
+  transform: rotate(180deg);
+}
+
+.user-actions {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.user-actions:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.user-info {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.user-info:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* הוספה/עדכון לקובץ הקיים */
+
+.pool-card {
+  border-left: 4px solid #007bff;
+  transition: all 0.3s ease;
+}
+
+.pool-card.expanded {
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+}
+
+.expanded-details {
+  padding: 15px;
+  border-top: 1px solid #e9ecef;
+  background-color: #f8f9fa;
+  margin-top: 10px;
+  border-radius: 0 0 8px 8px;
+}
+
+.pool-details h4 {
+  margin: 0 0 15px 0;
+  color: #495057;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #495057;
+  min-width: 80px;
+  margin-left: 10px;
+}
+
+.detail-value {
+  flex: 1;
+  text-align: right;
+  color: #6c757d;
+  word-break: break-word;
+}
+
+.no-additional-details {
+  color: #6c757d;
+  font-style: italic;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
+}
+
+/* 🎯 עיצוב אחיד לכפתורי הפעולה */
+.pool-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  font-family: inherit;
+}
+
+/* כפתור עריכה */
+.pool-action-btn.edit-btn {
+  background-color: #497fb9;
+  color: white;
+}
+
+.pool-action-btn.edit-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+/* כפתור מחיקה */
+.pool-action-btn.delete-btn {
+  background-color:#007bff;
+  color: white;
+}
+
+.pool-action-btn.delete-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+/* הסתרת האיקונים המקוריים */
+.pool-action-btn .edit-icon {
+  display: none;
+}
+
+.arrow-icon {
+  transition: transform 0.3s ease;
+  font-size: 1.2rem;
+}
+
+.arrow-icon.expanded {
+  transform: rotate(180deg);
+}
+
+.user-actions {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.user-actions:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.user-info {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.user-info:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+

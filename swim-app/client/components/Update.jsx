@@ -92,8 +92,8 @@ function Update({
 
     const sendUpdateRequest = async (token) => {
         // 🎯 אם יש directUpdateData - השתמש בו, אחרת updatedItem
-        const dataToSend = directUpdateData ? 
-            { ...item, ...directUpdateData } : 
+        const dataToSend = directUpdateData ?
+            { ...item, ...directUpdateData } :
             { ...item, ...updatedItem };
 
         return await fetch(`http://localhost:3000/${type}/${item.id}`, {
@@ -124,10 +124,10 @@ function Update({
             }
 
             if (response.ok) {
-                const updatedData = directUpdateData ? 
-                    { ...item, ...directUpdateData } : 
+                const updatedData = directUpdateData ?
+                    { ...item, ...directUpdateData } :
                     { ...item, ...updatedItem };
-                
+
                 updateDisplay(updatedData);
                 setShowUpdateDetails(false);
                 setDisplayChanged(true);
@@ -153,7 +153,6 @@ function Update({
         type: 'input'
     }));
 
-    // 🎯 אם יש directUpdateData - זה מצב עדכון ישיר
     if (directUpdateData) {
         return (
             <div onClick={updateItem} style={{ cursor: 'pointer', display: 'inline-block' }}>
@@ -162,7 +161,6 @@ function Update({
         );
     }
 
-    // 🎯 אחרת - מצב רגיל עם עיפרון
     return (
         <>
             <FaPen className="edit-icon" onClick={() => setShowUpdateDetails(true)} />
