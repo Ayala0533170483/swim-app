@@ -12,6 +12,35 @@ function BranchesPage() {
   const { handleError, clearErrors } = useHandleError();
   const [branches, setBranches, updateBranch, deleteBranch, addBranch] = useHandleDisplay([]);
 
+  //     setLoading(true);
+  //     clearErrors();
+
+  //     const response = await fetch('http://localhost:3000/branches', {
+  //       method: 'GET',
+  //       credentials: 'include',
+  //     });
+
+  //     if (!response.ok) {
+  //       handleError('getError', new Error(`Server error: ${response.status}`), true);
+  //       return;
+  //     }
+
+  //     const result = await response.json();
+
+  //     if (result.success) {
+  //       setBranches(result.data);
+  //     } else {
+  //       handleError('getError', new Error(result.error || 'Unknown error'), true);
+  //     }
+
+  //   } catch (error) {
+  //     console.error('Network error:', error);
+  //     handleError('getError', error, false);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchBranches = async () => {
     try {
       setLoading(true);
@@ -21,6 +50,7 @@ function BranchesPage() {
         method: 'GET',
         credentials: 'include',
       });
+
 
       if (!response.ok) {
         handleError('getError', new Error(`Server error: ${response.status}`), true);
@@ -36,7 +66,6 @@ function BranchesPage() {
       }
 
     } catch (error) {
-      console.error('Network error:', error);
       handleError('getError', error, false);
     } finally {
       setLoading(false);

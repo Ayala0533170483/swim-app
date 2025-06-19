@@ -49,8 +49,43 @@
   transition: transform 0.3s ease;
 }
 
+/* 🎯 עיצוב מיוחד לתמונת בריכה - רחבה וגבוהה יותר, בלי מסגרת ואנימציות */
+.pool-avatar {
+  width: 150px;
+  /* רוחב גדול יותר */
+  height: 110px;
+  /* גובה גדול יותר */
+  border-radius: 10px;
+  /* עיגול יותר בולט */
+  background: none;
+  overflow: hidden;
+  border: none;
+  box-shadow: none;
+  transition: none;
+}
+
+
+.pool-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  transition: none;
+  animation: none;
+}
+
+/* הסרת כל האנימציות והאפקטים מתמונת הבריכה */
+.user-card:hover .pool-image {
+  transform: none;
+}
+
 .user-card:hover .user-avatar {
   transform: scale(1.1);
+}
+
+/* הסרת אנימציה מהאווטאר של הבריכה */
+.user-card:hover .pool-avatar {
+  transform: none;
 }
 
 .avatar-icon {
@@ -60,6 +95,22 @@
 
 .user-details {
   flex: 1;
+}
+
+/* 🎯 עיצוב מיוחד לפרטי בריכה */
+.pool-details-main {
+  flex: 1;
+  margin-right: 1rem;
+  /* מרווח מהתמונה */
+  text-align: center;
+  /* מרכז את הטקסט */
+}
+
+.pool-phone-preview {
+  color: #666;
+  font-size: 0.95rem;
+  margin: 0.3rem 0;
+  font-weight: 500;
 }
 
 .user-name {
@@ -97,8 +148,8 @@
 }
 
 .user-card:hover .user-type {
-  /* background: linear-gradient(135deg, #0066cc, #00ccff); */
   color: white;
+  background: linear-gradient(135deg, #0066cc, #00ccff);
   transform: scale(1.05);
 }
 
@@ -137,23 +188,31 @@
 
 /* אנימציות */
 @keyframes fadeIn {
-  from { 
-    opacity: 0; 
-    transform: translateY(20px); 
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateX(-3px);
   }
+
   40% {
     transform: translateX(-8px);
   }
+
   60% {
     transform: translateX(-5px);
   }
@@ -176,20 +235,31 @@
     text-align: center;
     gap: 1rem;
   }
-  
+
   .user-info {
     flex-direction: column;
     text-align: center;
     gap: 1rem;
   }
-  
+
+  .pool-details-main {
+    text-align: center;
+    margin-right: 0;
+  }
+
   .user-actions {
     flex-direction: row;
     gap: 1rem;
   }
-  
+
   .click-hint {
     font-size: 0.8rem;
+  }
+
+  /* עדכון גודל תמונת בריכה במובייל */
+  .pool-avatar {
+    width: 100px;
+    height: 75px;
   }
 }
 
@@ -197,147 +267,29 @@
   .user-card {
     padding: 1rem;
   }
-  
+
   .user-avatar {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
   }
-  
+
+  /* עדכון גודל תמונת בריכה במובייל קטן */
+  .pool-avatar {
+    width: 90px;
+    height: 65px;
+  }
+
   .avatar-icon {
     font-size: 1.5rem;
   }
-  
+
   .user-name {
     font-size: 1.2rem;
   }
-  
+
   .user-email {
     font-size: 1rem;
   }
-}
-
-
-
-
-
-/* הוספה לקובץ הקיים */
-.pool-card {
-  border-left: 4px solid #007bff;
-}
-
-.pool-address, .pool-phone {
-  font-size: 0.9rem;
-  color: #666;
-  margin: 2px 0;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 5px;
-}
-/* הוספה לקובץ הקיים */
-
-.pool-card {
-  border-left: 4px solid #007bff;
-  transition: all 0.3s ease;
-}
-
-.pool-card.expanded {
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
-}
-
-.expanded-details {
-  padding: 15px;
-  border-top: 1px solid #e9ecef;
-  background-color: #f8f9fa;
-  margin-top: 10px;
-  border-radius: 0 0 8px 8px;
-}
-
-.pool-details h4 {
-  margin: 0 0 15px 0;
-  color: #495057;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.detail-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.detail-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
-.detail-label {
-  font-weight: 600;
-  color: #495057;
-  min-width: 80px;
-  margin-left: 10px;
-}
-
-.detail-value {
-  flex: 1;
-  text-align: right;
-  color: #6c757d;
-  word-break: break-word;
-}
-
-.no-additional-details {
-  color: #6c757d;
-  font-style: italic;
-  text-align: center;
-  margin: 10px 0;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 1px solid #dee2e6;
-}
-
-.arrow-icon {
-  transition: transform 0.3s ease;
-  font-size: 1.2rem;
-}
-
-.arrow-icon.expanded {
-  transform: rotate(180deg);
-}
-
-.user-actions {
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.user-actions:hover {
-  background-color: rgba(0, 123, 255, 0.05);
-}
-
-.user-info {
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.user-info:hover {
-  background-color: rgba(0, 123, 255, 0.05);
-}
-
-/* הוספה/עדכון לקובץ הקיים */
-
-.pool-card {
-  border-left: 4px solid #007bff;
-  transition: all 0.3s ease;
 }
 
 .pool-card.expanded {
@@ -434,7 +386,7 @@
 
 /* כפתור מחיקה */
 .pool-action-btn.delete-btn {
-  background-color:#007bff;
+  background-color: #007bff;
   color: white;
 }
 
@@ -480,3 +432,137 @@
   background-color: rgba(0, 123, 255, 0.05);
 }
 
+/* 🎯 עיצוב מיוחד לכרטיס בריכה עם תמונה */
+.pool-card .user-info {
+  align-items: stretch;
+  /* מאפשר לתמונה להיות גבוהה יותר */
+  min-height: 100px;
+}
+
+.pool-card .pool-details-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+/* הסרת אפקט טעינה ואנימציות מתמונה */
+.pool-image {
+  background: none;
+  transition: none;
+  animation: none;
+}
+
+.pool-image:not([src]),
+.pool-image[src=""] {
+  background: linear-gradient(135deg, #0066cc, #00ccff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pool-image:not([src])::before,
+.pool-image[src=""]::before {
+  content: "🏊‍♂️";
+  font-size: 2rem;
+  color: white;
+}
+
+/* הסרת אנימציה לטעינת תמונה */
+.pool-image[src]:not([src=""]) {
+  animation: none;
+}
+
+/* עיצוב משופר לפרטי בריכה */
+.pool-card .user-name {
+  font-size: 1.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.pool-card .user-email {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #0066cc;
+  margin-bottom: 0.3rem;
+}
+
+.pool-card .pool-phone-preview {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Responsive עבור בריכות */
+@media (max-width: 768px) {
+  .pool-card .user-info {
+    min-height: 80px;
+  }
+
+  .pool-card .user-name {
+    font-size: 1.3rem;
+  }
+
+  .pool-card .user-email {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pool-card .user-email {
+    .pool-card .user-email {
+      font-size: 1rem;
+    }
+
+    .pool-phone-preview {
+      font-size: 0.85rem;
+    }
+  }
+
+  /* הסרת כל האנימציות והאפקטים מתמונת הבריכה */
+  .pool-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0066cc, #00ccff);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  .pool-icon {
+    font-size: 2rem;
+    margin-bottom: 0.2rem;
+  }
+
+  /* הסרת כל האנימציות מהכרטיס כולו כשמדובר בבריכה */
+  .pool-card:hover .pool-avatar {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .pool-card .pool-avatar {
+    box-shadow: none;
+    transition: none;
+  }
+
+  /* וידוא שהתמונה תופיע בצורה נקייה ללא אפקטים */
+  .pool-card .pool-image {
+    border: none;
+    box-shadow: none;
+    filter: none;
+    transition: none;
+    transform: none;
+  }
+
+  .pool-card:hover .pool-image {
+    border: none;
+    box-shadow: none;
+    filter: none;
+    transition: none;
+    transform: none;
+  }
+}

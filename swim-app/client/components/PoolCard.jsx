@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Update from './Update';
 import DeleteItem from './DeleteItem';
-import { updateKeys, validationRules } from '../structures/PoolCardStructure';
+import { updateKeys, validationRules, getImageUrl } from '../structures/PoolCardStructure';
 import '../styles/UserCard.css';
 
 function PoolCard({ pool, updateDisplay, deleteDisplay, setDisplayChanged }) {
@@ -12,18 +12,53 @@ function PoolCard({ pool, updateDisplay, deleteDisplay, setDisplayChanged }) {
     console.log(`Clicked on pool: ${pool.name}`);
   };
 
+  // 🎯 בואו נבדוק מה יש בנתונים
+  console.log('🔍 Pool data:', pool);
+  console.log('🔍 Image path:', pool.image_path);
+
+  const imageUrl = getImageUrl(pool.image_path);
+  console.log('🔍 Generated image URL:', imageUrl);
+
   return (
     <div className={`user-card pool-card ${isExpanded ? 'expanded' : ''}`}>
       {/* החלק הבסיסי - תמיד נראה */}
       <div className="user-info" onClick={handleCardClick}>
-        <div className="user-avatar">
-          <span className="avatar-icon">🏊‍♂️</span>
+        <div className="user-avatar pool-avatar">
+          {imageUrl ? (
+            <>
+              <img
+                src={imageUrl}
+                alt={pool.name}
+                className="pool-image"
+                onLoad={() => console.log('✅ Image loaded:', imageUrl)}
+                onError={(e) => {
+                  console.log('❌ Image failed to load:', imageUrl);
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+              <div
+                className="pool-placeholder"
+                style={{ display: 'none' }}
+              >
+                <span className="pool-icon">🏊‍♂️</span>
+                <small>{pool.name}</small>
+              </div>
+            </>
+          ) : (
+            <div className="pool-placeholder">
+              <span className="pool-icon">🏊‍♂️</span>
+              <small>אין תמונה</small>
+            </div>
+          )}
         </div>
 
-        <div className="user-details">
+        <div className="user-details pool-details-main">
           <h3 className="user-name">{pool.name}</h3>
           <p className="user-email">{pool.city}</p>
-          <span className="user-type">בריכה</span>
+          {pool.phone && (
+            <p className="pool-phone-preview">📞 {pool.phone}</p>
+          )}
         </div>
       </div>
 
@@ -39,14 +74,6 @@ function PoolCard({ pool, updateDisplay, deleteDisplay, setDisplayChanged }) {
         <div className="expanded-details">
           <div className="pool-details">
             <h4>פרטי הבריכה:</h4>
-
-            {pool.address && (
-              <div className="detail-item">
-                <span className="detail-label">כתובת:</span>
-                <span className="detail-value">{pool.address}</span>
-              </div>
-            )}
-
             {pool.phone && (
               <div className="detail-item">
                 <span className="detail-label">טלפון:</span>
@@ -59,10 +86,6 @@ function PoolCard({ pool, updateDisplay, deleteDisplay, setDisplayChanged }) {
                 <span className="detail-label">תיאור:</span>
                 <span className="detail-value">{pool.description}</span>
               </div>
-            )}
-
-            {(!pool.address && !pool.phone && !pool.description && !pool.latitude) && (
-              <p className="no-additional-details">אין פרטים נוספים</p>
             )}
           </div>
 

@@ -16,7 +16,6 @@ app.set('trust proxy', true);
 
 const authRouter = require('./api/authRouter.js');
 const usersRouter = require('./api/usersRouter.js');
-const poolsRouter = require('./api/poolsRouter.js');
 const lessonesRouter = require('./api/lessonsRouter.js');
 const registerLessonsRouter = require('./api/registerLessonsRouter.js')
 const messagesRouter = require('./api/messagesRouter.js');
@@ -24,11 +23,12 @@ const branchesRouter = require('./api/branchesRouter.js');
 
 app.use('/', authRouter);
 app.use('/users', verifyToken, usersRouter);
-app.use('/pools', verifyToken, poolsRouter);
 app.use('/lessons', verifyToken, lessonesRouter);
 app.use('/registerLessons', verifyToken, registerLessonsRouter)
 app.use('/messages', messagesRouter);
+app.use('/pools', branchesRouter);
 app.use('/branches', branchesRouter);
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const PORT = 3000;

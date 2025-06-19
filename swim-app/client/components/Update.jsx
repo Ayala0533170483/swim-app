@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { FaPen } from "react-icons/fa";
+import { FaPen, FaImage } from "react-icons/fa";
 import "../styles/Update.css";
+import "../styles/FileInput.css";
 import useHandleError from "../hooks/useHandleError";
 import refreshToken from "../js-files/RefreshToken";
 import Cookies from 'js-cookie';
+import { getImageUrl } from "../structures/PoolCardStructure";
 
 function Update({
     userType,
@@ -13,14 +15,13 @@ function Update({
     nameButton,
     setDisplayChanged = () => { },
     keys = null,
-    validationRules = {},
-    // 🎯 2 אופציות חדשות כמו שעשית
-    directUpdateData = null, // הנתונים לעדכון ישיר
-    renderAs = null // מה לרנדר במקום עיפרון
+    validationRules = {}
 }) {
     const [showUpdateDetails, setShowUpdateDetails] = useState(false);
     const [updatedItem, setUpdatedItem] = useState(item);
     const [errors, setErrors] = useState({});
+    const [imagePreview, setImagePreview] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
     const { handleError } = useHandleError();
 
     const handleInputChange = (key, value) => {
@@ -46,6 +47,23 @@ function Update({
         }
     };
 
+    // פונקציה לטיפול בבחירת תמונה חדשה
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        setSelectedFile(file);
+        
+        if (file) {
+            // יצירת preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setImagePreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setImagePreview(null);
+        }
+    };
+
     const validateForm = () => {
         const newErrors = {};
         let isValid = true;
@@ -54,6 +72,25 @@ function Update({
             keys.forEach(field => {
                 const value = updatedItem[field.key];
                 const rules = validationRules[field.key];
+
+                // עבור שדה תמונה בעדכון - לא חובה (שונה מהוספה)
+                if (field.type === 'file' && field.key === 'image') {
+                    if (selectedFile) {
+                        // אם נבחר קובץ חדש, בדוק אותו
+                        const maxSize = 5 * 1024 * 1024; // 5MB
+                        if (selectedFile.size > maxSize) {
+                            newErrors[field.key] = 'גודל התמונה חייב להיות עד 5MB';
+                            isValid = false;
+                        }
+                        
+                        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                        if (!allowedTypes.includes(selectedFile.type)) {
+                            newErrors[field.key] = 'רק קבצי JPG, JPEG, PNG מותרים';
+                            isValid = false;
+                        }
+                    }
+                    return; // דלג על בדיקות נוספות לשדה תמונה
+                }
 
                 if (rules) {
                     if (rules.required && (!value || value.toString().trim() === '')) {
@@ -75,6 +112,7 @@ function Update({
                         newErrors[field.key] = rules.maxLength.message || `${field.label} לא יכול להכיל יותר מ-${rules.maxLength.value} תווים`;
                         isValid = false;
                     }
+                    
                     if (value && rules.validate) {
                         const validationResult = rules.validate(value, updatedItem);
                         if (validationResult !== true) {
@@ -91,25 +129,45 @@ function Update({
     };
 
     const sendUpdateRequest = async (token) => {
-        // 🎯 אם יש directUpdateData - השתמש בו, אחרת updatedItem
-        const dataToSend = directUpdateData ?
-            { ...item, ...directUpdateData } :
-            { ...item, ...updatedItem };
+        const url = `http://localhost:3000/${type}/${item.pool_id || item.id}`;
+        const headers = {};
 
-        return await fetch(`http://localhost:3000/${type}/${item.id}`, {
+        // בדיקה אם יש קובץ תמונה חדש
+        let body;
+        if (selectedFile) {
+            // שליחה כ-FormData עבור קבצים
+            const formData = new FormData();
+            
+            // הוספת כל השדות המעודכנים
+            Object.keys(updatedItem).forEach(key => {
+                if (key !== 'image' && updatedItem[key] !== undefined && updatedItem[key] !== null) {
+                    formData.append(key, updatedItem[key]);
+                }
+            });
+            
+            // הוספת התמונה החדשה
+            formData.append('image', selectedFile);
+            
+            body = formData;
+            // לא מגדירים Content-Type - הדפדפן יגדיר אוטומטית
+        } else {
+            // שליחה רגילה כ-JSON (בלי תמונה חדשה)
+            headers["Content-Type"] = "application/json";
+            body = JSON.stringify({ ...item, ...updatedItem });
+        }
+
+        headers.Authorization = `Bearer ${token}`;
+
+        return await fetch(url, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                ...(token && { Authorization: `Bearer ${token}` }),
-            },
+            headers,
             credentials: 'include',
-            body: JSON.stringify(dataToSend),
+            body,
         });
     };
 
     async function updateItem() {
-        // 🎯 אם זה עדכון ישיר - דלג על ולידציה
-        if (!directUpdateData && !validateForm()) {
+        if (!validateForm()) {
             return;
         }
 
@@ -118,26 +176,35 @@ function Update({
         try {
             let response = await sendUpdateRequest(token);
 
-            if (response.status === 401) {
+            if (response.status === 401 || response.status === 403) {
                 token = await refreshToken();
                 response = await sendUpdateRequest(token);
             }
 
             if (response.ok) {
-                const updatedData = directUpdateData ?
-                    { ...item, ...directUpdateData } :
-                    { ...item, ...updatedItem };
-
+                const result = await response.json();
+                const updatedData = result.data || { ...item, ...updatedItem };
+                
                 updateDisplay(updatedData);
                 setShowUpdateDetails(false);
                 setDisplayChanged(true);
                 setErrors({});
+                setImagePreview(null);
+                setSelectedFile(null);
             } else {
-                throw new Error("Failed to update item.");
+                const errorData = await response.json().catch(() => ({}));
+                console.error('Error response:', errorData);
+                
+                // הצגת הודעת שגיאה ספציפית
+                if (errorData.message && (errorData.message.includes('תמונה') || errorData.message.includes('גודל'))) {
+                    alert(errorData.message);
+                } else {
+                    handleError("updateError", null, true);
+                }
             }
 
         } catch (ex) {
-            handleError("updateError", ex);
+            handleError("updateError", ex, false);
         }
     }
 
@@ -145,6 +212,17 @@ function Update({
         setUpdatedItem(item);
         setShowUpdateDetails(false);
         setErrors({});
+        setImagePreview(null);
+        setSelectedFile(null);
+    };
+
+    const clearImage = (fieldKey) => {
+        setImagePreview(null);
+        setSelectedFile(null);
+        const fileInput = document.getElementById(`${fieldKey}-file`);
+        if (fileInput) {
+            fileInput.value = '';
+        }
     };
 
     const fieldsToRender = keys || Object.keys(updatedItem).filter(key => key !== "id").map(key => ({
@@ -153,49 +231,152 @@ function Update({
         type: 'input'
     }));
 
-    if (directUpdateData) {
-        return (
-            <div onClick={updateItem} style={{ cursor: 'pointer', display: 'inline-block' }}>
-                {renderAs || <span>עדכן</span>}
-            </div>
-        );
-    }
+    // קבלת URL התמונה הנוכחית
+    const currentImageUrl = item.image_path ? getImageUrl(item.image_path) : null;
 
     return (
         <>
-            <FaPen className="edit-icon" onClick={() => setShowUpdateDetails(true)} />
+            <button className="edit-button" onClick={() => setShowUpdateDetails(true)}>
+                <FaPen className="edit-icon" />
+                {nameButton}
+            </button>
 
             {showUpdateDetails && (
                 <div className="overlay">
                     <div className="modal">
-                        <h2>Edit {type}</h2>
-                        {fieldsToRender.map((field) => (
-                            <div key={field.key} style={{ marginBottom: "10px" }}>
-                                <label htmlFor={field.key} style={{ display: "block", fontWeight: "bold" }}>
-                                    {field.label || field.key}:
-                                </label>
-                                <input
-                                    id={field.key}
-                                    value={updatedItem[field.key] || ''}
-                                    placeholder={field.key}
-                                    onChange={(e) => handleInputChange(field.key, e.target.value)}
-                                    style={{
-                                        width: "100%",
-                                        padding: "8px",
-                                        border: "1px solid #ccc",
-                                        borderRadius: "4px",
-                                    }}
-                                />
-                                {errors[field.key] && (
-                                    <span className="error-message">
-                                        {errors[field.key]}
-                                    </span>
-                                )}
-                            </div>
-                        ))}
-                        <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-                            <button onClick={updateItem} className="btn-primary">Update</button>
-                            <button onClick={handleCancel} className="btn-primary">Cancel</button>
+                        <h2 className="modal-title">{nameButton}</h2>
+                        <div className="form-container">
+                            {fieldsToRender.map((field) => (
+                                <div key={field.key} className="form-field">
+                                    <label htmlFor={field.key} className="field-label">
+                                        {field.label}:
+                                    </label>
+
+                                    {field.type === 'select' ? (
+                                        <>
+                                            <select
+                                                id={field.key}
+                                                value={updatedItem[field.key] || ''}
+                                                className="field-input"
+                                                onChange={(e) => handleInputChange(field.key, e.target.value)}
+                                            >
+                                                <option value="">{field.placeholder || `בחר ${field.label}`}</option>
+                                                {field.options?.map(option => (
+                                                    <option key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {errors[field.key] && (
+                                                <span className="error-message">
+                                                    {errors[field.key]}
+                                                </span>
+                                            )}
+                                        </>
+                                    ) : field.type === 'textarea' ? (
+                                        <>
+                                            <textarea
+                                                id={field.key}
+                                                value={updatedItem[field.key] || ''}
+                                                placeholder={field.placeholder || field.label}
+                                                className="field-input"
+                                                rows={field.rows || 3}
+                                                onChange={(e) => handleInputChange(field.key, e.target.value)}
+                                            />
+                                            {errors[field.key] && (
+                                                <span className="error-message">
+                                                    {errors[field.key]}
+                                                </span>
+                                            )}
+                                        </>
+                                    ) : field.type === 'file' ? (
+                                        <>
+                                            <div className="file-input-wrapper">
+                                                <input
+                                                    type="file"
+                                                    id={`${field.key}-file`}
+                                                    accept={field.accept}
+                                                    className="hidden-file-input"
+                                                    onChange={handleImageChange}
+                                                />
+                                                <div 
+                                                    className="fake-file-input"
+                                                    onClick={() => document.getElementById(`${field.key}-file`).click()}
+                                                >
+                                                    <span className="file-input-text">
+                                                        {imagePreview ? 'תמונה חדשה נבחרה' : 
+                                                         currentImageUrl ? 'תמונה קיימת' : 'בחר תמונה...'}
+                                                    </span>
+                                                    <div className="file-input-icons">
+                                                        {(imagePreview || selectedFile) && (
+                                                            <button
+                                                                type="button"
+                                                                className="clear-file-btn"
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    clearImage(field.key);
+                                                                }}
+                                                            >
+                                                                ×
+                                                            </button>
+                                                        )}
+                                                        <FaImage className="file-input-icon" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            {field.note && (
+                                                <small className="field-note">{field.note}</small>
+                                            )}
+                                            
+                                            {/* תמונה קטנה - נוכחית או חדשה */}
+                                            {(imagePreview || currentImageUrl) && (
+                                                <div className="mini-image-preview">
+                                                    <img 
+                                                        src={imagePreview || currentImageUrl} 
+                                                        alt={imagePreview ? "תמונה חדשה" : "תמונה נוכחית"} 
+                                                        className="mini-preview-image"
+                                                    />
+                                                    {imagePreview && <small className="preview-label">תמונה חדשה</small>}
+                                                </div>
+                                            )}
+                                            
+                                            {errors[field.key] && (
+                                                <span className="error-message">
+                                                    {errors[field.key]}
+                                                </span>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <input
+                                                id={field.key}
+                                                type={field.inputType || 'text'}
+                                                value={updatedItem[field.key] || ''}
+                                                placeholder={field.placeholder || field.label}
+                                                className="field-input"
+                                                min={field.min}
+                                                max={field.max}
+                                                step={field.step}
+                                                onChange={(e) => handleInputChange(field.key, e.target.value)}
+                                            />
+                                            {errors[field.key] && (
+                                                <span className="error-message">
+                                                    {errors[field.key]}
+                                                </span>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                        <div className="button-container">
+                            <button onClick={updateItem} className="btn-primary">
+                                עריכה
+                            </button>
+                            <button onClick={handleCancel} className="btn-primary">
+                                ביטול
+                            </button>
                         </div>
                     </div>
                 </div>

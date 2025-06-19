@@ -1,4 +1,5 @@
 import React from 'react';
+import { fetchData } from '../js-files/GeneralRequests';
 
 function Branch({ branch, isSelected, onSelect }) {
     const getImageUrl = (imagePath) => {
@@ -11,6 +12,11 @@ function Branch({ branch, isSelected, onSelect }) {
     };
 
     const imageUrl = getImageUrl(branch.image_path);
+
+    const handleError = (errorType, error) => {
+        console.error(`${errorType}:`, error);
+    };
+
 
     return (
         <div
@@ -25,7 +31,6 @@ function Branch({ branch, isSelected, onSelect }) {
                             alt={branch.name}
                             className="branch-img"
                             onError={(e) => {
-                                // אם התמונה לא נטענת - הצג placeholder
                                 e.target.style.display = 'none';
                                 e.target.nextSibling.style.display = 'flex';
                             }}
