@@ -8,7 +8,7 @@ import '../styles/Message.css';
 function Messages() {
   const [messages, setMessages, updateMessage, deleteMessage] = useHandleDisplay([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('pending'); 
+  const [filter, setFilter] = useState('pending');
   const { handleError } = useHandleError();
 
   useEffect(() => {
@@ -29,14 +29,14 @@ function Messages() {
 
   const getFilteredMessages = () => {
     if (!messages) return [];
-    
+
     switch (filter) {
       case 'pending':
         return messages.filter(msg => !msg.is_handled);
       case 'handled':
         return messages.filter(msg => msg.is_handled);
       default:
-        return messages.filter(msg => !msg.is_handled); 
+        return messages.filter(msg => !msg.is_handled);
     }
   };
 
@@ -72,13 +72,13 @@ function Messages() {
       </div>
 
       <div className="messages-filters">
-        <button 
+        <button
           className={`filter-btn ${filter === 'pending' ? 'active' : ''}`}
           onClick={() => setFilter('pending')}
         >
           חדשות ({pendingCount})
         </button>
-        <button 
+        <button
           className={`filter-btn ${filter === 'handled' ? 'active' : ''}`}
           onClick={() => setFilter('handled')}
         >

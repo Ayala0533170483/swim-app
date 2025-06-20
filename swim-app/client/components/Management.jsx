@@ -1,13 +1,13 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import Messages from './Messages';
 import '../styles/Management.css';
 
 function Management() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { username } = useParams();
 
-  // קובע לפי הנתיב איזה חלק להציג
   const path = location.pathname;
   const activeSection = path.endsWith('/messages') ? 'messages' : 'overview';
 
@@ -23,7 +23,7 @@ function Management() {
             <div className="management-options">
               <div
                 className="management-card"
-                onClick={() => navigate('/management/messages')}
+                onClick={() => navigate(`/${username}/management/messages`)} // תיקון הנתיב
               >
                 <h3>הודעות צור קשר</h3>
                 <p>צפייה וניהול הודעות מלקוחות</p>
@@ -50,7 +50,7 @@ function Management() {
     <div className="management-container">
       {activeSection !== 'overview' && (
         <div className="back-navigation">
-          <button className="back-btn" onClick={() => navigate('/management')}>
+          <button className="back-btn" onClick={() => navigate(`/${username}/management`)}>
             ← חזור לניהול כללי
           </button>
         </div>
