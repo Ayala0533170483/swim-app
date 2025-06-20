@@ -15,7 +15,9 @@ function Update({
     nameButton,
     setDisplayChanged = () => { },
     keys = null,
-    validationRules = {}
+    validationRules = {},
+    directUpdateData = null,
+    renderAs = null
 }) {
     const [showUpdateDetails, setShowUpdateDetails] = useState(false);
     const [updatedItem, setUpdatedItem] = useState(item);
@@ -51,7 +53,7 @@ function Update({
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         setSelectedFile(file);
-        
+
         if (file) {
             // יצירת preview
             const reader = new FileReader();
@@ -82,7 +84,7 @@ function Update({
                             newErrors[field.key] = 'גודל התמונה חייב להיות עד 5MB';
                             isValid = false;
                         }
-                        
+
                         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
                         if (!allowedTypes.includes(selectedFile.type)) {
                             newErrors[field.key] = 'רק קבצי JPG, JPEG, PNG מותרים';
@@ -112,7 +114,7 @@ function Update({
                         newErrors[field.key] = rules.maxLength.message || `${field.label} לא יכול להכיל יותר מ-${rules.maxLength.value} תווים`;
                         isValid = false;
                     }
-                    
+
                     if (value && rules.validate) {
                         const validationResult = rules.validate(value, updatedItem);
                         if (validationResult !== true) {
@@ -128,32 +130,26 @@ function Update({
         return isValid;
     };
 
-    const sendUpdateRequest = async (token) => {
+    const sendUpdateRequest = async (token, dataToSend = null) => {
         const url = `http://localhost:3000/${type}/${item.pool_id || item.id}`;
         const headers = {};
 
-        // בדיקה אם יש קובץ תמונה חדש
         let body;
         if (selectedFile) {
-            // שליחה כ-FormData עבור קבצים
             const formData = new FormData();
-            
-            // הוספת כל השדות המעודכנים
+
             Object.keys(updatedItem).forEach(key => {
                 if (key !== 'image' && updatedItem[key] !== undefined && updatedItem[key] !== null) {
                     formData.append(key, updatedItem[key]);
                 }
             });
-            
-            // הוספת התמונה החדשה
+
             formData.append('image', selectedFile);
-            
+
             body = formData;
-            // לא מגדירים Content-Type - הדפדפן יגדיר אוטומטית
         } else {
-            // שליחה רגילה כ-JSON (בלי תמונה חדשה)
             headers["Content-Type"] = "application/json";
-            body = JSON.stringify({ ...item, ...updatedItem });
+            body = JSON.stringify(dataToSend || { ...item, ...updatedItem });
         }
 
         headers.Authorization = `Bearer ${token}`;
@@ -184,7 +180,7 @@ function Update({
             if (response.ok) {
                 const result = await response.json();
                 const updatedData = result.data || { ...item, ...updatedItem };
-                
+
                 updateDisplay(updatedData);
                 setShowUpdateDetails(false);
                 setDisplayChanged(true);
@@ -194,7 +190,7 @@ function Update({
             } else {
                 const errorData = await response.json().catch(() => ({}));
                 console.error('Error response:', errorData);
-                
+
                 // הצגת הודעת שגיאה ספציפית
                 if (errorData.message && (errorData.message.includes('תמונה') || errorData.message.includes('גודל'))) {
                     alert(errorData.message);
@@ -207,6 +203,33 @@ function Update({
             handleError("updateError", ex, false);
         }
     }
+
+    async function quickUpdate() {
+        let token = Cookies.get("accessToken");
+
+        try {
+            const dataToUpdate = { ...item, ...directUpdateData };
+            let response = await sendUpdateRequest(token, dataToUpdate);
+
+            if (response.status === 401 || response.status === 403) {
+                token = await refreshToken();
+                response = await sendUpdateRequest(token, dataToUpdate);
+            }
+
+            if (response.ok) {
+                const result = await response.json();
+                const updatedData = result.data || dataToUpdate;
+                updateDisplay(updatedData);
+                setDisplayChanged(true);
+            } else {
+                const errorData = await response.json().catch(() => ({}));
+                handleError("updateError", null, true);
+            }
+        } catch (ex) {
+            handleError("updateError", ex, false);
+        }
+    }
+
 
     const handleCancel = () => {
         setUpdatedItem(item);
@@ -231,15 +254,25 @@ function Update({
         type: 'input'
     }));
 
-    // קבלת URL התמונה הנוכחית
     const currentImageUrl = item.image_path ? getImageUrl(item.image_path) : null;
 
     return (
         <>
-            <button className="edit-button" onClick={() => setShowUpdateDetails(true)}>
-                <FaPen className="edit-icon" />
-                {nameButton}
-            </button>
+            {directUpdateData ? (
+                renderAs ? (
+                    React.cloneElement(renderAs, { onClick: quickUpdate })
+                ) : (
+                    <button className="edit-button" onClick={quickUpdate}>
+                        <FaPen className="edit-icon" />
+                        {nameButton}
+                    </button>
+                )
+            ) : (
+                <button className="edit-button" onClick={() => setShowUpdateDetails(true)}>
+                    <FaPen className="edit-icon" />
+                    {nameButton}
+                </button>
+            )}
 
             {showUpdateDetails && (
                 <div className="overlay">
@@ -299,13 +332,13 @@ function Update({
                                                     className="hidden-file-input"
                                                     onChange={handleImageChange}
                                                 />
-                                                <div 
+                                                <div
                                                     className="fake-file-input"
                                                     onClick={() => document.getElementById(`${field.key}-file`).click()}
                                                 >
                                                     <span className="file-input-text">
-                                                        {imagePreview ? 'תמונה חדשה נבחרה' : 
-                                                         currentImageUrl ? 'תמונה קיימת' : 'בחר תמונה...'}
+                                                        {imagePreview ? 'תמונה חדשה נבחרה' :
+                                                            currentImageUrl ? 'תמונה קיימת' : 'בחר תמונה...'}
                                                     </span>
                                                     <div className="file-input-icons">
                                                         {(imagePreview || selectedFile) && (
@@ -324,23 +357,23 @@ function Update({
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             {field.note && (
                                                 <small className="field-note">{field.note}</small>
                                             )}
-                                            
+
                                             {/* תמונה קטנה - נוכחית או חדשה */}
                                             {(imagePreview || currentImageUrl) && (
                                                 <div className="mini-image-preview">
-                                                    <img 
-                                                        src={imagePreview || currentImageUrl} 
-                                                        alt={imagePreview ? "תמונה חדשה" : "תמונה נוכחית"} 
+                                                    <img
+                                                        src={imagePreview || currentImageUrl}
+                                                        alt={imagePreview ? "תמונה חדשה" : "תמונה נוכחית"}
                                                         className="mini-preview-image"
                                                     />
                                                     {imagePreview && <small className="preview-label">תמונה חדשה</small>}
                                                 </div>
                                             )}
-                                            
+
                                             {errors[field.key] && (
                                                 <span className="error-message">
                                                     {errors[field.key]}

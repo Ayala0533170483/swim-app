@@ -33,18 +33,18 @@ function UserManagement({ userType }) {
     try {
       setLoading(true);
       setError(null);
-      
+
       console.log('Loading items for userType:', userType);
-      
+
       let data;
       if (isPoolManagement) {
         data = await fetchData('pools', '', handleError);
       } else {
         data = await fetchData('users', userType, handleError);
       }
-      
+
       console.log('Received data:', data);
-      
+
       if (Array.isArray(data)) {
         setItems(data);
       } else if (data && typeof data === 'object') {
@@ -54,7 +54,7 @@ function UserManagement({ userType }) {
         console.warn('Data is not an array:', data);
         setItems([]);
       }
-      
+
     } catch (err) {
       console.error('Error loading items:', err);
       setError(isPoolManagement ? 'שגיאה בטעינת הבריכות' : 'שגיאה בטעינת המשתמשים');
@@ -76,7 +76,7 @@ function UserManagement({ userType }) {
   const updateDisplay = (updatedItem) => {
     setItems(prev => {
       if (!Array.isArray(prev)) return [updatedItem];
-      
+
       return prev.map(item => {
         let itemId, updatedId;
         if (isPoolManagement) {
@@ -86,7 +86,7 @@ function UserManagement({ userType }) {
           itemId = item.user_id || item.id;
           updatedId = updatedItem.user_id;
         }
-        
+
         return itemId === updatedId ? updatedItem : item;
       });
     });
@@ -95,17 +95,17 @@ function UserManagement({ userType }) {
   const deleteDisplay = (deletedId) => {
     setItems(prev => {
       if (!Array.isArray(prev)) return [];
-      
+
       return prev.filter(item => {
         // זיהוי נכון של ID לפי סוג הפריט
         let itemId;
-        
+
         if (isPoolManagement) {
           itemId = item.pool_id || item.id;
         } else {
           itemId = item.user_id || item.id;
         }
-        
+
         return itemId !== deletedId;
       });
     });
@@ -204,12 +204,12 @@ function UserManagement({ userType }) {
               {items.map(item => {
                 // מפתח נכון לפי סוג הפריט
                 const key = isPoolManagement ? (item.pool_id || item.id) : (item.user_id || item.id);
-                
+
                 return (
-                  <config.CardComponent 
+                  <config.CardComponent
                     key={key}
-                    {...(isPoolManagement ? 
-                      { pool: item, updateDisplay, deleteDisplay, setDisplayChanged } : 
+                    {...(isPoolManagement ?
+                      { pool: item, updateDisplay, deleteDisplay, setDisplayChanged } :
                       { user: item, userType }
                     )}
                   />

@@ -83,8 +83,6 @@ function Message({ message, onUpdate, onDelete }) {
                     >
                         הצג מלא
                     </button>
-
-
                     <Update
                         item={message}
                         type="messages"
@@ -99,6 +97,7 @@ function Message({ message, onUpdate, onDelete }) {
                             </button>
                         }
                     />
+
                     <DeleteItem
                         id={message.id}
                         type="messages"

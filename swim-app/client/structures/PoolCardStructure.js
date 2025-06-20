@@ -1,4 +1,3 @@
-// 🎯 תיקון הפונקציה - טיפול בשני סוגי נתיבים
 export const getImageUrl = (imagePath) => {
   if (!imagePath) return null;
 
@@ -104,7 +103,7 @@ export const validationRules = {
       }
 
       const file = files[0];
-      const maxSize = 5 * 1024 * 1024; // 5MB
+      const maxSize = 5 * 1024 * 1024;
       if (file.size > maxSize) {
         return 'גודל התמונה חייב להיות עד 5MB';
       }
