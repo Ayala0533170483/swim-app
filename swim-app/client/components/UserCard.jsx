@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { 
-  getLessonDisplayFields, 
-  formatLessonValue, 
-  processLessonForDisplay 
+import {
+  getLessonDisplayFields,
+  formatLessonValue,
+  processLessonForDisplay
 } from '../structures/userLessonsDisplayStructure';
 import '../styles/UserCard.css';
 
@@ -20,7 +20,7 @@ function UserCard({ user, userType }) {
 
   const cardClass = `user-card ${userType === 'students' ? 'student-card' : 'teacher-card'}`;
   const lessonsCount = user.lessons ? user.lessons.length : 0;
-  
+
   const displayFields = getLessonDisplayFields(userType);
 
   return (
@@ -55,7 +55,7 @@ function UserCard({ user, userType }) {
               <h2>שיעורים של {user.name}</h2>
               <button className="close-button" onClick={closeModal}>×</button>
             </div>
-            
+
             <div className="modal-body">
               {lessonsCount === 0 ? (
                 <p>אין שיעורים רשומים</p>
@@ -63,7 +63,7 @@ function UserCard({ user, userType }) {
                 <div className="lessons-list">
                   {user.lessons.map((lesson, index) => {
                     const processedLesson = processLessonForDisplay(lesson);
-                    
+
                     return (
                       <div key={lesson.lesson_id} className="lesson-item">
                         <div className="lesson-header">
@@ -72,7 +72,7 @@ function UserCard({ user, userType }) {
                             {formatLessonValue('lesson_type', lesson.lesson_type)}
                           </span>
                         </div>
-                        
+
                         <div className="lesson-details">
                           {displayFields.map(field => (
                             <p key={field.key}>
