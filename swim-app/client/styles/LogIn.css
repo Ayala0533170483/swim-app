@@ -59,7 +59,8 @@ body {
   background: #f8fbff;
   color: #333;
   text-align: right;
-  box-sizing: border-box; /* הוספה - כך הpadding לא מוסיף לרוחב */
+  box-sizing: border-box;
+  margin: 10px; /* ← הוספנו את זה */
 }
 
 
@@ -86,7 +87,9 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  transform: translateX(-7px); /* ← הוזז 7 פיקסלים שמאלה */
 }
+
 
 .login-button:hover {
   transform: translateY(-2px);

@@ -147,7 +147,8 @@
   flex-wrap: wrap;
 }
 
-.btn-show-full {
+.btn-show-full,
+.btn-status-toggle {
   background: #17a2b8;
   color: white;
   border: none;
@@ -158,7 +159,8 @@
   font-weight: 600;
 }
 
-.btn-show-full:hover {
+.btn-show-full:hover,
+.btn-status-toggle:hover {
   background: #138496;
 }
 
@@ -321,66 +323,8 @@
     flex-direction: column;
   }
   
-  .btn-show-full {
+  .btn-show-full,
+  .btn-status-toggle {
     width: 100%;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* הוסף בסוף הקובץ - אחרי כל הCSS הקיים */
-
-.status-toggle-btn {
-    background: #ffc107;
-    color: #856404;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.status-toggle-btn:hover {
-    background: #e0a800;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
-}
-
-.status-toggle-btn.pending {
-    background: #28a745;
-    color: white;
-}
-
-.status-toggle-btn.pending:hover {
-    background: #218838;
-    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
-}
-
-.status-toggle-btn.handled {
-    background: #ffc107;
-    color: #856404;
-}
-
-.status-toggle-btn.handled:hover {
-    background: #e0a800;
-    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
-}
-

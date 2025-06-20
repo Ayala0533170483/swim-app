@@ -71,22 +71,58 @@ async function getUserById(user_id) {
 
 async function getAllUsersByType(typeName) {
     const type = typeName.endsWith('s') ? typeName.slice(0, -1) : typeName;
-
     const sql = `
         SELECT 
             u.user_id,
             u.name,
             u.email,
             u.is_active,
-            ut.type_name
+            ut.type_name,
+            l.lesson_id,
+            l.teacher_id,
+            l.pool_id,
+            p.name as pool_name,
+            l.lesson_date,
+            l.start_time,
+            l.end_time,
+            l.lesson_type,
+            l.max_participants,
+            l.min_age,
+            l.max_age,
+            l.level,
+            l.is_active as lesson_is_active,
+            l.num_registered,
+            lr.registration_id,
+            lr.registration_date,
+            lr.is_active as registration_status
         FROM users AS u
         LEFT JOIN user_types AS ut ON u.type_id = ut.type_id
-        WHERE ut.type_name = ? AND u.is_active = 1
-        ORDER BY u.name
+        LEFT JOIN lessons l ON (
+            (ut.type_name = 'teacher' AND l.teacher_id = u.user_id) OR
+            (ut.type_name = 'student' AND EXISTS (
+                SELECT 1 FROM lesson_registrations lr2 
+                WHERE lr2.lesson_id = l.lesson_id 
+                AND lr2.student_id = u.user_id 
+                AND lr2.is_active = 1
+            ))
+        )
+        LEFT JOIN pools p ON l.pool_id = p.pool_id
+        LEFT JOIN lesson_registrations lr ON (
+            ut.type_name = 'student' 
+            AND l.lesson_id = lr.lesson_id 
+            AND lr.student_id = u.user_id 
+            AND lr.is_active = 1
+        )
+        WHERE ut.type_name = ? 
+        AND u.is_active = 1 
+        AND (l.is_active = 1 OR l.lesson_id IS NULL)
+        ORDER BY u.name, l.lesson_date, l.start_time
     `;
+
     const [rows] = await pool.query(sql, [type]);
-    return rows;
+    return rows; 
 }
+
 
 module.exports = {
     getUserWithPassword,

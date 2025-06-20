@@ -20,7 +20,7 @@
 // // router.post('/', async (req, res) => {
 //     try {
 //         const userData = req.body;
-       
+
 
 //         const newUser = await usersController.createUser(userData);
 
@@ -95,9 +95,9 @@ router.get('/', async (req, res) => {
     try {
         console.log('🔍 Router - Full URL:', req.url); // דיבוג
         console.log('🔍 Router - Query params:', req.query); // דיבוג
-        
+
         let query = { ...req.query };
-        
+
         // בדיקה אם יש teachers או students בquery
         if ('teachers' in req.query || req.url.includes('teachers')) {
             query.type = 'teachers';
@@ -112,7 +112,7 @@ router.get('/', async (req, res) => {
         }
 
         console.log('🔍 Router - Final query:', query); // דיבוג
-        
+
         const users = await usersController.getUsers(query);
         console.log('🔍 Router - Users returned:', users.length, 'users');
         res.json(users);
