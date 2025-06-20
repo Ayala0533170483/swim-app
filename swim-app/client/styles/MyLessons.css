@@ -12,12 +12,17 @@
   padding: 0 2rem;
 }
 
+.page-header, .page-header * {
+  color: white !important;
+}
+
+
 .page-header {
   text-align: center;
   margin-bottom: 4rem;
   padding: 3rem 0;
   background: linear-gradient(135deg, #0066cc, #00ccff);
-  color: white;
+  color: white !important;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 102, 204, 0.3);
 }
