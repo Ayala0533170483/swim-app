@@ -203,7 +203,7 @@
 
 /* Stats Section */
 .stats-section {
-  background: linear-gradient(135deg, #0066cc, #00ccff);
+  background: linear-gradient(135deg, #5c91c6, #00ccff);
   padding: 4rem 0;
   color: white;
 }
@@ -217,6 +217,7 @@
 
 .stat-item {
   display: flex;
+   color: white;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
@@ -230,6 +231,7 @@
 
 .stat-number {
   font-size: 3rem;
+   color: white;
   font-weight: 800;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   animation: countUp 2s ease-out;
