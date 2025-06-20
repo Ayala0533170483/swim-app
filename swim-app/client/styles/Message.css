@@ -200,8 +200,8 @@
 }
 
 .close-button {
-  background: #dc3545;
-  color: white;
+  /* background: #dc3545; */
+  color: #232bc8;
   border: none;
   width: 30px;
   height: 30px;

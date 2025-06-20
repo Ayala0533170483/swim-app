@@ -1,4 +1,3 @@
-// מיפוי תרגומים לעברית
 export const lessonDisplayLabels = {
   lesson_date: 'תאריך השיעור',
   start_time: 'שעת התחלה',
@@ -13,7 +12,6 @@ export const lessonDisplayLabels = {
   registration_date: 'תאריך הרשמה'
 };
 
-// תרגום ערכים לעברית
 export const lessonDisplayValues = {
   lesson_type: {
     'private': 'פרטי',
@@ -26,7 +24,6 @@ export const lessonDisplayValues = {
   }
 };
 
-// פורמט תצוגה לכל שדה
 export const formatLessonValue = (key, value) => {
   if (!value && value !== 0) return '-';
   
@@ -37,7 +34,7 @@ export const formatLessonValue = (key, value) => {
     
     case 'start_time':
     case 'end_time':
-      return value.substring(0, 5); // HH:MM
+      return value.substring(0, 5); 
     
     case 'lesson_type':
       return lessonDisplayValues.lesson_type[value] || value;
@@ -45,54 +42,20 @@ export const formatLessonValue = (key, value) => {
     case 'level':
       return lessonDisplayValues.level[value] || value;
     
-    case 'participants_info':
-      // מקבל אובייקט עם num_registered ו max_participants
-      return `${value.registered}/${value.max}`;
-    
-    case 'age_range':
-      // מקבל אובייקט עם min_age ו max_age
-      return `${value.min}-${value.max}`;
-    
     default:
       return value;
   }
 };
 
-// הגדרת השדות שיוצגו ובאיזה סדר
-export const getLessonDisplayFields = (userType) => {
-  const baseFields = [
-    { key: 'lesson_date', label: lessonDisplayLabels.lesson_date },
-    { key: 'time_range', label: 'שעות השיעור' },
-    { key: 'pool_name', label: lessonDisplayLabels.pool_name },
-    { key: 'lesson_type', label: lessonDisplayLabels.lesson_type },
-    { key: 'level', label: lessonDisplayLabels.level },
-    { key: 'age_range', label: 'טווח גילאים' },
-    { key: 'participants_info', label: 'משתתפים' }
-  ];
-
-  // עבור תלמידים, הוסף תאריך הרשמה
-  if (userType === 'students') {
-    baseFields.push({ 
-      key: 'registration_date', 
-      label: lessonDisplayLabels.registration_date 
-    });
-  }
-
-  return baseFields;
-};
-
-// עיבוד נתוני שיעור לתצוגה
 export const processLessonForDisplay = (lesson) => {
   return {
-    ...lesson,
+    lesson_date: formatLessonValue('lesson_date', lesson.lesson_date),
     time_range: `${formatLessonValue('start_time', lesson.start_time)} - ${formatLessonValue('end_time', lesson.end_time)}`,
-    age_range: {
-      min: lesson.min_age,
-      max: lesson.max_age
-    },
-    participants_info: {
-      registered: lesson.num_registered,
-      max: lesson.max_participants
-    }
+    pool_name: lesson.pool_name,
+    lesson_type: formatLessonValue('lesson_type', lesson.lesson_type),
+    level: formatLessonValue('level', lesson.level),
+    age_range: `${lesson.min_age}-${lesson.max_age}`,
+    participants_info: `${lesson.num_registered}/${lesson.max_participants}`,
+    registration_date: lesson.registration_date ? formatLessonValue('registration_date', lesson.registration_date) : null
   };
 };

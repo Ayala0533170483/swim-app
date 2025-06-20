@@ -207,8 +207,8 @@
     position: absolute;
     top: 1.5rem;
     left: 1.5rem;
-    background: #dc3545;
-    color: white;
+    /* background: #353ddc; */
+    color: #353ddc;
     border: none;
     width: 40px;
     height: 40px;

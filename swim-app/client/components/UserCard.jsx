@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
-import {
-  getLessonDisplayFields,
-  formatLessonValue,
-  processLessonForDisplay
-} from '../structures/userLessonsDisplayStructure';
+import { processLessonForDisplay, lessonDisplayValues } from '../structures/userLessonsDisplayStructure';
 import '../styles/UserCard.css';
 
 function UserCard({ user, userType }) {
@@ -20,8 +16,6 @@ function UserCard({ user, userType }) {
 
   const cardClass = `user-card ${userType === 'students' ? 'student-card' : 'teacher-card'}`;
   const lessonsCount = user.lessons ? user.lessons.length : 0;
-
-  const displayFields = getLessonDisplayFields(userType);
 
   return (
     <>
@@ -43,11 +37,10 @@ function UserCard({ user, userType }) {
         </div>
 
         <div className="user-actions">
-          <span className="click-hint">פרטים נוספים</span>
+          <span className="click-hint">שיעורים רשומים</span>
         </div>
       </div>
 
-      {/* Modal עם תצוגה מובנית */}
       {showLessonsModal && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -55,30 +48,35 @@ function UserCard({ user, userType }) {
               <h2>שיעורים של {user.name}</h2>
               <button className="close-button" onClick={closeModal}>×</button>
             </div>
-
+            
             <div className="modal-body">
               {lessonsCount === 0 ? (
                 <p>אין שיעורים רשומים</p>
               ) : (
                 <div className="lessons-list">
                   {user.lessons.map((lesson, index) => {
-                    const processedLesson = processLessonForDisplay(lesson);
-
+                    const displayLesson = processLessonForDisplay(lesson);
+                    
                     return (
                       <div key={lesson.lesson_id} className="lesson-item">
                         <div className="lesson-header">
                           <h4>שיעור {index + 1}</h4>
                           <span className="lesson-type">
-                            {formatLessonValue('lesson_type', lesson.lesson_type)}
+                            {displayLesson.lesson_type}
                           </span>
                         </div>
-
+                        
                         <div className="lesson-details">
-                          {displayFields.map(field => (
-                            <p key={field.key}>
-                              <strong>{field.label}:</strong> {formatLessonValue(field.key, processedLesson[field.key])}
-                            </p>
-                          ))}
+                          <p><strong>תאריך:</strong> {displayLesson.lesson_date}</p>
+                          <p><strong>שעות:</strong> {displayLesson.time_range}</p>
+                          <p><strong>בריכה:</strong> {displayLesson.pool_name}</p>
+                          <p><strong>רמה:</strong> {displayLesson.level}</p>
+                          <p><strong>גילאים:</strong> {displayLesson.age_range}</p>
+                          <p><strong>משתתפים:</strong> {displayLesson.participants_info}</p>
+                          
+                          {userType === 'students' && displayLesson.registration_date && (
+                            <p><strong>תאריך הרשמה:</strong> {displayLesson.registration_date}</p>
+                          )}
                         </div>
                       </div>
                     );
