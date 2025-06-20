@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import { 
+  getLessonDisplayFields, 
+  formatLessonValue, 
+  processLessonForDisplay 
+} from '../structures/userLessonsDisplayStructure';
 import '../styles/UserCard.css';
 
 function UserCard({ user, userType }) {
@@ -14,9 +19,9 @@ function UserCard({ user, userType }) {
   };
 
   const cardClass = `user-card ${userType === 'students' ? 'student-card' : 'teacher-card'}`;
-
-  // חישוב מספר השיעורים
   const lessonsCount = user.lessons ? user.lessons.length : 0;
+  
+  const displayFields = getLessonDisplayFields(userType);
 
   return (
     <>
@@ -31,7 +36,6 @@ function UserCard({ user, userType }) {
           <div className="user-details">
             <h3 className="user-name">{user.name}</h3>
             <p className="user-email">{user.email}</p>
-            {/* הצגת מספר השיעורים */}
             <p className="lessons-count">
               שיעורים: {lessonsCount}
             </p>
@@ -42,9 +46,8 @@ function UserCard({ user, userType }) {
           <span className="click-hint">פרטים נוספים</span>
         </div>
       </div>
-  
 
-      {/* Modal מעוצב פשוט ונקי */}
+      {/* Modal עם תצוגה מובנית */}
       {showLessonsModal && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -52,40 +55,40 @@ function UserCard({ user, userType }) {
               <h2>שיעורים של {user.name}</h2>
               <button className="close-button" onClick={closeModal}>×</button>
             </div>
-
+            
             <div className="modal-body">
               {lessonsCount === 0 ? (
                 <p>אין שיעורים רשומים</p>
               ) : (
                 <div className="lessons-list">
-                  {user.lessons.map((lesson) => (
-                    <div key={lesson.lesson_id} className="lesson-item">
-                      <div className="lesson-header">
-                        <h4>שיעור #{lesson.lesson_id}</h4>
-                        <span className="lesson-type">{lesson.lesson_type}</span>
+                  {user.lessons.map((lesson, index) => {
+                    const processedLesson = processLessonForDisplay(lesson);
+                    
+                    return (
+                      <div key={lesson.lesson_id} className="lesson-item">
+                        <div className="lesson-header">
+                          <h4>שיעור {index + 1}</h4>
+                          <span className="lesson-type">
+                            {formatLessonValue('lesson_type', lesson.lesson_type)}
+                          </span>
+                        </div>
+                        
+                        <div className="lesson-details">
+                          {displayFields.map(field => (
+                            <p key={field.key}>
+                              <strong>{field.label}:</strong> {formatLessonValue(field.key, processedLesson[field.key])}
+                            </p>
+                          ))}
+                        </div>
                       </div>
-
-                      <div className="lesson-details">
-                        <p><strong>תאריך:</strong> {new Date(lesson.lesson_date).toLocaleDateString('he-IL')}</p>
-                        <p><strong>שעה:</strong> {lesson.start_time} - {lesson.end_time}</p>
-                        <p><strong>בריכה:</strong> {lesson.pool_name}</p>
-                        <p><strong>רמה:</strong> {lesson.level}</p>
-                        <p><strong>גילאים:</strong> {lesson.min_age}-{lesson.max_age}</p>
-                        <p><strong>משתתפים:</strong> {lesson.num_registered}/{lesson.max_participants}</p>
-
-                        {userType === 'students' && lesson.registration_date && (
-                          <p><strong>הרשמה:</strong> {new Date(lesson.registration_date).toLocaleDateString('he-IL')}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
           </div>
         </div>
       )}
-
     </>
   );
 }
