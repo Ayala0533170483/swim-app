@@ -6,7 +6,7 @@ import UserCard from './UserCard';
 import PoolCard from './PoolCard';
 import AddItem from './AddItem';
 import { addKeys, validationRules, poolConfig } from '../structures/PoolCardStructure';
-import '../styles/UserManagement.css';
+import '../styles/ItemManagement .css';
 
 function UserManagement({ userType }) {
   const [items, setItems] = useState([]);
@@ -16,7 +16,6 @@ function UserManagement({ userType }) {
   const { userData } = useContext(userContext);
   const { username } = useParams();
 
-  // בדיקה אם זה ניהול בריכות
   const isPoolManagement = userType === 'pools';
 
   useEffect(() => {
@@ -37,18 +36,15 @@ function UserManagement({ userType }) {
       
       console.log('Loading items for userType:', userType);
       
-      // עבור בריכות נשתמש ב-fetchData רגיל, עבור משתמשים נשתמש בפורמט הקיים
       let data;
       if (isPoolManagement) {
         data = await fetchData('pools', '', handleError);
       } else {
-        // הפורמט הקיים עבור משתמשים
         data = await fetchData('users', userType, handleError);
       }
       
       console.log('Received data:', data);
       
-      // ודא שהנתונים הם מערך
       if (Array.isArray(data)) {
         setItems(data);
       } else if (data && typeof data === 'object') {
@@ -82,15 +78,13 @@ function UserManagement({ userType }) {
       if (!Array.isArray(prev)) return [updatedItem];
       
       return prev.map(item => {
-        // זיהוי נכון של ID לפי סוג הפריט
         let itemId, updatedId;
-        
         if (isPoolManagement) {
-          itemId = item.pool_id || item.id;
-          updatedId = updatedItem.pool_id || updatedItem.id;
+          itemId = item.pool_id;
+          updatedId = updatedItem.pool_id;
         } else {
           itemId = item.user_id || item.id;
-          updatedId = updatedItem.user_id || updatedItem.id;
+          updatedId = updatedItem.user_id;
         }
         
         return itemId === updatedId ? updatedItem : item;
@@ -179,24 +173,25 @@ function UserManagement({ userType }) {
   return (
     <div className="user-management-page">
       <div className="container">
+        {/* הריבוע הכחול - רק כותרת ותיאור */}
         <div className="page-header">
           <h1>{config.pageTitle}</h1>
           <p>{config.description}</p>
-          
-          {/* כפתור הוספה רק לבריכות */}
-          {config.showAddButton && (
-            <div className="add-item-section">
-              <AddItem
-                type="pools"
-                keys={config.addKeys}
-                addDisplay={addDisplay}
-                nameButton={config.addButtonText}
-                setDisplayChanged={setDisplayChanged}
-                validationRules={config.validationRules}
-              />
-            </div>
-          )}
         </div>
+
+        {/* כפתור הוספה - מחוץ לריבוע הכחול */}
+        {config.showAddButton && (
+          <div className="add-item-section">
+            <AddItem
+              type="pools"
+              keys={config.addKeys}
+              addDisplay={addDisplay}
+              nameButton={config.addButtonText}
+              setDisplayChanged={setDisplayChanged}
+              validationRules={config.validationRules}
+            />
+          </div>
+        )}
 
         {items.length === 0 ? (
           <div className="no-users">

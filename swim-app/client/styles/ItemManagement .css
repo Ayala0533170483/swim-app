@@ -101,6 +101,18 @@
   gap: 1.5rem;
 }
 
+/* הסרת אנימציות hover שגורמות לקפיצה */
+.users-list > * {
+  transition: none !important; /* הסרת כל האנימציות */
+}
+
+/* אם אתה רוצה לשמור על אפקט hover עדין בלי קפיצה */
+.users-list > *:hover {
+  transform: none !important; /* ללא שינוי מיקום */
+  box-shadow: 0 4px 15px rgba(0, 102, 204, 0.15) !important; /* רק שינוי צל עדין */
+  transition: box-shadow 0.2s ease !important; /* אנימציה רק לצל */
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .page-header h1 {

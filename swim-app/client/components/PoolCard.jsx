@@ -90,17 +90,16 @@ function PoolCard({ pool, updateDisplay, deleteDisplay, setDisplayChanged }) {
           </div>
 
           <div className="action-buttons">
-            <button className="pool-action-btn edit-btn">
-              <Update
-                item={{ ...pool, id: pool.pool_id }}
-                type="pools"
-                updateDisplay={updateDisplay}
-                setDisplayChanged={setDisplayChanged}
-                keys={updateKeys}
-                validationRules={validationRules}
-              />
-              ערוך פרטים
-            </button>
+            {/* תקן את כפתור העריכה */}
+            <Update
+              item={{ ...pool, id: pool.pool_id }}
+              type="pools"
+              updateDisplay={updateDisplay}
+              setDisplayChanged={setDisplayChanged}
+              keys={updateKeys}
+              validationRules={validationRules}
+              nameButton="ערוך פרטים"
+            />
 
             <DeleteItem
               id={pool.pool_id}

@@ -20,9 +20,6 @@ function UserCard({ user, userType }) {
         <div className="user-details">
           <h3 className="user-name">{user.name}</h3>
           <p className="user-email">{user.email}</p>
-          <span className="user-type">
-            {userType === 'students' ? 'תלמיד' : 'מורה'}
-          </span>
         </div>
       </div>
 

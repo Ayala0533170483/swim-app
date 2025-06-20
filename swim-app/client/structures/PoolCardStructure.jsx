@@ -5,22 +5,13 @@ export const getImageUrl = (imagePath) => {
   if (imagePath.startsWith('http')) {
     return imagePath;
   }
-  
-  // 🎯 אם הנתיב כבר מתחיל ב-uploads/ - השתמש בו כמו שהוא
-  if (imagePath.startsWith('uploads/')) {
-    return `http://localhost:3000/${imagePath}`;
-  }
-  
-  // 🎯 אחרת - הוסף את התיקייה
-  return `http://localhost:3000/uploads/pools/${imagePath}`;
+  return `http://localhost:3000/${imagePath}`;
 };
 
-// פונקציה לקבלת תמונת ברירת מחדל
 export const getDefaultPoolImage = () => {
   return null;
 };
 
-// הגדרות שדות לעדכון
 export const updateKeys = [
   { key: 'name', label: 'שם הבריכה', type: 'input' },
   { key: 'city', label: 'עיר', type: 'input' },
@@ -37,50 +28,49 @@ export const updateKeys = [
   }
 ];
 
-// הגדרות שדות להוספה (עם פרטים נוספים)
 export const addKeys = [
-  { 
-    key: 'name', 
-    label: 'שם הבריכה', 
-    type: 'input', 
+  {
+    key: 'name',
+    label: 'שם הבריכה',
+    type: 'input',
     placeholder: 'הכנס שם בריכה',
     required: true
   },
-  { 
-    key: 'city', 
-    label: 'עיר', 
-    type: 'input', 
+  {
+    key: 'city',
+    label: 'עיר',
+    type: 'input',
     placeholder: 'הכנס עיר',
     required: true
   },
-  { 
-    key: 'phone', 
-    label: 'טלפון', 
-    type: 'input', 
-    placeholder: 'הכנס מספר טלפון' 
+  {
+    key: 'phone',
+    label: 'טלפון',
+    type: 'input',
+    placeholder: 'הכנס מספר טלפון'
   },
-  { 
-    key: 'description', 
-    label: 'תיאור', 
-    type: 'textarea', 
-    placeholder: 'תיאור הבריכה', 
-    rows: 3 
+  {
+    key: 'description',
+    label: 'תיאור',
+    type: 'textarea',
+    placeholder: 'תיאור הבריכה',
+    rows: 3
   },
-  { 
-    key: 'latitude', 
-    label: 'קו רוחב', 
-    type: 'input', 
-    inputType: 'number', 
-    step: 'any', 
-    placeholder: 'קו רוחב (אופציונלי)' 
+  {
+    key: 'latitude',
+    label: 'קו רוחב',
+    type: 'input',
+    inputType: 'number',
+    step: 'any',
+    placeholder: 'קו רוחב (אופציונלי)'
   },
-  { 
-    key: 'longitude', 
-    label: 'קו אורך', 
-    type: 'input', 
-    inputType: 'number', 
-    step: 'any', 
-    placeholder: 'קו אורך (אופציונלי)' 
+  {
+    key: 'longitude',
+    label: 'קו אורך',
+    type: 'input',
+    inputType: 'number',
+    step: 'any',
+    placeholder: 'קו אורך (אופציונלי)'
   },
   {
     key: 'image',
@@ -92,7 +82,6 @@ export const addKeys = [
   }
 ];
 
-// חוקי ולידציה
 export const validationRules = {
   name: {
     required: { value: true, message: 'שם הבריכה הוא שדה חובה' },
@@ -113,24 +102,23 @@ export const validationRules = {
       if (!files || files.length === 0) {
         return 'תמונה נדרשת';
       }
-      
+
       const file = files[0];
       const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
         return 'גודל התמונה חייב להיות עד 5MB';
       }
-      
+
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
       if (!allowedTypes.includes(file.type)) {
         return 'רק קבצי JPG, JPEG, PNG מותרים';
       }
-      
+
       return true;
     }
   }
 };
 
-// הגדרות כלליות
 export const poolConfig = {
   pageTitle: 'ניהול בריכות',
   description: 'צפייה וניהול בריכות במערכת',
@@ -138,7 +126,6 @@ export const poolConfig = {
   addButtonText: 'הוסף בריכה חדשה'
 };
 
-// פונקציה לעיצוב תצוגת הבריכה
 export const formatPoolDisplay = (pool) => {
   return {
     id: pool.pool_id || pool.id,

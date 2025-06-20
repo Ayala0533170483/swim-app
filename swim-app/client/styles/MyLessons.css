@@ -242,8 +242,9 @@
   background: linear-gradient(135deg, #0066cc, #00ccff);
 }
 
+/* הסר את האנימציה של הקפיצה */
 .lesson-card:hover {
-  transform: translateY(-5px);
+  /* transform: translateY(-5px); - הסר את השורה הזו */
   box-shadow: 0 20px 40px rgba(0, 102, 204, 0.2);
   border-color: #00ccff;
 }
