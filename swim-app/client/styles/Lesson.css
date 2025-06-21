@@ -457,6 +457,16 @@
     font-size: 1.2rem;
   }
 
+  /* הוסף את זה לקובץ Lesson.css הקיים */
+  .conflict-lesson-card {
+    border: 2px solid #dc3545;
+    background-color: #fff5f5;
+  }
+
+  .conflict-lesson-card .lesson-header {
+    background-color: #ffe6e6;
+  }
+
   /* Responsive Design */
   @media (max-width: 768px) {
     .lesson-card {

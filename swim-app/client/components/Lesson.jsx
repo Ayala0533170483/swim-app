@@ -7,7 +7,16 @@ import { userContext } from "./App";
 import Update from "./Update";
 import AddItem from "./AddItem";
 import Delete from "./DeleteItem";
-import { createLessonUpdateConfig } from "../structures/lessonStructures";
+import {
+    createLessonUpdateConfig,
+    getLessonIcon,
+    getLevelColor,
+    formatAgeRange,
+    formatDate,
+    formatTime,
+    translateLessonType,
+    translateLevel
+} from "../structures/lessonStructures";
 
 function Lesson({ lesson, pools, mode = "view" }) {
     const { userData } = useContext(userContext);
@@ -22,64 +31,14 @@ function Lesson({ lesson, pools, mode = "view" }) {
 
     const isTeacher = userData?.type_name === 'teacher';
     const isRegisterMode = mode === 'register';
+    const isConflictMode = mode === 'conflict';
     const hasRegistrations = lesson.registrations && lesson.registrations.length > 0;
     const numRegistrations = lesson.registrations ? lesson.registrations.length : 0;
-
-    function getLessonIcon(type) {
-        switch (type?.toLowerCase()) {
-            case 'private': return '👤';
-            case 'group': return '👥';
-            default: return '🏊‍♀️';
-        }
-    }
-
-    function getLevelColor(level) {
-        switch (level?.toLowerCase()) {
-            case 'beginner': return '#28a745';
-            case 'intermediate': return '#ffc107';
-            case 'advanced': return '#dc3545';
-            default: return '#0066cc';
-        }
-    }
-
-    function formatAgeRange(minAge, maxAge) {
-        if (!minAge && !maxAge) return 'כל הגילאים';
-        if (!minAge) return `עד גיל ${maxAge}`;
-        if (!maxAge) return `מגיל ${minAge}`;
-        return `${minAge}-${maxAge}`;
-    }
-
-
-    function formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('he-IL');
-    }
-
-    function formatTime(timeString) {
-        return timeString?.substring(0, 5);
-    }
-
-    function translateLessonType(type) {
-        switch (type?.toLowerCase()) {
-            case 'private': return 'פרטי';
-            case 'group': return 'קבוצתי';
-            default: return 'לא מוגדר';
-        }
-    }
-
-    function translateLevel(level) {
-        switch (level?.toLowerCase()) {
-            case 'beginner': return 'מתחיל';
-            case 'intermediate': return 'בינוני';
-            case 'advanced': return 'מתקדם';
-            default: return 'כללי';
-        }
-    }
 
     const updateConfig = createLessonUpdateConfig(lesson, pools);
 
     return (
-        <div className="lesson-card">
+        <div className={`lesson-card ${isConflictMode ? 'conflict-lesson-card' : ''}`}>
             <div className="lesson-header">
                 <div className="lesson-icon">
                     {getLessonIcon(lesson.lesson_type)}
@@ -119,7 +78,6 @@ function Lesson({ lesson, pools, mode = "view" }) {
                             <div className="info-item">
                                 <span className="info-label">טווח גילאים:</span>
                                 <span className="info-value">{formatAgeRange(lesson.min_age, lesson.max_age)}</span>
-
                             </div>
                             <div className="info-item">
                                 <span className="info-label">מקומות פנויים:</span>
@@ -128,13 +86,19 @@ function Lesson({ lesson, pools, mode = "view" }) {
                                 </span>
                             </div>
                         </>
+                    ) : isConflictMode ? (
+                        <>
+                            <div className="info-item">
+                                <span className="info-label">טווח גילאים:</span>
+                                <span className="info-value">{formatAgeRange(lesson.min_age, lesson.max_age)}</span>
+                            </div>
+                        </>
                     ) : (
                         isTeacher && (
                             <>
                                 <div className="info-item">
                                     <span className="info-label">טווח גילאים:</span>
                                     <span className="info-value">{formatAgeRange(lesson.min_age, lesson.max_age)}</span>
-
                                 </div>
                                 <div className="info-item">
                                     <span className="info-label">מספר נרשמים:</span>
@@ -146,52 +110,55 @@ function Lesson({ lesson, pools, mode = "view" }) {
                 </div>
             </div>
 
-            <div className="lesson-actions">
-                {isRegisterMode ? (
-                    <AddItem
-                        type="registerLessons"
-                        addDisplay={addRegistration}
-                        defaltValues={{
-                            lesson_id: lesson.lesson_id,
-                            student_id: userData?.user_id,
-                            action: "register"
-                        }}
-                        nameButton="הצטרף לשיעור"
-                        keys={[]}
-                        validationRules={{}}
-                        useContactStyle={true}
-                    />
-                ) : (
-                    <div className="lesson-actions-right">
-                        {isTeacher && hasRegistrations && (
-                            <button
-                                onClick={() => setShowParticipants(!showParticipants)}
-                                className="btn-show-participants"
-                            >
-                                {showParticipants ? 'הסתר משתתפים' : `הצג משתתפים `}
-                            </button>
-                        )}
+            {/* הסתרת כפתורים במצב conflict */}
+            {!isConflictMode && (
+                <div className="lesson-actions">
+                    {isRegisterMode ? (
+                        <AddItem
+                            type="registerLessons"
+                            addDisplay={addRegistration}
+                            defaltValues={{
+                                lesson_id: lesson.lesson_id,
+                                student_id: userData?.user_id,
+                                action: "register"
+                            }}
+                            nameButton="הצטרף לשיעור"
+                            keys={[]}
+                            validationRules={{}}
+                            useContactStyle={true}
+                        />
+                    ) : (
+                        <div className="lesson-actions-right">
+                            {isTeacher && hasRegistrations && (
+                                <button
+                                    onClick={() => setShowParticipants(!showParticipants)}
+                                    className="btn-show-participants"
+                                >
+                                    {showParticipants ? 'הסתר משתתפים' : `הצג משתתפים `}
+                                </button>
+                            )}
 
-                        {isTeacher && !hasRegistrations && (
-                            <>
-                                <Update
-                                    {...updateConfig}
-                                    updateDisplay={updateLessons}
-                                    setDisplayChanged={() => { }}
-                                />
-                                <Delete
-                                    id={lesson.lesson_id}
-                                    type="lessons"
-                                    deleteDisplay={deleteLessons}
-                                    nameButton="מחיקת השיעור"
-                                />
-                            </>
-                        )}
-                    </div>
-                )}
-            </div>
+                            {isTeacher && !hasRegistrations && (
+                                <>
+                                    <Update
+                                        {...updateConfig}
+                                        updateDisplay={updateLessons}
+                                        setDisplayChanged={() => { }}
+                                    />
+                                    <Delete
+                                        id={lesson.lesson_id}
+                                        type="lessons"
+                                        deleteDisplay={deleteLessons}
+                                        nameButton="מחיקת השיעור"
+                                    />
+                                </>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
 
-            {!isRegisterMode && showParticipants && hasRegistrations && (
+            {!isRegisterMode && !isConflictMode && showParticipants && hasRegistrations && (
                 <div className="participants-section">
                     <h4>משתתפים בשיעור:</h4>
                     <div className="participants-list">

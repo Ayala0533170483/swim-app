@@ -65,12 +65,116 @@ async function createLesson(lessonData) {
         if (!lessonData.user_id || !lessonData.pool_id || !lessonData.lesson_date) {
             throw new Error('Missing required fields: teacher_id, pool_id, lesson_date');
         }
-        lessonData.teacher_id = lessonData.user_id;
+        
+        const teacherId = lessonData.user_id;
+        
+        console.log('🔍 Creating lesson with data:', {
+            teacherId,
+            date: lessonData.lesson_date,
+            start: lessonData.start_time,
+            end: lessonData.end_time,
+            pool: lessonData.pool_id
+        });
+        
+        // בדיקת חפיפות בלוח הזמנים של המורה
+        const conflicts = await lessonsService.checkTeacherScheduleConflicts(
+            teacherId,
+            lessonData.lesson_date,
+            lessonData.start_time,
+            lessonData.end_time
+        );
+
+        console.log('🔍 Found conflicts:', conflicts);
+
+        let warnings = [];
+        
+        if (conflicts.length > 0) {
+            console.log('⚠️ Processing conflicts...');
+            
+            // בדיקה אם יש חפיפה באותה בריכה
+            const samePoolConflicts = conflicts.filter(conflict => {
+                const isSamePool = conflict.pool_id === parseInt(lessonData.pool_id);
+                console.log(`🔍 Conflict ${conflict.lesson_id}: pool ${conflict.pool_id} vs ${lessonData.pool_id} = ${isSamePool}`);
+                return isSamePool;
+            });
+            
+            if (samePoolConflicts.length > 0) {
+                // חפיפה באותה בריכה - מונע יצירה
+                console.log('🚫 Same pool conflicts found:', samePoolConflicts);
+                
+                throw new Error(JSON.stringify({
+                    type: 'SCHEDULE_CONFLICT',
+                    message: 'יש לך שיעור קיים באותה בריכה בזמן חופף',
+                    conflicts: samePoolConflicts
+                }));
+            }
+            
+            // בדיקת צפיפות (פחות מ-15 דקות) בבריכות אחרות
+            const getTimeInMinutes = (timeStr) => {
+                const [hours, minutes] = timeStr.split(':').map(Number);
+                return hours * 60 + minutes;
+            };
+            
+            const newStartMinutes = getTimeInMinutes(lessonData.start_time);
+            const newEndMinutes = getTimeInMinutes(lessonData.end_time);
+            
+            console.log('🔍 New lesson time range:', newStartMinutes, '-', newEndMinutes);
+            
+            conflicts.forEach(conflict => {
+                const conflictStartMinutes = getTimeInMinutes(conflict.start_time);
+                const conflictEndMinutes = getTimeInMinutes(conflict.end_time);
+                
+                console.log(`🔍 Existing lesson ${conflict.lesson_id} time range:`, conflictStartMinutes, '-', conflictEndMinutes);
+                
+                // חישוב המרווח בין השיעורים
+                let minGap = Infinity;
+                
+                if (newEndMinutes <= conflictStartMinutes) {
+                    // השיעור החדש נגמר לפני שהקיים מתחיל
+                    minGap = conflictStartMinutes - newEndMinutes;
+                    console.log(`🔍 New lesson ends before existing starts. Gap: ${minGap} minutes`);
+                } else if (newStartMinutes >= conflictEndMinutes) {
+                    // השיעור החדש מתחיל אחרי שהקיים נגמר
+                    minGap = newStartMinutes - conflictEndMinutes;
+                    console.log(`🔍 New lesson starts after existing ends. Gap: ${minGap} minutes`);
+                } else {
+                    // יש חפיפה - זה לא אמור לקרות כי זה כבר נבדק ב-SQL
+                    console.log('🚫 Overlapping lessons detected!');
+                    minGap = 0;
+                }
+                
+                if (minGap < 15 && minGap >= 0) {
+                    console.log(`⚠️ Tight schedule detected! Gap: ${minGap} minutes`);
+                    warnings.push({
+                        type: 'TIGHT_SCHEDULE',
+                        message: `שים לב: יש לך שיעור צמוד בזמן ב${conflict.pool_name} (מרווח של ${minGap} דקות בלבד)`,
+                        conflict: conflict
+                    });
+                }
+            });
+        }
+
+        console.log('✅ Creating lesson...');
+        
+        // יצירת השיעור
+        lessonData.teacher_id = teacherId;
         delete lessonData.user_id;
         const result = await genericService.create('lessons', lessonData);
 
-        return result;
+        console.log('✅ Lesson created successfully');
+
+        return {
+            lesson: result,
+            warnings: warnings
+        };
+
     } catch (error) {
+        console.error('❌ Error in createLesson:', error.message);
+        
+        // אם זה שגיאת חפיפה, נזרוק אותה כמו שהיא
+        if (error.message.startsWith('{"type":"SCHEDULE_CONFLICT"')) {
+            throw error;
+        }
         throw error;
     }
 }
@@ -98,24 +202,10 @@ async function deleteLesson(lessonId) {
     }
 }
 
-// async function getLessonsByPool(poolId) {
-//     try {
-//         const lessons = await genericService.getItems('lessons', { pool_id: poolId });
-//         return lessons;
-//     } catch (error) {
-//         throw error;
-//     }
-// }
-
-
-
 module.exports = {
     getMyLessons,
     getAvailableLessons,
     createLesson,
     updateLesson,
-   deleteLesson 
-    // getLessonsByTeacher,
-    // getLessonsByPool,
-
+    deleteLesson 
 };

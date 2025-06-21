@@ -7,6 +7,74 @@ export const getTimeDifferenceInMinutes = (startTime, endTime) => {
   return endTotalMin - startTotalMin;
 };
 
+// פונקציות תצוגה ופורמטים
+export const getLessonIcon = (type) => {
+  switch (type?.toLowerCase()) {
+    case 'private': return '👤';
+    case 'group': return '👥';
+    default: return '🏊‍♀️';
+  }
+};
+
+export const getLevelColor = (level) => {
+  switch (level?.toLowerCase()) {
+    case 'beginner': return '#28a745';
+    case 'intermediate': return '#ffc107';
+    case 'advanced': return '#dc3545';
+    default: return '#0066cc';
+  }
+};
+
+export const formatAgeRange = (minAge, maxAge) => {
+  if (!minAge && !maxAge) return 'כל הגילאים';
+  if (!minAge) return `עד גיל ${maxAge}`;
+  if (!maxAge) return `מגיל ${minAge}`;
+  return `${minAge}-${maxAge}`;
+};
+
+export const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('he-IL');
+};
+
+export const formatTime = (timeString) => {
+  return timeString?.substring(0, 5);
+};
+
+export const translateLessonType = (type) => {
+  switch (type?.toLowerCase()) {
+    case 'private': return 'פרטי';
+    case 'group': return 'קבוצתי';
+    default: return 'לא מוגדר';
+  }
+};
+
+export const translateLevel = (level) => {
+  switch (level?.toLowerCase()) {
+    case 'beginner': return 'מתחיל';
+    case 'intermediate': return 'בינוני';
+    case 'advanced': return 'מתקדם';
+    default: return 'כללי';
+  }
+};
+
+// פונקציה חדשה לפורמט שיעור קיים למודל קונפליקט
+export const formatConflictLessonForModal = (conflictLesson) => {
+  return {
+    lesson_id: conflictLesson.lesson_id,
+    lesson_date: conflictLesson.lesson_date,
+    start_time: conflictLesson.start_time,
+    end_time: conflictLesson.end_time,
+    lesson_type: conflictLesson.lesson_type,
+    level: conflictLesson.level,
+    pool_name: conflictLesson.pool_name,
+    pool_id: conflictLesson.pool_id,
+    min_age: conflictLesson.min_age,
+    max_age: conflictLesson.max_age,
+    registrations: [] // אין רישומים להציג במודל
+  };
+};
+
 export const createLessonKeys = (pools) => [
   {
     key: 'lesson_date',
@@ -78,7 +146,6 @@ export const createLessonKeys = (pools) => [
     inputType: 'number',
     placeholder: 'גיל מקסימום'
   }
-
 ];
 
 export const createLessonValidationRules = () => ({

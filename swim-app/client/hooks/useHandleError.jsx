@@ -23,6 +23,16 @@ export default function useHandleError() {
         alert(errorMessage);
     };
 
+    // הסרנו את ה-alert מכאן!
+    const handleLessonConflictError = (error, formatFunctions) => {
+        if (error.response?.data?.type === 'SCHEDULE_CONFLICT') {
+            // פשוט נחזיר true כדי לציין שזה קונפליקט
+            // המודל יטפל בהצגה
+            return true;
+        }
+        return false;
+    };
+
     const clearErrors = () => setError([]);
     const logErrors = () => {
         errors.forEach((error) => {
@@ -30,5 +40,5 @@ export default function useHandleError() {
         });
     };
 
-    return { handleError, clearErrors, logErrors };
+    return { handleError, handleLessonConflictError, clearErrors, logErrors };
 }

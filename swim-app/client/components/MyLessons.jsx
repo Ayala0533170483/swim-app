@@ -9,11 +9,18 @@ import Lesson from './Lesson';
 import {
   createLessonKeys,
   createLessonValidationRules,
-  defaultLessonValues
+  defaultLessonValues,
+  formatDate,
+  formatTime,
+  translateLessonType,
+  translateLevel,
+  formatConflictLessonForModal
 } from '../structures/lessonStructures';
+import '../styles/Modal.css';
 import '../styles/Update.css';
 
 export const LessonsContext = React.createContext();
+
 function MyLessons() {
   const { userData } = useContext(userContext);
   const [lessons, setLessons, updateLessons, deleteLessons, addLessons] = useHandleDisplay([]);
@@ -22,7 +29,12 @@ function MyLessons() {
   const [displayChanged, setDisplayChanged] = useState(false);
   const { handleError } = useHandleError();
   const isTeacher = userData?.type_name === 'teacher';
-
+  const [conflictModal, setConflictModal] = useState({
+    isOpen: false,
+    conflictLesson: null,
+    message: '',
+    type: ''
+  });
 
   const lessonKeys = useMemo(() => {
     return createLessonKeys(pools);
@@ -64,7 +76,6 @@ function MyLessons() {
   useEffect(() => {
     let isMounted = true;
     const fetchLessons = async () => {
-
       if (!userData) {
         if (isMounted) setLoading(false);
         return;
@@ -94,13 +105,111 @@ function MyLessons() {
     };
   }, [userData?.user_id]);
 
-  const handleAddLesson = useCallback((newLesson) => {
-    addLessons(newLesson);
+  const handleAddLesson = useCallback(async (newLesson) => {
+    try {
+      // אם יש אזהרות, נציג אותן במודל
+      if (newLesson.warnings && newLesson.warnings.length > 0) {
+        newLesson.warnings.forEach(warning => {
+          if (warning.type === 'TIGHT_SCHEDULE') {
+            setConflictModal({
+              isOpen: true,
+              conflictLesson: warning.conflict,
+              message: warning.message,
+              type: 'warning'
+            });
+          }
+        });
+      }
+
+      // עדכון הרשימה (השיעור כבר נוצר בהצלחה)
+      addLessons(newLesson.lesson || newLesson);
+    } catch (error) {
+      console.error('Error in handleAddLesson:', error);
+    }
   }, [addLessons]);
+
+  // פונקציה לטיפול בשגיאות שיעורים
+  const handleLessonError = (error) => {
+    console.log('🔥 handleLessonError called!');
+    console.log('Error response data:', error.response?.data);
+    
+    if (error.response?.data?.type === 'SCHEDULE_CONFLICT') {
+      console.log('🎯 Schedule conflict detected!');
+      const { message, conflicts } = error.response.data;
+      console.log('Conflicts array:', conflicts);
+      
+      if (conflicts && conflicts.length > 0) {
+        console.log('📋 Setting conflict modal with existing lesson:', conflicts[0]);
+        setConflictModal({
+          isOpen: true,
+          conflictLesson: conflicts[0], // זה השיעור הקיים!
+          message: message,
+          type: 'error'
+        });
+        return true;
+      }
+    }
+    
+    console.log('❌ Not a schedule conflict, using regular error handling');
+    return false;
+  };
+
+  // פונקציה לסגירת המודל
+  const closeConflictModal = () => {
+    setConflictModal({
+      isOpen: false,
+      conflictLesson: null,
+      message: '',
+      type: ''
+    });
+  };
 
   if (!userData) {
     return <div className="loading">טוען נתוני משתמש...</div>;
   }
+
+  // המודל לתצוגת קונפליקטים
+  const ConflictModal = () => {
+    if (!conflictModal.isOpen || !conflictModal.conflictLesson) return null;
+
+    console.log('🎭 Rendering modal with conflict lesson:', conflictModal.conflictLesson);
+
+    // נמיר את נתוני הקונפליקט לפורמט של Lesson באמצעות הפונקציה מהסטרוקצ'ס
+    const conflictLessonFormatted = formatConflictLessonForModal(conflictModal.conflictLesson);
+
+    console.log('🎭 Formatted lesson for modal:', conflictLessonFormatted);
+
+    return (
+      <div className="modal-overlay" onClick={closeConflictModal}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-header">
+            <h2>
+              {conflictModal.type === 'error' ? '❌ שיעור קיים באותו זמן' : '⚠️ שים לב'}
+            </h2>
+            <button className="modal-close" onClick={closeConflictModal}>×</button>
+          </div>
+          
+          <div className="modal-body">
+            <p className="conflict-message">{conflictModal.message}</p>
+            <div className="conflict-lesson">
+              <h3>פרטי השיעור הקיים:</h3>
+              <Lesson 
+                lesson={conflictLessonFormatted} 
+                pools={pools} 
+                mode="conflict" 
+              />
+            </div>
+          </div>
+          
+          <div className="modal-footer">
+            <button className="btn-modal-close" onClick={closeConflictModal}>
+              הבנתי
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <LessonsContext.Provider value={{
@@ -108,7 +217,6 @@ function MyLessons() {
       deleteLessons,
       displayChanged,
       setDisplayChanged
-
     }}>
       <div className="my-lessons-page">
         <div className="container">
@@ -131,6 +239,7 @@ function MyLessons() {
                 validationRules={lessonValidationRules}
                 keys={lessonKeys}
                 setDisplayChanged={setDisplayChanged}
+                onError={handleLessonError}
               />
             </div>
           )}
@@ -166,6 +275,7 @@ function MyLessons() {
           )}
         </div>
       </div>
+      <ConflictModal />
     </LessonsContext.Provider>
   );
 }

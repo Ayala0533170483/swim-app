@@ -105,7 +105,6 @@ async function registerStudentToLesson(lessonId, studentId) {
       throw new Error('השיעור לא נמצא או שהוא לא פעיל');
     }
 
-    // רק אחרי שהרישום הצליח - נקבל את הנתונים למייל
     const [lessonDetails] = await conn.query(
       `SELECT 
         l.lesson_id,
@@ -148,9 +147,58 @@ l.max_age,
   }
 }
 
+async function checkTeacherScheduleConflicts(teacherId, lessonDate, startTime, endTime, excludeLessonId = null) {
+  console.log('🔍 Checking conflicts for:', {
+    teacherId,
+    lessonDate,
+    startTime,
+    endTime,
+    excludeLessonId
+  });
+
+  const sql = `
+    SELECT 
+      l.lesson_id,
+      l.pool_id,
+      p.name as pool_name,
+      l.lesson_date,
+      l.start_time,
+      l.end_time,
+      l.lesson_type,
+      l.level,
+      l.min_age,
+      l.max_age
+    FROM lessons l
+    LEFT JOIN pools p ON l.pool_id = p.pool_id
+    WHERE l.teacher_id = ? 
+    AND l.lesson_date = ?
+    AND l.is_active = 1
+    AND (
+      -- חפיפה מלאה או חלקית: השיעור החדש מתחיל לפני שהקיים נגמר
+      -- והשיעור החדש נגמר אחרי שהקיים מתחיל
+      (? < l.end_time AND ? > l.start_time)
+    )
+    ${excludeLessonId ? 'AND l.lesson_id != ?' : ''}
+    ORDER BY l.start_time`;
+
+  const params = [teacherId, lessonDate, startTime, endTime];
+  if (excludeLessonId) {
+    params.push(excludeLessonId);
+  }
+
+  console.log('🔍 SQL Query:', sql);
+  console.log('🔍 Parameters:', params);
+
+  const [rows] = await pool.query(sql, params);
+  
+  console.log('🔍 Found conflicts:', rows);
+  
+  return rows;
+}
 
 module.exports = {
   getMyLessons,
   getAvailableLessons,
-  registerStudentToLesson
+  registerStudentToLesson,
+  checkTeacherScheduleConflicts
 };

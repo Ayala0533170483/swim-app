@@ -17,7 +17,8 @@ function AddItem({
     setDisplayChanged = () => { },
     validationRules = {},
     userId = null,
-    useContactStyle = false
+    useContactStyle = false,
+    onError = null
 }) {
     const [showAddItem, setShowAddItem] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -147,6 +148,16 @@ function AddItem({
                 const errorData = await response.json().catch(() => ({}));
                 console.error('❌ Error response:', errorData);
 
+                // אם יש פונקציית onError מותאמת אישית (למשל לקונפליקטים)
+                if (onError && typeof onError === 'function') {
+                    const handled = onError({ response: { data: errorData, status: response.status } });
+                    if (handled) {
+                        // השגיאה טופלה על ידי הפונקציה המותאמת
+                        setIsSubmitting(false);
+                        return;
+                    }
+                }
+
                 if (useContactStyle) {
                     alert(errorData.message || 'שגיאה בשליחת ההודעה. אנא נסה שוב.');
                 } else {
@@ -160,6 +171,15 @@ function AddItem({
             }
         } catch (error) {
             console.error('❌ Network error:', error);
+
+            // אם יש פונקציית onError מותאמת אישית
+            if (onError && typeof onError === 'function') {
+                const handled = onError(error);
+                if (handled) {
+                    setIsSubmitting(false);
+                    return;
+                }
+            }
 
             if (useContactStyle) {
                 alert('שגיאת רשת. אנא בדוק את החיבור לאינטרנט ונסה שוב.');

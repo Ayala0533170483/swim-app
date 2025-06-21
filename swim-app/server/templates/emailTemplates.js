@@ -54,15 +54,15 @@ const createLessonConfirmationTemplate = (studentName, lessonData) => {
                 margin-bottom: 20px;
                 text-align: right;
             }
-            .success-message {
-                background-color: #d4edda;
-                border-right: 4px solid #28a745;
-                padding: 15px;
-                margin: 20px 0;
-                border-radius: 5px;
-                color: #155724;
-                text-align: right;
-            }
+            // .success-message {
+            //     background-color: #d4edda;
+            //     border-right: 4px solid #28a745;
+            //     padding: 15px;
+            //     margin: 20px 0;
+            //     border-radius: 5px;
+            //     color: #155724;
+            //     text-align: right;
+            // }
             .lesson-details { 
                 background-color: #f8f9fa;
                 border: 1px solid #e9ecef;
@@ -123,7 +123,7 @@ const createLessonConfirmationTemplate = (studentName, lessonData) => {
                 <h1><span class="emoji">🏊‍♀️</span>SwimWise<span class="emoji">🏊‍♂️</span></h1>
             </div>
             <div class="content">
-                <div class="greeting">שלום ${studentName},</div>
+                <div class="greeting">שלום ,${studentName}</div>
                 
                 <div class="success-message">
                     <strong></strong> נרשמת לשיעור השחייה 
@@ -133,34 +133,34 @@ const createLessonConfirmationTemplate = (studentName, lessonData) => {
                     <h3>פרטי השיעור שלך:</h3>
                     
                     <div class="detail-row">
-                        <span class="detail-label">📅 תאריך:</span>
                         <span class="detail-value">${formattedDate}</span>
+                        <span class="detail-label">📅 תאריך:</span>
                     </div>
                     
                     <div class="detail-row">
-                        <span class="detail-label">⏰ שעה:</span>
                         <span class="detail-value">${lessonData.start_time} - ${lessonData.end_time}</span>
+                        <span class="detail-label">⏰ שעה:</span>
                     </div>
                     
                     <div class="detail-row">
-                        <span class="detail-label">🏊 בריכה:</span>
                         <span class="detail-value">${lessonData.pool_name}</span>
+                        <span class="detail-label">🏊 בריכה:</span>
                     </div>
                     
                     <div class="detail-row">
-                        <span class="detail-label">👨‍🏫 מדריך:</span>
                         <span class="detail-value">${lessonData.teacher_name}</span>
+                        <span class="detail-label">👨‍🏫 מדריך:</span>
                     </div>
                     
                     <div class="detail-row">
-                        <span class="detail-label">📋 סוג שיעור:</span>
                         <span class="detail-value">${lessonData.lesson_type === 'private' ? 'שיעור פרטי' : 'שיעור קבוצתי'}</span>
+                        <span class="detail-label">📋 סוג שיעור:</span>
                     </div>
                 </div>
                 
                 <div class="calendar-info">
-                    <strong>📱 הוספה ליומן</strong><br>
-                    קובץ היומן מצורף למייל - לחץ עליו כדי להוסיף את השיעור ליומן שלך!
+                    <strong>הוספה ליומן</strong><br>
+                    קובץ היומן מצורף למייל - לחץ עליו כדי להוסיף את השיעור ליומן שלך
                 </div>
                 
                 <p style="color: #6c757d; font-size: 14px; margin-top: 30px; text-align: right;">
@@ -168,8 +168,8 @@ const createLessonConfirmationTemplate = (studentName, lessonData) => {
                 </p>
             </div>
             <div class="footer">
-                <p><strong>בהצלחה בשיעור!</strong> 🌊</p>
-                <p>מועדון השחייה | צוות השירות</p>
+                <p><strong>🌊 בהצלחה בשיעור!</strong> </p>
+                <p>swinSchool | צוות השירות</p>
             </div>
         </div>
     </body>
