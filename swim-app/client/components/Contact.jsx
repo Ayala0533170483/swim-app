@@ -63,7 +63,6 @@ function Contact() {
         ...(userData && { user_id: userData.user_id || userData.id })
       };
 
-      console.log('Message sent successfully:', messageData);
       setContactMessages(prev => [...prev, messageData]);
 
       if (userData) {
@@ -160,7 +159,6 @@ function Contact() {
                       onChange={handleChange}
                       className={`form-input ${fieldErrors.name ? 'error' : ''} ${isUserLoggedIn ? 'auto-filled' : ''}`}
                       placeholder="הכנס את שמך המלא"
-                      readOnly={userData}
                     />
                     {fieldErrors.name && (
                       <span className="field-error">{fieldErrors.name}</span>
