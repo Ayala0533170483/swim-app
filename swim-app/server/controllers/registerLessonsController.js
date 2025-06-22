@@ -1,6 +1,6 @@
 const lessonsService = require('../services/lessonsService');
 // במקום EmailService, השתמש בקובץ הקיים:
-const { sendLessonConfirmationEmail } = require('./emailLogic');
+const { sendLessonConfirmationEmail } = require('./emailController');
 const calendarUtils = require('../utils/calendarUtils');
 
 async function registerToLesson(registrationData) {

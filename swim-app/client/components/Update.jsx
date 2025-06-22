@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { FaPen, FaImage } from "react-icons/fa";
+import { FaPen } from "react-icons/fa";
 import "../styles/Update.css";
-import "../styles/FileInput.css";
+import FileInput from './FileInput';
 import useHandleError from "../hooks/useHandleError";
 import refreshToken from "../js-files/RefreshToken";
 import Cookies from 'js-cookie';
@@ -22,7 +22,6 @@ function Update({
     const [showUpdateDetails, setShowUpdateDetails] = useState(false);
     const [updatedItem, setUpdatedItem] = useState(item);
     const [errors, setErrors] = useState({});
-    const [imagePreview, setImagePreview] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const { handleError } = useHandleError();
 
@@ -49,21 +48,17 @@ function Update({
         }
     };
 
-    // פונקציה לטיפול בבחירת תמונה חדשה
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
+    // פונקציה לטיפול בשינוי קובץ
+    const handleFileChange = (file) => {
         setSelectedFile(file);
+    };
 
-        if (file) {
-            // יצירת preview
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setImagePreview(e.target.result);
-            };
-            reader.readAsDataURL(file);
-        } else {
-            setImagePreview(null);
-        }
+    // פונקציה לטיפול בשגיאות קובץ
+    const handleFileError = (error) => {
+        setErrors(prev => ({
+            ...prev,
+            image: error.message
+        }));
     };
 
     const validateForm = () => {
@@ -75,11 +70,9 @@ function Update({
                 const value = updatedItem[field.key];
                 const rules = validationRules[field.key];
 
-                // עבור שדה תמונה בעדכון - לא חובה (שונה מהוספה)
-                if (field.type === 'file' && field.key === 'image') {
+                              if (field.type === 'file' && field.key === 'image') {
                     if (selectedFile) {
-                        // אם נבחר קובץ חדש, בדוק אותו
-                        const maxSize = 5 * 1024 * 1024; // 5MB
+                        const maxSize = 5 * 1024 * 1024; 
                         if (selectedFile.size > maxSize) {
                             newErrors[field.key] = 'גודל התמונה חייב להיות עד 5MB';
                             isValid = false;
@@ -185,7 +178,6 @@ function Update({
                 setShowUpdateDetails(false);
                 setDisplayChanged(true);
                 setErrors({});
-                setImagePreview(null);
                 setSelectedFile(null);
             } else {
                 const errorData = await response.json().catch(() => ({}));
@@ -230,22 +222,11 @@ function Update({
         }
     }
 
-
     const handleCancel = () => {
         setUpdatedItem(item);
         setShowUpdateDetails(false);
         setErrors({});
-        setImagePreview(null);
         setSelectedFile(null);
-    };
-
-    const clearImage = (fieldKey) => {
-        setImagePreview(null);
-        setSelectedFile(null);
-        const fileInput = document.getElementById(`${fieldKey}-file`);
-        if (fileInput) {
-            fileInput.value = '';
-        }
     };
 
     const fieldsToRender = keys || Object.keys(updatedItem).filter(key => key !== "id").map(key => ({
@@ -324,54 +305,20 @@ function Update({
                                         </>
                                     ) : field.type === 'file' ? (
                                         <>
-                                            <div className="file-input-wrapper">
-                                                <input
-                                                    type="file"
-                                                    id={`${field.key}-file`}
-                                                    accept={field.accept}
-                                                    className="hidden-file-input"
-                                                    onChange={handleImageChange}
-                                                />
-                                                <div
-                                                    className="fake-file-input"
-                                                    onClick={() => document.getElementById(`${field.key}-file`).click()}
-                                                >
-                                                    <span className="file-input-text">
-                                                        {imagePreview ? 'תמונה חדשה נבחרה' :
-                                                            currentImageUrl ? 'תמונה קיימת' : 'בחר תמונה...'}
-                                                    </span>
-                                                    <div className="file-input-icons">
-                                                        {(imagePreview || selectedFile) && (
-                                                            <button
-                                                                type="button"
-                                                                className="clear-file-btn"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    clearImage(field.key);
-                                                                }}
-                                                            >
-                                                                ×
-                                                            </button>
-                                                        )}
-                                                        <FaImage className="file-input-icon" />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <FileInput
+                                                value={selectedFile}
+                                                onChange={handleFileChange}
+                                                onError={handleFileError}
+                                                disabled={false}
+                                                accept={field.accept || 'image/*'}
+                                                placeholder="בחר תמונה חדשה..."
+                                                fieldKey={field.key}
+                                                showPreview={true}
+                                                currentImageUrl={currentImageUrl}
+                                            />
 
                                             {field.note && (
                                                 <small className="field-note">{field.note}</small>
-                                            )}
-
-                                            {/* תמונה קטנה - נוכחית או חדשה */}
-                                            {(imagePreview || currentImageUrl) && (
-                                                <div className="mini-image-preview">
-                                                    <img
-                                                        src={imagePreview || currentImageUrl}
-                                                        alt={imagePreview ? "תמונה חדשה" : "תמונה נוכחית"}
-                                                        className="mini-preview-image"
-                                                    />
-                                                    {imagePreview && <small className="preview-label">תמונה חדשה</small>}
-                                                </div>
                                             )}
 
                                             {errors[field.key] && (
@@ -419,3 +366,4 @@ function Update({
 }
 
 export default Update;
+

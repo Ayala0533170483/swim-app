@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { fetchData } from '../js-files/GeneralRequests';
 import useHandleError from '../hooks/useHandleError';
 import useHandleDisplay from '../hooks/useHandleDisplay';
+import Cookies from 'js-cookie';
+import FileInput from './FileInput';
 import '../styles/SendMessages.css';
 
 function SendMessages() {
@@ -25,20 +27,20 @@ function SendMessages() {
 
         const allUsers = await fetchData('users', '', handleError);
     
-if (allUsers) {
-  const mapped = allUsers
-    .filter(u => u.type_id !== 1)    // מסננים מנהלים (1)
-    .map(u => ({
-      ...u,
-      type_name: u.type_id === 2
-        ? 'teacher'
-        : u.type_id === 3
-          ? 'student'
-          : 'unknown'
-    }));
+        if (allUsers) {
+          const mapped = allUsers
+            .filter(u => u.type_id !== 1)    // מסננים מנהלים (1)
+            .map(u => ({
+              ...u,
+              type_name: u.type_id === 2
+                ? 'teacher'
+                : u.type_id === 3
+                  ? 'student'
+                  : 'unknown'
+            }));
 
-  setUsers(mapped);
-}
+          setUsers(mapped);
+        }
 
       } catch (error) {
         handleError('getError', error);
@@ -98,18 +100,6 @@ if (allUsers) {
     }
   };
 
-  const handleStudentsContainerClick = (e) => {
-    if (e.target.type !== 'checkbox' && students.length > 0) {
-      handleSelectAllStudents();
-    }
-  };
-
-  const handleTeachersContainerClick = (e) => {
-    if (e.target.type !== 'checkbox' && teachers.length > 0) {
-      handleSelectAllTeachers();
-    }
-  };
-
   const updateGroupSelections = (selectedIds) => {
     if (!users || users.length === 0) return;
 
@@ -123,36 +113,17 @@ if (allUsers) {
     setSelectAllTeachers(selectedTeachers.length === teachers.length && teachers.length > 0);
   };
 
-  const handleFileUpload = (event) => {
-    try {
-      const file = event.target.files[0];
-
-      if (file) {
-        if (file.size > 5 * 1024 * 1024) {
-          handleError('addError', new Error('גודל הקובץ חייב להיות קטן מ-5MB'));
-          return;
-        }
-
-        const allowedTypes = [
-          'application/pdf',
-          'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'image/jpeg',
-          'image/jpg',
-          'image/png'
-        ];
-
-        if (!allowedTypes.includes(file.type)) {
-          handleError('addError', new Error('סוג קובץ לא נתמך. אנא בחר PDF, Word או תמונה'));
-          return;
-        }
-
-        setAttachedFile(file);
-        clearErrors();
-      }
-    } catch (error) {
-      handleError('addError', error);
+  // פונקציה פשוטה לטיפול בשינוי קובץ
+  const handleFileChange = (file) => {
+    setAttachedFile(file);
+    if (file) {
+      clearErrors(); // נקה שגיאות אם יש קובץ תקין
     }
+  };
+
+  // פונקציה לטיפול בשגיאות קובץ
+  const handleFileError = (error) => {
+    handleError('addError', error);
   };
 
   const handleSendMessage = async () => {
@@ -176,36 +147,61 @@ if (allUsers) {
 
       setSending(true);
 
-      console.log('Sending message to:', selectedUsers);
-      console.log('Subject:', subject);
-      console.log('Content:', messageContent);
-      console.log('File:', attachedFile);
+      // יצירת רשימת נמענים עם הפרטים הנדרשים
+      const recipients = users
+        .filter(user => selectedUsers.includes(user.user_id))
+        .map(user => ({
+          name: user.name,
+          email: user.email
+        }));
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // יצירת FormData לשליחת הנתונים עם קובץ
+      const formData = new FormData();
+      formData.append('userIds', JSON.stringify(selectedUsers));
+      formData.append('recipients', JSON.stringify(recipients));
+      formData.append('subject', subject.trim());
+      formData.append('messageContent', messageContent.trim());
+      
+      if (attachedFile) {
+        formData.append('attachedFile', attachedFile);
+      }
 
-      alert('ההודעה נשלחה בהצלחה!');
+      // שליחת הבקשה לשרת
+      const token = Cookies.get("accessToken");
+      const response = await fetch('http://localhost:3000/email/send-general-message', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include',
+        body: formData
+      });
 
-      setSelectedUsers([]);
-      setSelectAllStudents(false);
-      setSelectAllTeachers(false);
-      setSubject('');
-      setMessageContent('');
-      setAttachedFile(null);
+      const result = await response.json();
 
-      const fileInput = document.getElementById('file');
-      if (fileInput) fileInput.value = '';
+      if (response.ok && result.totalSent > 0) {
+        const message = result.totalFailed > 0 
+          ? `ההודעה נשלחה ל-${result.totalSent} מתוך ${result.totalSent + result.totalFailed} משתמשים`
+          : `ההודעה נשלחה בהצלחה ל-${result.totalSent} משתמשים!`;
+        alert(message);
+        
+        // איפוס הטופס
+        setSelectedUsers([]);
+        setSelectAllStudents(false);
+        setSelectAllTeachers(false);
+        setSubject('');
+        setMessageContent('');
+        setAttachedFile(null);
+
+      } else {
+        throw new Error(result.error || 'שגיאה בשליחת ההודעה');
+      }
 
     } catch (error) {
       handleError('addError', error, true);
     } finally {
       setSending(false);
     }
-  };
-
-  const removeAttachedFile = () => {
-    setAttachedFile(null);
-    const fileInput = document.getElementById('file');
-    if (fileInput) fileInput.value = '';
   };
 
   if (loading) {
@@ -229,8 +225,6 @@ if (allUsers) {
       <div className="messages-header">
         <h1>שליחת הודעות למשתמשים</h1>
       </div>
-  
-      {console.log('students array:', students, 'length:', students.length)}
 
       <div className="group-selection">
         <div className="group-options">
@@ -258,10 +252,9 @@ if (allUsers) {
         </div>
       </div>
 
-
-      <div className="users-section">
+      <div className="message-users-section">
         <h3>בחר משתמשים ({selectedUsers.length} נבחרו)</h3>
-        <div className="users-list">
+        <div className="message-users-list">
           {users.map(user => (
             <div key={user.user_id} className="user-card">
               <input
@@ -312,27 +305,17 @@ if (allUsers) {
         </div>
 
         <div className="form-group">
-          <label htmlFor="file">קובץ מצורף (אופציונלי):</label>
-          <input
-            type="file"
-            id="file"
-            onChange={handleFileUpload}
-            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+          <label>קובץ מצורף (אופציונלי):</label>
+          <FileInput
+            value={attachedFile}
+            onChange={handleFileChange}
+            onError={handleFileError}
             disabled={sending}
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+            placeholder="בחר קובץ..."
+            fieldKey="attachedFile"
+            showPreview={true}
           />
-          {attachedFile && (
-            <div className="file-info">
-              <span>קובץ נבחר: {attachedFile.name}</span>
-              <button
-                type="button"
-                className="remove-file-btn"
-                onClick={removeAttachedFile}
-                disabled={sending}
-              >
-                ✕
-              </button>
-            </div>
-          )}
           <small className="file-hint">
             קבצים מותרים: PDF, Word, תמונות (מקסימום 5MB)
           </small>

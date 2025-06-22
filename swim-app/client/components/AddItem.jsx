@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { FaPlus, FaImage } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import "../styles/AddItem.css";
-import "../styles/FileInput.css";
+import FileInput from './FileInput';
 import useHandleError from "../hooks/useHandleError";
 import refreshToken from "../js-files/RefreshToken";
 import Cookies from 'js-cookie';
@@ -22,7 +22,6 @@ function AddItem({
 }) {
     const [showAddItem, setShowAddItem] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [imagePreview, setImagePreview] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const { handleError } = useHandleError();
 
@@ -39,26 +38,15 @@ function AddItem({
     });
     const watchedValues = watch();
 
-    // פונקציה לטיפול בבחירת תמונה
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
+    // פונקציה לטיפול בשינוי קובץ
+    const handleFileChange = (file) => {
         setSelectedFile(file);
-        
-        if (file) {
-            // יצירת preview
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setImagePreview(e.target.result);
-            };
-            reader.readAsDataURL(file);
-            
-            // עדכון הטופס
-            setValue('image', file);
-        } else {
-            setImagePreview(null);
-            setSelectedFile(null);
-            setValue('image', null);
-        }
+        setValue('image', file);
+    };
+
+    // פונקציה לטיפול בשגיאות קובץ
+    const handleFileError = (error) => {
+        handleError('addError', error);
     };
 
     const sendAddRequest = async (token, data) => {
@@ -141,7 +129,6 @@ function AddItem({
                 setDisplayChanged(true);
                 reset(defaltValues);
                 setShowAddItem(false);
-                setImagePreview(null);
                 setSelectedFile(null);
 
             } else {
@@ -194,7 +181,6 @@ function AddItem({
     const handleCancel = () => {
         reset(defaltValues);
         setShowAddItem(false);
-        setImagePreview(null);
         setSelectedFile(null);
     };
 
@@ -207,16 +193,6 @@ function AddItem({
                 });
             }
         }
-    };
-
-    const clearImage = (fieldKey) => {
-        setImagePreview(null);
-        setSelectedFile(null);
-        const fileInput = document.getElementById(`${fieldKey}-file`);
-        if (fileInput) {
-            fileInput.value = '';
-        }
-        setValue('image', null);
     };
 
     if (useContactStyle) {
@@ -302,51 +278,19 @@ function AddItem({
                                         </>
                                     ) : field.type === 'file' ? (
                                         <>
-                                            <div className="file-input-wrapper">
-                                                <input
-                                                    type="file"
-                                                    id={`${field.key}-file`}
-                                                    accept={field.accept || 'image/*'}
-                                                    className="hidden-file-input"
-                                                    onChange={handleImageChange}
-                                                />
-                                                <div 
-                                                    className="fake-file-input"
-                                                    onClick={() => document.getElementById(`${field.key}-file`).click()}
-                                                >
-                                                    <span className="file-input-text">
-                                                        {selectedFile ? `נבחר: ${selectedFile.name}` : 'בחר תמונה...'}
-                                                    </span>
-                                                    <div className="file-input-icons">
-                                                        {selectedFile && (
-                                                            <button
-                                                                type="button"
-                                                                className="clear-file-btn"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    clearImage(field.key);
-                                                                }}
-                                                            >
-                                                                ×
-                                                            </button>
-                                                        )}
-                                                        <FaImage className="file-input-icon" />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <FileInput
+                                                value={selectedFile}
+                                                onChange={handleFileChange}
+                                                onError={handleFileError}
+                                                disabled={isSubmitting}
+                                                accept={field.accept || 'image/*'}
+                                                placeholder="בחר תמונה..."
+                                                fieldKey={field.key}
+                                                showPreview={true}
+                                            />
                                             
                                             {field.note && (
                                                 <small className="field-note">{field.note}</small>
-                                            )}
-                                            
-                                            {imagePreview && (
-                                                <div className="mini-image-preview">
-                                                    <img 
-                                                        src={imagePreview} 
-                                                        alt="תצוגה מקדימה" 
-                                                        className="mini-preview-image"
-                                                    />
-                                                </div>
                                             )}
                                             
                                             {errors[field.key] && (
