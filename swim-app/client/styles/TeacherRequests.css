@@ -10,13 +10,12 @@
 
 /* Page Header */
 .page-header {
-   
+
     border-radius: 25px;
     padding: 3rem 2rem;
     margin-bottom: 3rem;
     box-shadow: 0 15px 35px rgba(0, 102, 204, 0.1);
     border: 2px solid transparent
-
                 linear-gradient(135deg, #0066cc, #00ccff) border-box;
     position: relative;
     overflow: hidden;
@@ -73,7 +72,7 @@
     100% { transform: scale(1); }
 }
 
-/* Filters Section */
+
 .filters-section {
     background: white;
     border-radius: 20px;
@@ -125,7 +124,7 @@
     transform: translateY(-1px);
 }
 
-/* Loading */
+
 .loading {
     text-align: center;
     padding: 4rem;
@@ -154,7 +153,7 @@
     100% { transform: rotate(360deg); }
 }
 
-/* No Requests */
+
 .no-requests {
     text-align: center;
     padding: 4rem 2rem;
@@ -177,27 +176,29 @@
     margin: 0;
 }
 
-/* Requests Container */
+
 .requests-container {
     margin-top: 2rem;
 }
 
 .requests-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
 }
 
-/* Request Card */
+
 .request-card {
     background: white;
     border-radius: 20px;
-    padding: 2rem;
+    padding: 1rem;
     box-shadow: 0 10px 30px rgba(0, 102, 204, 0.1);
     border: 2px solid transparent;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    min-width: 0;
+    transform: scale(0.85);
 }
 
 .request-card::before {
@@ -211,24 +212,24 @@
 }
 
 .request-card:hover {
-    transform: translateY(-5px);
+    transform: scale(0.85) translateY(-5px); 
     box-shadow: 0 20px 40px rgba(0, 102, 204, 0.15);
     border-color: #00ccff;
 }
 
-/* Request Header */
+
 .request-header {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    gap: 1.2rem; 
+    margin-bottom: 1.5rem; 
 }
 
 .request-icon {
-    font-size: 3rem;
+    font-size: 2.5rem; /* הקטנה מ-3rem ל-2.5rem */
     background: linear-gradient(135deg, #e6f3ff, #cce7ff);
-    width: 70px;
-    height: 70px;
+    width: 60px; /* הקטנה מ-70px ל-60px */
+    height: 60px; /* הקטנה מ-70px ל-60px */
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -248,14 +249,14 @@
 
 .request-title {
     color: #0066cc;
-    font-size: 1.6rem;
+    font-size: 1.4rem; /* הקטנה מ-1.6rem ל-1.4rem */
     font-weight: 700;
-    margin: 0 0 0.8rem 0;
+    margin: 0 0 0.6rem 0; /* הקטנה מ-0.8rem ל-0.6rem */
 }
 
 .request-meta {
     display: flex;
-    gap: 1rem;
+    gap: 0.8rem; /* הקטנה מ-1rem ל-0.8rem */
     flex-wrap: wrap;
     align-items: center;
 }
@@ -263,10 +264,10 @@
 .request-date,
 .request-time {
     color: #666;
-    font-size: 1rem;
+    font-size: 0.9rem; /* הקטנה מ-1rem ל-0.9rem */
     font-weight: 500;
     background: #f8f9fa;
-    padding: 0.4rem 0.8rem;
+    padding: 0.3rem 0.6rem; /* הקטנה מ-0.4rem 0.8rem ל-0.3rem 0.6rem */
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -274,9 +275,9 @@
 }
 
 .request-status {
-    padding: 0.5rem 1.2rem;
+    padding: 0.4rem 1rem; /* הקטנה מ-0.5rem 1.2rem ל-0.4rem 1rem */
     border-radius: 20px;
-    font-size: 0.9rem;
+    font-size: 0.8rem; /* הקטנה מ-0.9rem ל-0.8rem */
     font-weight: 600;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -304,19 +305,19 @@
 
 /* Request Details */
 .request-details {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem; /* הקטנה מ-2rem ל-1.5rem */
 }
 
 .request-info-grid {
     display: grid;
-    gap: 1rem;
+    gap: 0.8rem; /* הקטנה מ-1rem ל-0.8rem */
 }
 
 .info-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
+    padding: 0.8rem 1.2rem; /* הקטנה מ-1rem 1.5rem ל-0.8rem 1.2rem */
     background: #f8fbff;
     border-radius: 12px;
     border-right: 3px solid #0066cc;
@@ -331,24 +332,24 @@
 .info-item.note-item {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.8rem;
+    gap: 0.6rem; /* הקטנה מ-0.8rem ל-0.6rem */
 }
 
 .info-label {
     color: #555;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.9rem; /* הקטנה מ-1rem ל-0.9rem */
 }
 
 .info-value {
     color: #0066cc;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.9rem; /* הקטנה מ-1rem ל-0.9rem */
 }
 
 .note-text {
     background: white;
-    padding: 1rem;
+    padding: 0.8rem; /* הקטנה מ-1rem ל-0.8rem */
     border-radius: 10px;
     border: 1px solid #e1e5e9;
     font-style: italic;
@@ -361,9 +362,9 @@
 /* Request Actions */
 .request-actions {
     display: flex;
-    gap: 1rem;
+    gap: 0.8rem; /* הקטנה מ-1rem ל-0.8rem */
     justify-content: center;
-    padding-top: 2rem;
+    padding-top: 1.5rem; /* הקטנה מ-2rem ל-1.5rem */
     border-top: 2px solid #f1f3f4;
 }
 
@@ -371,9 +372,9 @@
     background: linear-gradient(135deg, #28a745, #20c997);
     color: white;
     border: none;
-    padding: 1rem 2rem;
+    padding: 0.8rem 1.6rem; /* הקטנה מ-1rem 2rem ל-0.8rem 1.6rem */
     border-radius: 12px;
-    font-size: 1.1rem;
+    font-size: 1rem; /* הקטנה מ-1.1rem ל-1rem */
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -381,7 +382,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    min-width: 150px;
+    min-width: 130px; /* הקטנה מ-150px ל-130px */
     justify-content: center;
 }
 
@@ -394,9 +395,9 @@
     background: linear-gradient(135deg, #dc3545, #c82333);
     color: white;
     border: none;
-    padding: 1rem 2rem;
+    padding: 0.8rem 1.6rem; /* הקטנה מ-1rem 2rem ל-0.8rem 1.6rem */
     border-radius: 12px;
-    font-size: 1.1rem;
+    font-size: 1rem; /* הקטנה מ-1.1rem ל-1rem */
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -404,7 +405,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    min-width: 150px;
+    min-width: 130px; /* הקטנה מ-150px ל-130px */
     justify-content: center;
 }
 
@@ -431,7 +432,23 @@
     margin: 2rem 0;
 }
 
-/* Responsive Design */
+/* רספונסיבי - 2 כרטיסים בטאבלט */
+@media (max-width: 1024px) {
+    .requests-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.2rem;
+    }
+    
+    .request-card {
+        transform: scale(0.9); /* הגדלה קלה בטאבלט */
+    }
+    
+    .request-card:hover {
+        transform: scale(0.9) translateY(-5px);
+    }
+}
+
+/* רספונסיבי - כרטיס אחד במובייל */
 @media (max-width: 768px) {
     .teacher-requests-container {
         padding: 1rem;
@@ -474,24 +491,28 @@
         width: 100%;
     }
     
-       .requests-grid {
+    .requests-grid {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 1rem;
     }
     
     .request-card {
-        padding: 1.5rem;
+        padding: 1rem;
+        transform: scale(1); /* גודל מלא במובייל */
+    }
+    
+    .request-card:hover {
+        transform: scale(1) translateY(-5px);
     }
     
     .request-header {
         flex-direction: column;
         text-align: center;
-        gap: 1rem;
+        gap: 0.8rem;
     }
     
     .request-meta {
         justify-content: center;
-        flex-wrap: wrap;
     }
     
     .request-actions {
@@ -538,23 +559,23 @@
     }
     
     .request-card {
-        padding: 1rem;
+        padding: 0.8rem;
     }
     
     .request-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 2rem;
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
     }
     
     .request-title {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
     }
     
     .btn-approve,
     .btn-reject {
-        padding: 0.8rem 1.5rem;
-        font-size: 1rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
     }
 }
 
@@ -605,11 +626,11 @@
 @keyframes slideInFromRight {
     from {
         opacity: 0;
-        transform: translateX(50px);
+        transform: scale(0.85) translateX(50px);
     }
     to {
         opacity: 1;
-        transform: translateX(0);
+        transform: scale(0.85) translateX(0);
     }
 }
 
@@ -644,15 +665,15 @@
 }
 
 @keyframes approveSuccess {
-    0% { background: white; }
-    50% { background: #d4edda; }
-    100% { background: white; }
+    0% { background: white; transform: scale(0.85); }
+    50% { background: #d4edda; transform: scale(0.85); }
+    100% { background: white; transform: scale(0.85); }
 }
 
 @keyframes rejectSuccess {
-    0% { background: white; }
-    50% { background: #f8d7da; }
-    100% { background: white; }
+    0% { background: white; transform: scale(0.85); }
+    50% { background: #f8d7da; transform: scale(0.85); }
+    100% { background: white; transform: scale(0.85); }
 }
 
 /* Custom Scrollbar */
@@ -720,6 +741,7 @@
         box-shadow: none;
         border: 1px solid #ddd;
         margin-bottom: 1rem;
+        transform: scale(1); /* גודל מלא בהדפסה */
     }
     
     .page-header {
@@ -788,4 +810,3 @@
         transition-duration: 0.01ms !important;
     }
 }
-
