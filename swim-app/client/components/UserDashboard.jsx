@@ -31,13 +31,14 @@ function UserDashboard() {
         return [
           { path: `/${usernameForUrl}/my-lessons`, label: 'השיעורים שלי' },
           { path: `/${usernameForUrl}/register-lesson`, label: 'רישום לשיעור חדש' },
+          { path: `/${usernameForUrl}/request-lesson`, label: 'בקשת שיעור' }, // ← הוסף את זה
           { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
-
         ];
       case "teacher":
         return [
           { path: `/${usernameForUrl}/my-lessons`, label: 'השיעורים שלי' },
           { path: `/${usernameForUrl}/requests`, label: 'בקשות ממתינות' },
+          { path: `/${usernameForUrl}/teacher-requests`, label: 'בקשות שיעורים' }, // ← הוסף את זה
           { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
         ];
       case "admin":
@@ -47,7 +48,6 @@ function UserDashboard() {
           { path: `/${usernameForUrl}/students`, label: 'ניהול תלמידים' },
           { path: `/${usernameForUrl}/pools`, label: 'ניהול בריכות' },
           { path: `/${usernameForUrl}/management`, label: 'ניהול כללי' }
-
         ];
       default:
         return [{ path: '/profile', label: 'הפרופיל שלי' }];
