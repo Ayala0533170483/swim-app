@@ -59,21 +59,6 @@ export const translateLevel = (level) => {
 };
 
 // פונקציה חדשה לפורמט שיעור קיים למודל קונפליקט
-export const formatConflictLessonForModal = (conflictLesson) => {
-  return {
-    lesson_id: conflictLesson.lesson_id,
-    lesson_date: conflictLesson.lesson_date,
-    start_time: conflictLesson.start_time,
-    end_time: conflictLesson.end_time,
-    lesson_type: conflictLesson.lesson_type,
-    level: conflictLesson.level,
-    pool_name: conflictLesson.pool_name,
-    pool_id: conflictLesson.pool_id,
-    min_age: conflictLesson.min_age,
-    max_age: conflictLesson.max_age,
-    registrations: [] // אין רישומים להציג במודל
-  };
-};
 
 export const createLessonKeys = (pools) => [
   {
@@ -307,3 +292,49 @@ export const createLessonUpdateConfig = (lesson, pools) => {
     validationRules: createLessonValidationRules()
   };
 };
+
+// הוסף את הפונקציות החסרות בסוף הקובץ:
+
+export const formatConflictLessonForModal = (conflictLesson) => {
+  return {
+    lesson_id: conflictLesson.lesson_id,
+    lesson_date: conflictLesson.lesson_date,
+    start_time: conflictLesson.start_time,
+    end_time: conflictLesson.end_time,
+    lesson_type: conflictLesson.lesson_type,
+    level: conflictLesson.level,
+    pool_name: conflictLesson.pool_name,
+    pool_id: conflictLesson.pool_id,
+    min_age: conflictLesson.min_age,
+    max_age: conflictLesson.max_age,
+    registrations: [] // אין רישומים להציג במודל
+  };
+};
+
+export const getWarningIcon = (warningType) => {
+  switch (warningType) {
+    case 'SCHEDULE_CONFLICT':
+      return '❌';
+    case 'TIGHT_SCHEDULE':
+      return '⚠️';
+    case 'OVERLAP_WARNING':
+      return '🚨';
+    default:
+      return '⚠️';
+  }
+};
+
+export const getWarningTitle = (warningType) => {
+  switch (warningType) {
+    case 'SCHEDULE_CONFLICT':
+      return 'שיעור קיים באותו זמן';
+    case 'TIGHT_SCHEDULE':
+      return 'שים לב - לוח זמנים צפוף';
+    case 'OVERLAP_WARNING':
+      return 'אזהרה חמורה - חפיפה בזמן';
+    default:
+      return 'שים לב';
+  }
+};
+
+

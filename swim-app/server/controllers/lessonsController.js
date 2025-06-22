@@ -60,6 +60,71 @@ async function getAvailableLessons(studentId) {
     }
 }
 
+// פונקציה עזר להמרת זמן למספר דקות
+function timeToMinutes(timeString) {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    return hours * 60 + minutes;
+}
+
+// פונקציה עזר לבדיקת חפיפה בין שני שיעורים
+function hasTimeOverlap(start1, end1, start2, end2) {
+    const start1Minutes = timeToMinutes(start1);
+    const end1Minutes = timeToMinutes(end1);
+    const start2Minutes = timeToMinutes(start2);
+    const end2Minutes = timeToMinutes(end2);
+    
+    console.log('🔍 Checking overlap:', {
+        lesson1: `${start1}(${start1Minutes}) - ${end1}(${end1Minutes})`,
+        lesson2: `${start2}(${start2Minutes}) - ${end2}(${end2Minutes})`
+    });
+    
+    // חפיפה מתרחשת אם: start1 < end2 AND end1 > start2
+    const overlap = start1Minutes < end2Minutes && end1Minutes > start2Minutes;
+    console.log('🔍 Has overlap:', overlap);
+    
+    return overlap;
+}
+
+// פונקציה מתוקנת לחישוב מרווח בין שיעורים - הבעיה הייתה כאן!
+function calculateGapBetweenLessons(newStart, newEnd, existingStart, existingEnd) {
+    const newStartMinutes = timeToMinutes(newStart);
+    const newEndMinutes = timeToMinutes(newEnd);
+    const existingStartMinutes = timeToMinutes(existingStart);
+    const existingEndMinutes = timeToMinutes(existingEnd);
+    
+    console.log('🔍 Gap calculation - DETAILED:', {
+        newLesson: `${newStart}(${newStartMinutes}) - ${newEnd}(${newEndMinutes})`,
+        existingLesson: `${existingStart}(${existingStartMinutes}) - ${existingEnd}(${existingEndMinutes})`
+    });
+    
+    // בדיקה אם יש חפיפה קודם כל
+    if (newStartMinutes < existingEndMinutes && newEndMinutes > existingStartMinutes) {
+        console.log('🔍 Gap calculation: overlap detected, gap = -1');
+        return -1; // מסמן חפיפה
+    }
+    
+    let gap;
+    
+    // אם השיעור החדש מתחיל אחרי שהקיים מסתיים
+    if (newStartMinutes >= existingEndMinutes) {
+        gap = newStartMinutes - existingEndMinutes;
+        console.log(`🔍 New lesson starts after existing ends: ${existingEnd} -> ${newStart} = ${gap} minutes gap`);
+    }
+    // אם השיעור הקיים מתחיל אחרי שהחדש מסתיים
+    else if (existingStartMinutes >= newEndMinutes) {
+        gap = existingStartMinutes - newEndMinutes;
+        console.log(`🔍 Existing lesson starts after new ends: ${newEnd} -> ${existingStart} = ${gap} minutes gap`);
+    }
+    // במקרה של חפיפה (לא אמור להגיע לכאן)
+    else {
+        gap = -1;
+        console.log('🔍 Unexpected overlap case in gap calculation');
+    }
+    
+    console.log(`🔍 FINAL GAP RESULT: ${gap} minutes`);
+    return gap;
+}
+
 async function createLesson(lessonData) {
     try {
         if (!lessonData.user_id || !lessonData.pool_id || !lessonData.lesson_date) {
@@ -67,101 +132,117 @@ async function createLesson(lessonData) {
         }
         
         const teacherId = lessonData.user_id;
+        const newPoolId = parseInt(lessonData.pool_id);
         
         console.log('🔍 Creating lesson with data:', {
             teacherId,
             date: lessonData.lesson_date,
             start: lessonData.start_time,
             end: lessonData.end_time,
-            pool: lessonData.pool_id
+            pool: newPoolId
         });
         
-        // בדיקת חפיפות בלוח הזמנים של המורה
-        const conflicts = await lessonsService.checkTeacherScheduleConflicts(
+        // קבלת כל השיעורים הקיימים של המורה באותו תאריך
+        const existingLessons = await lessonsService.getTeacherLessonsForDate(
             teacherId,
-            lessonData.lesson_date,
-            lessonData.start_time,
-            lessonData.end_time
+            lessonData.lesson_date
         );
-
-        console.log('🔍 Found conflicts:', conflicts);
-
+        
+        console.log('🔍 Found existing lessons:', existingLessons.length);
         let warnings = [];
         
-        if (conflicts.length > 0) {
-            console.log('⚠️ Processing conflicts...');
+        // אם יש שיעורים קיימים - בדוק חפיפות ואזהרות
+        if (existingLessons && existingLessons.length > 0) {
+            console.log('🔍 Checking conflicts and warnings against existing lessons...');
             
-            // בדיקה אם יש חפיפה באותה בריכה
-            const samePoolConflicts = conflicts.filter(conflict => {
-                const isSamePool = conflict.pool_id === parseInt(lessonData.pool_id);
-                console.log(`🔍 Conflict ${conflict.lesson_id}: pool ${conflict.pool_id} vs ${lessonData.pool_id} = ${isSamePool}`);
-                return isSamePool;
-            });
-            
-            if (samePoolConflicts.length > 0) {
-                // חפיפה באותה בריכה - מונע יצירה
-                console.log('🚫 Same pool conflicts found:', samePoolConflicts);
+            for (const existingLesson of existingLessons) {
+                console.log(`\n🔍 === CHECKING LESSON ${existingLesson.lesson_id} ===`);
+                console.log(`   Existing: ${existingLesson.start_time} - ${existingLesson.end_time} (Pool: ${existingLesson.pool_name}, ID: ${existingLesson.pool_id})`);
+                console.log(`   New: ${lessonData.start_time} - ${lessonData.end_time} (Pool ID: ${newPoolId})`);
                 
-                throw new Error(JSON.stringify({
-                    type: 'SCHEDULE_CONFLICT',
-                    message: 'יש לך שיעור קיים באותה בריכה בזמן חופף',
-                    conflicts: samePoolConflicts
-                }));
-            }
-            
-            // בדיקת צפיפות (פחות מ-15 דקות) בבריכות אחרות
-            const getTimeInMinutes = (timeStr) => {
-                const [hours, minutes] = timeStr.split(':').map(Number);
-                return hours * 60 + minutes;
-            };
-            
-            const newStartMinutes = getTimeInMinutes(lessonData.start_time);
-            const newEndMinutes = getTimeInMinutes(lessonData.end_time);
-            
-            console.log('🔍 New lesson time range:', newStartMinutes, '-', newEndMinutes);
-            
-            conflicts.forEach(conflict => {
-                const conflictStartMinutes = getTimeInMinutes(conflict.start_time);
-                const conflictEndMinutes = getTimeInMinutes(conflict.end_time);
+                // בדיקת חפיפה בזמן
+                const hasOverlap = hasTimeOverlap(
+                    lessonData.start_time,
+                    lessonData.end_time,
+                    existingLesson.start_time,
+                    existingLesson.end_time
+                );
                 
-                console.log(`🔍 Existing lesson ${conflict.lesson_id} time range:`, conflictStartMinutes, '-', conflictEndMinutes);
-                
-                // חישוב המרווח בין השיעורים
-                let minGap = Infinity;
-                
-                if (newEndMinutes <= conflictStartMinutes) {
-                    // השיעור החדש נגמר לפני שהקיים מתחיל
-                    minGap = conflictStartMinutes - newEndMinutes;
-                    console.log(`🔍 New lesson ends before existing starts. Gap: ${minGap} minutes`);
-                } else if (newStartMinutes >= conflictEndMinutes) {
-                    // השיעור החדש מתחיל אחרי שהקיים נגמר
-                    minGap = newStartMinutes - conflictEndMinutes;
-                    console.log(`🔍 New lesson starts after existing ends. Gap: ${minGap} minutes`);
+                if (hasOverlap) {
+                    console.log('🚫 TIME OVERLAP DETECTED!');
+                    
+                    // בדיקה אם זה באותה בריכה
+                    const isSamePool = existingLesson.pool_id === newPoolId;
+                    console.log(`🔍 Same pool check: ${existingLesson.pool_id} === ${newPoolId} = ${isSamePool}`);
+                    
+                    if (isSamePool) {
+                        // חפיפה באותה בריכה - מונע יצירה
+                        console.log('🚫 SAME POOL CONFLICT - BLOCKING CREATION');
+                        
+                        throw new Error(JSON.stringify({
+                            type: 'SCHEDULE_CONFLICT',
+                            message: 'יש לך שיעור קיים באותה בריכה בזמן חופף',
+                            conflicts: [existingLesson]
+                        }));
+                    } else {
+                        // חפיפה בבריכה אחרת - אזהרה חמורה
+                        console.log('⚠️ DIFFERENT POOL OVERLAP - SERIOUS WARNING');
+                        warnings.push({
+                            type: 'OVERLAP_WARNING',
+                            message: `אזהרה: יש לך שיעור חופף בזמן ב${existingLesson.pool_name}! זה בלתי אפשרי פיזית`,
+                            conflict: existingLesson
+                        });
+                    }
                 } else {
-                    // יש חפיפה - זה לא אמור לקרות כי זה כבר נבדק ב-SQL
-                    console.log('🚫 Overlapping lessons detected!');
-                    minGap = 0;
+                    // אין חפיפה - בדיקת מרווח לאזהרת צמידות
+                    console.log('✅ No overlap - checking gap...');
+                    
+                    const gap = calculateGapBetweenLessons(
+                        lessonData.start_time,
+                        lessonData.end_time,
+                        existingLesson.start_time,
+                        existingLesson.end_time
+                    );
+                    
+                    console.log(`🔍 Gap result: ${gap} minutes`);
+                    
+                    // אזהרה אם המרווח קטן מ-15 דקות
+                    if (gap >= 0 && gap < 15) {
+                        const isDifferentPool = existingLesson.pool_id !== newPoolId;
+                        
+                        console.log(`🔍 Gap check: gap=${gap}, isDifferentPool=${isDifferentPool}`);
+                        
+                        if (isDifferentPool) {
+                            console.log(`⚠️ TIGHT SCHEDULE WARNING: ${gap} minutes gap between different pools`);
+                            warnings.push({
+                                type: 'TIGHT_SCHEDULE',
+                                message: `שים לב: יש לך שיעור צמוד בזמן ב${existingLesson.pool_name} (מרווח של ${gap} דקות בלבד)`,
+                                conflict: existingLesson
+                            });
+                        } else {
+                            console.log(`ℹ️ Tight schedule in same pool (${gap} minutes) - no warning needed`);
+                        }
+                    } else if (gap >= 15) {
+                        console.log(`✅ Good gap: ${gap} minutes - no warning needed`);
+                    } else if (gap === -1) {
+                        console.log(`❌ Gap calculation returned -1 (overlap) - this shouldn't happen here`);
+                    }
                 }
-                
-                if (minGap < 15 && minGap >= 0) {
-                    console.log(`⚠️ Tight schedule detected! Gap: ${minGap} minutes`);
-                    warnings.push({
-                        type: 'TIGHT_SCHEDULE',
-                        message: `שים לב: יש לך שיעור צמוד בזמן ב${conflict.pool_name} (מרווח של ${minGap} דקות בלבד)`,
-                        conflict: conflict
-                    });
-                }
-            });
+                console.log(`=== END CHECKING LESSON ${existingLesson.lesson_id} ===\n`);
+            }
         }
 
-        console.log('✅ Creating lesson...');
+        // יוצר את השיעור (אם הגענו עד כאן, אין קונפליקטים חוסמים)
+        console.log('✅ No blocking conflicts found - creating lesson...');
         
-        // יצירת השיעור
         lessonData.teacher_id = teacherId;
         delete lessonData.user_id;
         const result = await genericService.create('lessons', lessonData);
-
         console.log('✅ Lesson created successfully');
+        
+        if (warnings.length > 0) {
+            console.log(`⚠️ Created with ${warnings.length} warnings:`, warnings);
+        }
 
         return {
             lesson: result,
@@ -171,7 +252,6 @@ async function createLesson(lessonData) {
     } catch (error) {
         console.error('❌ Error in createLesson:', error.message);
         
-        // אם זה שגיאת חפיפה, נזרוק אותה כמו שהיא
         if (error.message.startsWith('{"type":"SCHEDULE_CONFLICT"')) {
             throw error;
         }
@@ -207,5 +287,5 @@ module.exports = {
     getAvailableLessons,
     createLesson,
     updateLesson,
-    deleteLesson 
+    deleteLesson
 };

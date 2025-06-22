@@ -14,7 +14,9 @@ import {
   formatTime,
   translateLessonType,
   translateLevel,
-  formatConflictLessonForModal
+  formatConflictLessonForModal,
+  getWarningIcon,
+  getWarningTitle
 } from '../structures/lessonStructures';
 import '../styles/Modal.css';
 import '../styles/Update.css';
@@ -106,29 +108,31 @@ function MyLessons() {
   }, [userData?.user_id]);
 
   const handleAddLesson = useCallback(async (newLesson) => {
+    console.log('🔍 handleAddLesson called with:', newLesson);
+    
     try {
-      // אם יש אזהרות, נציג אותן במודל
+      // טיפול באזהרות
       if (newLesson.warnings && newLesson.warnings.length > 0) {
-        newLesson.warnings.forEach(warning => {
-          if (warning.type === 'TIGHT_SCHEDULE') {
-            setConflictModal({
-              isOpen: true,
-              conflictLesson: warning.conflict,
-              message: warning.message,
-              type: 'warning'
-            });
-          }
+        console.log('⚠️ Warnings found:', newLesson.warnings);
+        
+        // נציג את האזהרה הראשונה (או הכי חמורה)
+        const warning = newLesson.warnings[0];
+        
+        setConflictModal({
+          isOpen: true,
+          conflictLesson: warning.conflict,
+          message: warning.message,
+          type: warning.type
         });
       }
 
-      // עדכון הרשימה (השיעור כבר נוצר בהצלחה)
+      // הוסף את השיעור לרשימה
       addLessons(newLesson.lesson || newLesson);
     } catch (error) {
       console.error('Error in handleAddLesson:', error);
     }
   }, [addLessons]);
 
-  // פונקציה לטיפול בשגיאות שיעורים
   const handleLessonError = (error) => {
     console.log('🔥 handleLessonError called!');
     console.log('Error response data:', error.response?.data);
@@ -136,15 +140,14 @@ function MyLessons() {
     if (error.response?.data?.type === 'SCHEDULE_CONFLICT') {
       console.log('🎯 Schedule conflict detected!');
       const { message, conflicts } = error.response.data;
-      console.log('Conflicts array:', conflicts);
       
       if (conflicts && conflicts.length > 0) {
         console.log('📋 Setting conflict modal with existing lesson:', conflicts[0]);
         setConflictModal({
           isOpen: true,
-          conflictLesson: conflicts[0], // זה השיעור הקיים!
+          conflictLesson: conflicts[0],
           message: message,
-          type: 'error'
+          type: 'SCHEDULE_CONFLICT'
         });
         return true;
       }
@@ -154,7 +157,6 @@ function MyLessons() {
     return false;
   };
 
-  // פונקציה לסגירת המודל
   const closeConflictModal = () => {
     setConflictModal({
       isOpen: false,
@@ -168,23 +170,17 @@ function MyLessons() {
     return <div className="loading">טוען נתוני משתמש...</div>;
   }
 
-  // המודל לתצוגת קונפליקטים
   const ConflictModal = () => {
     if (!conflictModal.isOpen || !conflictModal.conflictLesson) return null;
 
-    console.log('🎭 Rendering modal with conflict lesson:', conflictModal.conflictLesson);
-
-    // נמיר את נתוני הקונפליקט לפורמט של Lesson באמצעות הפונקציה מהסטרוקצ'ס
     const conflictLessonFormatted = formatConflictLessonForModal(conflictModal.conflictLesson);
-
-    console.log('🎭 Formatted lesson for modal:', conflictLessonFormatted);
 
     return (
       <div className="modal-overlay" onClick={closeConflictModal}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <div className="modal-header">
             <h2>
-              {conflictModal.type === 'error' ? '❌ שיעור קיים באותו זמן' : '⚠️ שים לב'}
+              {getWarningIcon(conflictModal.type)} {getWarningTitle(conflictModal.type)}
             </h2>
             <button className="modal-close" onClick={closeConflictModal}>×</button>
           </div>
@@ -223,8 +219,6 @@ function MyLessons() {
           <div className="page-header">
             <h1>השיעורים שלי</h1>
             <p>ברוך הבא {userData.name}, כאן תוכל לראות את כל השיעורים שלך</p>
-            <p style={{ fontSize: '12px', color: '#666' }}>
-            </p>
           </div>
 
           {isTeacher && (

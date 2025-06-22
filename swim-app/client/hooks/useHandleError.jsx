@@ -23,12 +23,10 @@ export default function useHandleError() {
         alert(errorMessage);
     };
 
-    // הסרנו את ה-alert מכאן!
-    const handleLessonConflictError = (error, formatFunctions) => {
+    // פונקציה פשוטה שרק מזהה קונפליקטים - המודל יטפל בהצגה
+    const handleLessonConflictError = (error) => {
         if (error.response?.data?.type === 'SCHEDULE_CONFLICT') {
-            // פשוט נחזיר true כדי לציין שזה קונפליקט
-            // המודל יטפל בהצגה
-            return true;
+            return true; // מסמן שזה קונפליקט שיעורים
         }
         return false;
     };
