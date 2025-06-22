@@ -535,3 +535,44 @@
     }
   }
 }
+
+
+
+/* הוסף את הסגנונות האלה לקובץ ה-CSS הקיים */
+
+.lesson-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.lesson-header-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.calendar-icon-btn {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.calendar-icon-btn:hover {
+    transform: translateY(-2px) scale(1.1);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    background: linear-gradient(135deg, #45a049 0%, #4CAF50 100%);
+}
+
+.calendar-icon-btn:active {
+    transform: translateY(0) scale(0.95);
+}
