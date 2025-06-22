@@ -1,5 +1,4 @@
 
-
 import React, { useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { userContext } from './App';
 import AddItem from './AddItem';
@@ -8,7 +7,7 @@ import useHandleError from '../hooks/useHandleError';
 import '../styles/MyLessons.css';
 import useHandleDisplay from '../hooks/useHandleDisplay';
 import Lesson from './Lesson';
-import CalendarModal from './CalendarModal';
+import CalendarModal from './CalendarView';
 import {
   createLessonKeys,
   createLessonValidationRules,
@@ -23,6 +22,8 @@ import {
 } from '../structures/lessonStructures';
 import '../styles/Modal.css';
 import '../styles/Update.css';
+import CalendarInline from './CalendarModalInline';
+
 
 export const LessonsContext = React.createContext();
 
@@ -33,6 +34,8 @@ function MyLessons() {
   const [loading, setLoading] = useState(true);
   const [displayChanged, setDisplayChanged] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [viewMode, setViewMode] = useState('cards');
+
   const { handleError } = useHandleError();
   const isTeacher = userData?.type_name === 'teacher';
   const [conflictModal, setConflictModal] = useState({
@@ -113,15 +116,15 @@ function MyLessons() {
 
   const handleAddLesson = useCallback(async (newLesson) => {
     console.log('🔍 handleAddLesson called with:', newLesson);
-    
+
     try {
       // טיפול באזהרות
       if (newLesson.warnings && newLesson.warnings.length > 0) {
         console.log('⚠️ Warnings found:', newLesson.warnings);
-        
+
         // נציג את האזהרה הראשונה (או הכי חמורה)
         const warning = newLesson.warnings[0];
-        
+
         setConflictModal({
           isOpen: true,
           conflictLesson: warning.conflict,
@@ -140,11 +143,11 @@ function MyLessons() {
   const handleLessonError = (error) => {
     console.log('🔥 handleLessonError called!');
     console.log('Error response data:', error.response?.data);
-    
+
     if (error.response?.data?.type === 'SCHEDULE_CONFLICT') {
       console.log('🎯 Schedule conflict detected!');
       const { message, conflicts } = error.response.data;
-      
+
       if (conflicts && conflicts.length > 0) {
         console.log('📋 Setting conflict modal with existing lesson:', conflicts[0]);
         setConflictModal({
@@ -156,7 +159,7 @@ function MyLessons() {
         return true;
       }
     }
-    
+
     console.log('❌ Not a schedule conflict, using regular error handling');
     return false;
   };
@@ -196,19 +199,19 @@ function MyLessons() {
             </h2>
             <button className="modal-close" onClick={closeConflictModal}>×</button>
           </div>
-          
+
           <div className="modal-body">
             <p className="conflict-message">{conflictModal.message}</p>
             <div className="conflict-lesson">
               <h3>פרטי השיעור הקיים:</h3>
-              <Lesson 
-                lesson={conflictLessonFormatted} 
-                pools={pools} 
-                mode="conflict" 
+              <Lesson
+                lesson={conflictLessonFormatted}
+                pools={pools}
+                mode="conflict"
               />
             </div>
           </div>
-          
+
           <div className="modal-footer">
             <button className="btn-modal-close" onClick={closeConflictModal}>
               הבנתי
@@ -234,16 +237,27 @@ function MyLessons() {
                 <h1>השיעורים שלי</h1>
                 <p>ברוך הבא {userData.name}, כאן תוכל לראות את כל השיעורים שלך</p>
               </div>
-              
+
               {lessons.length > 0 && (
                 <div className="page-header-actions">
-                  <button 
+                  {/* <button 
                     className="calendar-main-btn" 
                     onClick={openCalendar}
                     title="הצג את כל השיעורים בלוח שנה"
                   >
                     📅 לוח שנה
-                  </button>
+                  </button> */}
+                  <button className="calendar-main-btn" onClick={openCalendar}>📅 לוח שנה (Modal)</button>
+
+                  {/* ה־Checkbox החדש */}
+                  <label style={{ marginLeft: 16, display: 'flex', alignItems: 'center' }}>
+                    <input
+                      type="checkbox"
+                      checked={viewMode === 'calendar'}
+                      onChange={() => setViewMode(prev => prev === 'cards' ? 'calendar' : 'cards')}
+                    />
+                    <span style={{ marginLeft: 8 }}>לוח שנה במקום כרטיסים</span>
+                  </label>
                 </div>
               )}
             </div>
@@ -266,45 +280,27 @@ function MyLessons() {
             </div>
           )}
 
+
           {loading ? (
             <div className="loading">טוען...</div>
           ) : (
             <div className="lessons-container">
-              {lessons.length === 0 ? (
-                <div className="no-lessons">
-                  <h3>אין לך שיעורים</h3>
-                  <p>
-                    {isTeacher
-                      ? 'לחץ על "הוספת שיעור חדש" כדי ליצור שיעור חדש'
-                      : 'אין לך שיעורים רשומים'
-                    }
-                  </p>
+              {viewMode === 'cards' ? (
+                <div className="lessons-grid">
+                  {lessons.map(lesson => (
+                    <Lesson key={lesson.lesson_id} lesson={lesson} pools={pools} />
+                  ))}
                 </div>
               ) : (
-                <>
-                  <div className="lessons-grid">
-                    {lessons.map(lesson => (
-                      <Lesson
-                        key={lesson.lesson_id}
-                        lesson={lesson}
-                        pools={pools}
-                      />
-                    ))}
-                  </div>
-                </>
+                <CalendarInline lessons={lessons} userName={userData.name} />
               )}
             </div>
           )}
+
+
         </div>
       </div>
-      
-      <CalendarModal
-        isOpen={isCalendarOpen}
-        onClose={closeCalendar}
-        lessons={lessons}
-        userName={userData.name}
-      />
-      
+
       <ConflictModal />
     </LessonsContext.Provider>
   );

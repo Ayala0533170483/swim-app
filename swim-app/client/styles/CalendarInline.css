@@ -1,0 +1,133 @@
+.calendar-inline-container {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  direction: rtl;
+}
+
+.calendar-header {
+  margin-bottom: 20px;
+  text-align: center;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 16px;
+}
+
+.calendar-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.calendar-header p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.calendar-wrapper {
+  direction: ltr; /* הלוח שנה עצמו צריך להיות LTR */
+  min-height: 600px;
+}
+
+/* עיצוב מותאם אישית ללוח השנה */
+.calendar-wrapper .rbc-calendar {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.calendar-wrapper .rbc-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding: 12px 8px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.calendar-wrapper .rbc-today {
+  background-color: #e3f2fd;
+}
+
+.calendar-wrapper .rbc-event {
+  background-color: #2196f3 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 2px 6px !important;
+  font-size: 12px !important;
+}
+
+.calendar-wrapper .rbc-event:hover {
+  background-color: #1976d2 !important;
+}
+
+.calendar-wrapper .rbc-toolbar {
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.calendar-wrapper .rbc-toolbar button {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  margin: 0 2px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.calendar-wrapper .rbc-toolbar button:hover {
+  background-color: #f5f5f5;
+  border-color: #bbb;
+}
+
+.calendar-wrapper .rbc-toolbar button.rbc-active {
+  background-color: #2196f3;
+  color: white;
+  border-color: #2196f3;
+}
+
+.calendar-wrapper .rbc-month-view {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.calendar-wrapper .rbc-date-cell {
+  padding: 8px;
+  text-align: center;
+}
+
+.calendar-wrapper .rbc-off-range-bg {
+  background-color: #f8f9fa;
+}
+
+/* תיקון לכיוון טקסט בעברית */
+.calendar-wrapper .rbc-event-content {
+  direction: rtl;
+  text-align: right;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .calendar-inline-container {
+    padding: 16px;
+    margin-top: 16px;
+  }
+  
+  .calendar-wrapper {
+    font-size: 14px;
+  }
+  
+  .calendar-wrapper .rbc-toolbar {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .calendar-wrapper .rbc-toolbar-label {
+    order: -1;
+    margin-bottom: 10px;
+  }
+}

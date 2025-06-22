@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react"; // הסר את React אם לא משתמש בו
 
 export default function useHandleDisplay(initialItems = null) {
     const [items, setItems] = useState(initialItems);
@@ -8,11 +8,16 @@ export default function useHandleDisplay(initialItems = null) {
         console.log('updatedFields:', updatedFields);
         console.log('current items:', items);
 
-        setItems((prevItems) =>
-            prevItems.map((item) => {
+        setItems((prevItems) => {
+            // וודא שprevItems הוא מערך
+            if (!Array.isArray(prevItems)) {
+                console.warn('prevItems is not an array:', prevItems);
+                return prevItems;
+            }
+            
+            return prevItems.map((item) => {
                 console.log('checking item:', item);
 
-                // בדוק את כל האפשרויות של ID
                 const itemId = item.lesson_id || item.id || item.pool_id || item.user_id || item.contact_id;
                 const updatedId = updatedFields.lesson_id || updatedFields.id || updatedFields.pool_id || updatedFields.user_id || updatedFields.contact_id;
 
@@ -27,24 +32,36 @@ export default function useHandleDisplay(initialItems = null) {
                     return updated;
                 }
                 return item;
-            })
-        );
+            });
+        });
     };
 
     const deleteItem = (deleteId) => {
-        setItems((prevItems) =>
-            prevItems.filter((item) => {
+        setItems((prevItems) => {
+            if (!Array.isArray(prevItems)) {
+                console.warn('prevItems is not an array:', prevItems);
+                return prevItems;
+            }
+            
+            return prevItems.filter((item) => {
                 const itemId = item.lesson_id || item.id || item.pool_id || item.user_id || item.contact_id;
                 return itemId !== deleteId;
-            })
-        );
+            });
+        });
     };
 
     const addItem = (newItem) => {
         if (!items) {
             setItems([newItem]);
+        } else {
+            setItems((prevItems) => {
+                if (!Array.isArray(prevItems)) {
+                    console.warn('prevItems is not an array:', prevItems);
+                    return [newItem];
+                }
+                return [...prevItems, newItem];
+            });
         }
-        else { setItems((prevItems) => [...prevItems, newItem]); }
     };
 
     return [items, setItems, updateItem, deleteItem, addItem];
