@@ -3,6 +3,7 @@ import { fetchData } from '../js-files/GeneralRequests';
 import useHandleError from '../hooks/useHandleError';
 import useHandleDisplay from '../hooks/useHandleDisplay';
 import Cookies from 'js-cookie';
+import FileInput from './FileInput';
 import '../styles/SendMessages.css';
 
 function SendMessages() {
@@ -25,10 +26,10 @@ function SendMessages() {
         clearErrors();
 
         const allUsers = await fetchData('users', '', handleError);
-
+    
         if (allUsers) {
           const mapped = allUsers
-            .filter(u => u.type_id !== 1)
+            .filter(u => u.type_id !== 1)    // מסננים מנהלים (1)
             .map(u => ({
               ...u,
               type_name: u.type_id === 2
@@ -112,36 +113,17 @@ function SendMessages() {
     setSelectAllTeachers(selectedTeachers.length === teachers.length && teachers.length > 0);
   };
 
-  const handleFileUpload = (event) => {
-    try {
-      const file = event.target.files[0];
-
-      if (file) {
-        if (file.size > 5 * 1024 * 1024) {
-          handleError('addError', new Error('גודל הקובץ חייב להיות קטן מ-5MB'));
-          return;
-        }
-
-        const allowedTypes = [
-          'application/pdf',
-          'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'image/jpeg',
-          'image/jpg',
-          'image/png'
-        ];
-
-        if (!allowedTypes.includes(file.type)) {
-          handleError('addError', new Error('סוג קובץ לא נתמך. אנא בחר PDF, Word או תמונה'));
-          return;
-        }
-
-        setAttachedFile(file);
-        clearErrors();
-      }
-    } catch (error) {
-      handleError('addError', error);
+  // פונקציה פשוטה לטיפול בשינוי קובץ
+  const handleFileChange = (file) => {
+    setAttachedFile(file);
+    if (file) {
+      clearErrors(); // נקה שגיאות אם יש קובץ תקין
     }
+  };
+
+  // פונקציה לטיפול בשגיאות קובץ
+  const handleFileError = (error) => {
+    handleError('addError', error);
   };
 
   const handleSendMessage = async () => {
@@ -165,6 +147,7 @@ function SendMessages() {
 
       setSending(true);
 
+      // יצירת רשימת נמענים עם הפרטים הנדרשים
       const recipients = users
         .filter(user => selectedUsers.includes(user.user_id))
         .map(user => ({
@@ -172,16 +155,18 @@ function SendMessages() {
           email: user.email
         }));
 
+      // יצירת FormData לשליחת הנתונים עם קובץ
       const formData = new FormData();
       formData.append('userIds', JSON.stringify(selectedUsers));
       formData.append('recipients', JSON.stringify(recipients));
       formData.append('subject', subject.trim());
       formData.append('messageContent', messageContent.trim());
-
+      
       if (attachedFile) {
         formData.append('attachedFile', attachedFile);
       }
 
+      // שליחת הבקשה לשרת
       const token = Cookies.get("accessToken");
       const response = await fetch('http://localhost:3000/email/send-general-message', {
         method: 'POST',
@@ -195,11 +180,11 @@ function SendMessages() {
       const result = await response.json();
 
       if (response.ok && result.totalSent > 0) {
-        const message = result.totalFailed > 0
+        const message = result.totalFailed > 0 
           ? `ההודעה נשלחה ל-${result.totalSent} מתוך ${result.totalSent + result.totalFailed} משתמשים`
           : `ההודעה נשלחה בהצלחה ל-${result.totalSent} משתמשים!`;
         alert(message);
-
+        
         // איפוס הטופס
         setSelectedUsers([]);
         setSelectAllStudents(false);
@@ -207,9 +192,6 @@ function SendMessages() {
         setSubject('');
         setMessageContent('');
         setAttachedFile(null);
-
-        const fileInput = document.getElementById('file');
-        if (fileInput) fileInput.value = '';
 
       } else {
         throw new Error(result.error || 'שגיאה בשליחת ההודעה');
@@ -220,12 +202,6 @@ function SendMessages() {
     } finally {
       setSending(false);
     }
-  };
-
-  const removeAttachedFile = () => {
-    setAttachedFile(null);
-    const fileInput = document.getElementById('file');
-    if (fileInput) fileInput.value = '';
   };
 
   if (loading) {
@@ -276,9 +252,9 @@ function SendMessages() {
         </div>
       </div>
 
-      <div className="users-section">
+      <div className="message-users-section">
         <h3>בחר משתמשים ({selectedUsers.length} נבחרו)</h3>
-        <div className="users-list">
+        <div className="message-users-list">
           {users.map(user => (
             <div key={user.user_id} className="user-card">
               <input
@@ -329,38 +305,17 @@ function SendMessages() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="file">קובץ מצורף (אופציונלי):</label>
-
-          <input
-            type="file"
-            id="file"
-            onChange={handleFileUpload}
-            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+          <label>קובץ מצורף (אופציונלי):</label>
+          <FileInput
+            value={attachedFile}
+            onChange={handleFileChange}
+            onError={handleFileError}
             disabled={sending}
-            style={{ display: 'none' }}
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+            placeholder="בחר קובץ..."
+            fieldKey="attachedFile"
+            showPreview={true}
           />
-
-          <div
-            className="file-upload-area"
-            onClick={() => !sending && document.getElementById('file').click()}
-          >
-
-            <span>{attachedFile ? attachedFile.name : 'בחר קובץ'}</span>
-          </div>
-
-          {attachedFile && (
-            <div className="file-info">
-              <span>קובץ נבחר: {attachedFile.name}</span>
-              <button
-                type="button"
-                className="remove-file-btn"
-                onClick={removeAttachedFile}
-                disabled={sending}
-              >
-                ✕
-              </button>
-            </div>
-          )}
           <small className="file-hint">
             קבצים מותרים: PDF, Word, תמונות (מקסימום 5MB)
           </small>

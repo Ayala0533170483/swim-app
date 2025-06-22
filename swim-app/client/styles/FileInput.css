@@ -48,7 +48,7 @@
 }
 
 .clear-file-btn {
-    background: #e74c3c;
+    /* background: #e74c3c; */
     color: white;
     border: none;
     border-radius: 50%;
@@ -67,7 +67,6 @@
     transform: scale(1.1);
 }
 
-/* תצוגה מקדימה קטנה */
 .mini-image-preview {
     margin-top: 10px;
     text-align: center;

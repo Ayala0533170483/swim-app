@@ -91,7 +91,7 @@
   border-bottom: 2px solid #e6f3ff;
 }
 
-.users-list {
+.message-users-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1rem;
@@ -306,7 +306,6 @@
   box-shadow: none;
 }
 
-/* מצבי טעינה ושגיאות */
 .loading {
   text-align: center;
   font-size: 1.5rem;
@@ -382,7 +381,7 @@
     max-width: 300px;
   }
   
-  .users-list {
+  .message-users-list {
     grid-template-columns: 1fr;
     max-height: 300px;
   }
@@ -435,25 +434,24 @@
 }
 
 /* סקרול בר מותאם */
-.users-list::-webkit-scrollbar {
+.message-users-list::-webkit-scrollbar {
   width: 8px;
 }
 
-.users-list::-webkit-scrollbar-track {
+.message-users-list::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 4px;
 }
 
-.users-list::-webkit-scrollbar-thumb {
+.message-users-list::-webkit-scrollbar-thumb {
   background: #0066cc;
   border-radius: 4px;
 }
 
-.users-list::-webkit-scrollbar-thumb:hover {
+.message-users-list::-webkit-scrollbar-thumb:hover {
   background: #0052a3;
 }
 
-/* אפקטים נוספים */
 .group-checkbox input[type="checkbox"]:checked + label {
   color: #0052a3;
 }
@@ -465,7 +463,7 @@
 
 .message-form input:valid,
 .message-form textarea:valid {
-  border-color: #28a745;
+  border-color: #0066cc;
 }
 
 .send-button:active:not(:disabled) {
