@@ -1,5 +1,5 @@
 const { createTransporter } = require('../config/emailTransporter');
-const { createLessonConfirmationTemplate } = require('../templates/emailTemplates');
+const { createLessonConfirmationTemplate } = require('../templates/emailRegisterlessonsTemplates');
 
 const sendLessonConfirmationEmail = async (studentEmail, studentName, lessonData, icsContent) => {
     try {

@@ -26,7 +26,7 @@ function createLessonCalendarEvent(lessonData) {
         location: lessonData.pool_name,
         alarms: [{
             type: 'display',
-            trigger: 60 * 30 // 30 דקות לפני
+            trigger: 60 * 30 
         }]
     });
     

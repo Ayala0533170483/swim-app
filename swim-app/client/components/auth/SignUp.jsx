@@ -53,7 +53,6 @@ function Signup() {
         body: JSON.stringify(payload),
       });
 
-      console.log("📡 Response status:", res.status);
 
       if (!res.ok) {
         const errorData = await res.json();
