@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useContext } from 'react';
 import { userContext } from './App';
 import { fetchData } from '../js-files/GeneralRequests';
@@ -19,9 +20,16 @@ function RegisterLesson() {
     const [filter, setFilter] = useState({
         lessonType: 'all',
         level: 'all',
-        poolId: 'all'
+        poolId: 'all',
+        poolName: 'all'
     });
     const { handleError } = useHandleError();
+
+
+    const availablePoolNames = React.useMemo(() => {
+        const poolNames = [...new Set(availableLessons.map(lesson => lesson.pool_name))];
+        return poolNames.filter(Boolean).sort();
+    }, [availableLessons]);
 
     const handleRegistrationSuccess = (registrationData) => {
         console.log('Registration successful:', registrationData);
@@ -107,6 +115,7 @@ function RegisterLesson() {
         if (filter.lessonType !== 'all' && lesson.lesson_type !== filter.lessonType) return false;
         if (filter.level !== 'all' && lesson.level !== filter.level) return false;
         if (filter.poolId !== 'all' && lesson.pool_id !== parseInt(filter.poolId)) return false;
+        if (filter.poolName !== 'all' && lesson.pool_name !== filter.poolName) return false;
         return true;
     });
 
@@ -167,6 +176,21 @@ function RegisterLesson() {
                             <option value="beginner">מתחיל</option>
                             <option value="intermediate">בינוני</option>
                             <option value="advanced">מתקדם</option>
+                        </select>
+                    </div>
+
+                    <div className="filter-group">
+                        <label>בריכה:</label>
+                        <select
+                            value={filter.poolName}
+                            onChange={(e) => setFilter({ ...filter, poolName: e.target.value })}
+                        >
+                            <option value="all">כל הבריכות</option>
+                            {availablePoolNames.map(poolName => (
+                                <option key={poolName} value={poolName}>
+                                    {poolName}
+                                </option>
+                            ))}
                         </select>
                     </div>
                 </div>

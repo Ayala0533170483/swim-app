@@ -1,3 +1,5 @@
+
+
 import React, { useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { userContext } from './App';
 import AddItem from './AddItem';
@@ -6,6 +8,7 @@ import useHandleError from '../hooks/useHandleError';
 import '../styles/MyLessons.css';
 import useHandleDisplay from '../hooks/useHandleDisplay';
 import Lesson from './Lesson';
+import CalendarModal from './CalendarModal';
 import {
   createLessonKeys,
   createLessonValidationRules,
@@ -29,6 +32,7 @@ function MyLessons() {
   const [pools, setPools] = useState([]);
   const [loading, setLoading] = useState(true);
   const [displayChanged, setDisplayChanged] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const { handleError } = useHandleError();
   const isTeacher = userData?.type_name === 'teacher';
   const [conflictModal, setConflictModal] = useState({
@@ -166,6 +170,14 @@ function MyLessons() {
     });
   };
 
+  const openCalendar = () => {
+    setIsCalendarOpen(true);
+  };
+
+  const closeCalendar = () => {
+    setIsCalendarOpen(false);
+  };
+
   if (!userData) {
     return <div className="loading">טוען נתוני משתמש...</div>;
   }
@@ -217,8 +229,24 @@ function MyLessons() {
       <div className="my-lessons-page">
         <div className="container">
           <div className="page-header">
-            <h1>השיעורים שלי</h1>
-            <p>ברוך הבא {userData.name}, כאן תוכל לראות את כל השיעורים שלך</p>
+            <div className="page-header-content">
+              <div className="page-title-section">
+                <h1>השיעורים שלי</h1>
+                <p>ברוך הבא {userData.name}, כאן תוכל לראות את כל השיעורים שלך</p>
+              </div>
+              
+              {lessons.length > 0 && (
+                <div className="page-header-actions">
+                  <button 
+                    className="calendar-main-btn" 
+                    onClick={openCalendar}
+                    title="הצג את כל השיעורים בלוח שנה"
+                  >
+                    📅 לוח שנה
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {isTeacher && (
@@ -269,6 +297,14 @@ function MyLessons() {
           )}
         </div>
       </div>
+      
+      <CalendarModal
+        isOpen={isCalendarOpen}
+        onClose={closeCalendar}
+        lessons={lessons}
+        userName={userData.name}
+      />
+      
       <ConflictModal />
     </LessonsContext.Provider>
   );
