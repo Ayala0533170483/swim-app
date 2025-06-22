@@ -20,6 +20,7 @@ const lessonesRouter = require('./api/lessonsRouter.js');
 const registerLessonsRouter = require('./api/registerLessonsRouter.js')
 const messagesRouter = require('./api/messagesRouter.js');
 const branchesRouter = require('./api/branchesRouter.js');
+const emailRouter = require('./api/emailRouter.js');
 
 app.use('/', authRouter);
 app.use('/users', verifyToken, usersRouter);
@@ -28,6 +29,7 @@ app.use('/registerLessons', verifyToken, registerLessonsRouter)
 app.use('/messages', messagesRouter);
 app.use('/pools', branchesRouter);
 app.use('/branches', branchesRouter);
+app.use('/email', verifyToken, emailRouter);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

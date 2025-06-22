@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchData } from '../js-files/GeneralRequests';
 import useHandleError from '../hooks/useHandleError';
 import useHandleDisplay from '../hooks/useHandleDisplay';
+import Cookies from 'js-cookie';
 import '../styles/SendMessages.css';
 
 function SendMessages() {
@@ -24,21 +25,21 @@ function SendMessages() {
         clearErrors();
 
         const allUsers = await fetchData('users', '', handleError);
-    
-if (allUsers) {
-  const mapped = allUsers
-    .filter(u => u.type_id !== 1)    // מסננים מנהלים (1)
-    .map(u => ({
-      ...u,
-      type_name: u.type_id === 2
-        ? 'teacher'
-        : u.type_id === 3
-          ? 'student'
-          : 'unknown'
-    }));
 
-  setUsers(mapped);
-}
+        if (allUsers) {
+          const mapped = allUsers
+            .filter(u => u.type_id !== 1)
+            .map(u => ({
+              ...u,
+              type_name: u.type_id === 2
+                ? 'teacher'
+                : u.type_id === 3
+                  ? 'student'
+                  : 'unknown'
+            }));
+
+          setUsers(mapped);
+        }
 
       } catch (error) {
         handleError('getError', error);
@@ -95,18 +96,6 @@ if (allUsers) {
       const newSelected = [...new Set([...selectedUsers, ...teacherIds])];
       setSelectedUsers(newSelected);
       setSelectAllTeachers(true);
-    }
-  };
-
-  const handleStudentsContainerClick = (e) => {
-    if (e.target.type !== 'checkbox' && students.length > 0) {
-      handleSelectAllStudents();
-    }
-  };
-
-  const handleTeachersContainerClick = (e) => {
-    if (e.target.type !== 'checkbox' && teachers.length > 0) {
-      handleSelectAllTeachers();
     }
   };
 
@@ -176,24 +165,55 @@ if (allUsers) {
 
       setSending(true);
 
-      console.log('Sending message to:', selectedUsers);
-      console.log('Subject:', subject);
-      console.log('Content:', messageContent);
-      console.log('File:', attachedFile);
+      const recipients = users
+        .filter(user => selectedUsers.includes(user.user_id))
+        .map(user => ({
+          name: user.name,
+          email: user.email
+        }));
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const formData = new FormData();
+      formData.append('userIds', JSON.stringify(selectedUsers));
+      formData.append('recipients', JSON.stringify(recipients));
+      formData.append('subject', subject.trim());
+      formData.append('messageContent', messageContent.trim());
 
-      alert('ההודעה נשלחה בהצלחה!');
+      if (attachedFile) {
+        formData.append('attachedFile', attachedFile);
+      }
 
-      setSelectedUsers([]);
-      setSelectAllStudents(false);
-      setSelectAllTeachers(false);
-      setSubject('');
-      setMessageContent('');
-      setAttachedFile(null);
+      const token = Cookies.get("accessToken");
+      const response = await fetch('http://localhost:3000/email/send-general-message', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include',
+        body: formData
+      });
 
-      const fileInput = document.getElementById('file');
-      if (fileInput) fileInput.value = '';
+      const result = await response.json();
+
+      if (response.ok && result.totalSent > 0) {
+        const message = result.totalFailed > 0
+          ? `ההודעה נשלחה ל-${result.totalSent} מתוך ${result.totalSent + result.totalFailed} משתמשים`
+          : `ההודעה נשלחה בהצלחה ל-${result.totalSent} משתמשים!`;
+        alert(message);
+
+        // איפוס הטופס
+        setSelectedUsers([]);
+        setSelectAllStudents(false);
+        setSelectAllTeachers(false);
+        setSubject('');
+        setMessageContent('');
+        setAttachedFile(null);
+
+        const fileInput = document.getElementById('file');
+        if (fileInput) fileInput.value = '';
+
+      } else {
+        throw new Error(result.error || 'שגיאה בשליחת ההודעה');
+      }
 
     } catch (error) {
       handleError('addError', error, true);
@@ -229,8 +249,6 @@ if (allUsers) {
       <div className="messages-header">
         <h1>שליחת הודעות למשתמשים</h1>
       </div>
-  
-      {console.log('students array:', students, 'length:', students.length)}
 
       <div className="group-selection">
         <div className="group-options">
@@ -257,7 +275,6 @@ if (allUsers) {
 
         </div>
       </div>
-
 
       <div className="users-section">
         <h3>בחר משתמשים ({selectedUsers.length} נבחרו)</h3>
@@ -313,13 +330,24 @@ if (allUsers) {
 
         <div className="form-group">
           <label htmlFor="file">קובץ מצורף (אופציונלי):</label>
+
           <input
             type="file"
             id="file"
             onChange={handleFileUpload}
             accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
             disabled={sending}
+            style={{ display: 'none' }}
           />
+
+          <div
+            className="file-upload-area"
+            onClick={() => !sending && document.getElementById('file').click()}
+          >
+
+            <span>{attachedFile ? attachedFile.name : 'בחר קובץ'}</span>
+          </div>
+
           {attachedFile && (
             <div className="file-info">
               <span>קובץ נבחר: {attachedFile.name}</span>

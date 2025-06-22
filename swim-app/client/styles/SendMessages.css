@@ -471,3 +471,12 @@
 .send-button:active:not(:disabled) {
   transform: translateY(0);
 }
+.file-upload-area {
+  border: 2px dashed #4a90e2;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+}
+
