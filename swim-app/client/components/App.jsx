@@ -15,6 +15,8 @@ import RegisterLesson from './RegisterLesson';
 import UserManagement from './ItemManagement ';
 import Management from './Management';
 import Messages from './Messages'
+import SendMessages from './SendMessages'
+
 export const userContext = createContext();
 
 export default function App() {
@@ -38,6 +40,7 @@ export default function App() {
                     <Route path=":username/pools" element={<UserManagement userType="pools" />} />
                     <Route path=":username/management" element={<Management />} />
                     <Route path=":username/management/messages" element={<Messages/>} />
+                     <Route path=":username/management/send-messages" element={<SendMessages/>} />
                     <Route path=":username" element={<Profile />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />

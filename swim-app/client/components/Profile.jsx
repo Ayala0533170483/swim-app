@@ -78,7 +78,7 @@ function UserProfile() {
             <div className="profile-header">
                 <h1>הפרופיל האישי שלי</h1>
             </div>
-
+            
             <div className="profile-content">
                 <div className="profile-section">
                     <h2>פרטים אישיים</h2>
