@@ -120,13 +120,57 @@ async function getAllUsersByType(typeName) {
     `;
 
     const [rows] = await pool.query(sql, [type]);
-    return rows; 
+    return rows;
 }
+
+async function deleteStudent(userId) {
+    const connection = await pool.getConnection();
+    try {
+        console.log('🚀 Starting deleteStudent for userId:', userId);
+        
+        // קורא לפרוצדורה ללא שם דטבייס (כמו שאר הפונקציות)
+        const [resultSets] = await connection.query(
+            'CALL DeactivateStudentAndGetTeachers(?)',
+            [userId]
+        );
+        
+        console.log('📊 Full procedure result:', resultSets);
+        
+        const privateLessons = Array.isArray(resultSets[0]) ? resultSets[0] : [];
+        const debugMessage = Array.isArray(resultSets[1]) ? resultSets[1] : [];
+        
+        console.log('🏊 Private lessons found:', privateLessons);
+        console.log('🔍 Debug message:', debugMessage);
+        
+        // בדיקה נוספת - ללא שם דטבייס (כמו שאר הפונקציות)
+        const [userCheck] = await connection.query(
+            'SELECT user_id, name, is_active FROM users WHERE user_id = ?',
+            [userId]
+        );
+        
+        console.log('👤 User status after procedure:', userCheck);
+        
+        return {
+            privateTeachers: privateLessons,
+            userStatus: userCheck[0] || null,
+            debugInfo: debugMessage
+        };
+        
+    } catch (err) {
+        console.error('❌ Error in deleteStudent:', err);
+        throw err;
+    } finally {
+        connection.release();
+    }
+}
+
+
 
 
 module.exports = {
     getUserWithPassword,
     createUserWithPasswordHash,
     getUserById,
-    getAllUsersByType
+    getAllUsersByType,
+    deleteStudent
 };

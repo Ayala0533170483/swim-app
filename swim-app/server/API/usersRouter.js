@@ -84,9 +84,12 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         const id = req.params.id;
+        const additionalData = req.body; // קבלת הנתונים הנוספים מהגוף הבקשה
+        
         console.log(`Deleting user with id ${id}`);
+        console.log('Additional data:', additionalData); // לדיבוג
 
-        const result = await usersController.deleteUser(id);
+        const result = await usersController.deleteUser(id, additionalData);
 
         res.json({
             success: true,
@@ -103,5 +106,7 @@ router.delete('/:id', async (req, res) => {
         });
     }
 });
+
+
 
 module.exports = router;

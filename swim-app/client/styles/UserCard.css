@@ -162,11 +162,6 @@
   transition: all 0.3s ease;
 }
 
-.user-card:hover .user-actions {
-  opacity: 1;
-  transform: translateX(-5px);
-}
-
 .click-hint {
   color: #0066cc;
   font-size: 0.9rem;
@@ -415,10 +410,6 @@
   border-radius: 4px;
 }
 
-.user-actions:hover {
-  background-color: rgba(0, 123, 255, 0.05);
-}
-
 .user-info {
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -430,10 +421,8 @@
   background-color: rgba(0, 123, 255, 0.05);
 }
 
-/* 🎯 עיצוב מיוחד לכרטיס בריכה עם תמונה */
 .pool-card .user-info {
   align-items: stretch;
-  /* מאפשר לתמונה להיות גבוהה יותר */
   min-height: 100px;
 }
 
@@ -776,9 +765,253 @@
   .lesson-details {
     grid-template-columns: 1fr;
   }
-  
+
   .modal-content {
     width: 95%;
     max-height: 80vh;
+  }
+}
+
+
+/* הוסף את זה לקובץ הקיים */
+
+.user-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.user-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.student-card {
+  border-left: 4px solid #3498db;
+}
+
+.teacher-card {
+  border-left: 4px solid #e74c3c;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.user-avatar {
+  margin-left: 15px;
+}
+
+.avatar-icon {
+  font-size: 2.5rem;
+  display: block;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.user-name {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.user-email {
+  margin: 0 0 8px 0;
+  color: #7f8c8d;
+  font-size: 0.95rem;
+}
+
+.lessons-count {
+  margin: 0;
+  color: #34495e;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.user-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.delete-button,
+.view-button {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+}
+
+.view-button:hover {
+  background: linear-gradient(135deg, #2980b9, #1f5f8b);
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+}
+
+.delete-button:hover {
+  background: linear-gradient(135deg, #2980b9, #1f5f8b);
+  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+}
+
+.action-icon {
+  font-size: 0.85rem;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 0;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  border-bottom: 1px solid #ecf0f1;
+  background: #f8f9fa;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.4rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #7f8c8d;
+  padding: 5px;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+
+
+.modal-body {
+  padding: 25px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.lessons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.lesson-item {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border-right: 4px solid #3498db;
+}
+
+.lesson-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.lesson-header h4 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.lesson-type {
+  background: #3498db;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.lesson-details p {
+  margin: 8px 0;
+  color: #34495e;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.lesson-details strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .user-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .action-button {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 10px;
+  }
+
+  .user-info {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .user-avatar {
+    margin: 0 0 15px 0;
   }
 }

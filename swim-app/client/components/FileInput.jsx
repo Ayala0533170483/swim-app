@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaImage } from "react-icons/fa";
+import { FaUpload } from "react-icons/fa";
 import '../styles/FileInput.css';
 
 function FileInput({
@@ -150,7 +150,7 @@ function FileInput({
                             ×
                         </button>
                     )}
-                    <FaImage className="file-input-icon" />
+                    <FaUpload className="file-input-icon" />
                 </div>
             </div>
 

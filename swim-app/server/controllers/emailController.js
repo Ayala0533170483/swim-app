@@ -1,6 +1,8 @@
 const { createTransporter } = require('../config/emailTransporter');
-const { createLessonConfirmationTemplate } = require('../templates/emailRegisterlessonsTemplates');
+const { createLessonConfirmationTemplate } = require('../templates/emailRegisterlessonsTemplate');
 const { createGeneralMessageTemplate } = require('../templates/emailGeneralMessageTemplate');
+const { createUserRemovalTemplate } = require('../templates/emailUserRemovalTemplate');
+const { createLessonCancellationTemplate } = require('../templates/emailLessonCancellationTemplate');
 const cleanFileName = (originalName) => {
     return originalName
         .replace(/[^\w\s.-]/g, '') // הסרת תווים מיוחדים
@@ -42,12 +44,12 @@ const sendGeneralMessage = async (recipients, subject, messageContent, attachedF
     try {
         const transporter = createTransporter();
         const results = [];
-        
+
         for (const recipient of recipients) {
             try {
                 const htmlContent = createGeneralMessageTemplate(
-                    recipient.name, 
-                    subject, 
+                    recipient.name,
+                    subject,
                     messageContent
                 );
 
@@ -71,7 +73,7 @@ const sendGeneralMessage = async (recipients, subject, messageContent, attachedF
 
                 const result = await transporter.sendMail(mailOptions);
                 console.log(`Email sent to ${recipient.email}:`, result.messageId);
-                
+
                 results.push({
                     email: recipient.email,
                     name: recipient.name,
@@ -95,7 +97,7 @@ const sendGeneralMessage = async (recipients, subject, messageContent, attachedF
         const failed = results.filter(r => !r.success).length;
 
         return {
-           success: successful > 0,
+            success: successful > 0,
             totalSent: successful,
             totalFailed: failed,
             results: results
@@ -103,8 +105,8 @@ const sendGeneralMessage = async (recipients, subject, messageContent, attachedF
 
     } catch (error) {
         console.error('Error in sendGeneralMessage:', error);
-        return { 
-            success: false, 
+        return {
+            success: false,
             error: error.message,
             totalSent: 0,
             totalFailed: recipients.length
@@ -116,8 +118,54 @@ const sendCancellationEmail = async (studentEmail, studentName, lessonData) => {
     // פונקציה לשליחת מייל ביטול
 };
 
+const sendUserRemovalEmail = async (userEmail, userName, userType) => {
+    try {
+        const transporter = createTransporter();
+        const htmlContent = createUserRemovalTemplate(userName, userType);
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: userEmail,
+            subject: `SWIMWISE - הסרה מהמערכת`,
+            html: htmlContent
+        };
+
+        const result = await transporter.sendMail(mailOptions);
+        console.log(`User removal email sent to ${userEmail}:`, result.messageId);
+        return { success: true, messageId: result.messageId };
+
+    } catch (error) {
+        console.error(`Error sending user removal email to ${userEmail}:`, error);
+        return { success: false, error: error.message };
+    }
+};
+
+const sendLessonCancellationEmail = async (teacherEmail, teacherName, lessonData) => {
+    try {
+        const transporter = createTransporter();
+        const htmlContent = createLessonCancellationTemplate(teacherName, lessonData);
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: teacherEmail,
+            subject: `SWIMWISE - ביטול שיעור שחייה`,
+            html: htmlContent
+        };
+
+        const result = await transporter.sendMail(mailOptions);
+        console.log(`Lesson cancellation email sent to ${teacherEmail}:`, result.messageId);
+        return { success: true, messageId: result.messageId };
+
+    } catch (error) {
+        console.error(`Error sending lesson cancellation email to ${teacherEmail}:`, error);
+        return { success: false, error: error.message };
+    }
+};
+
 module.exports = {
     sendLessonConfirmationEmail,
     sendGeneralMessage,
-    sendCancellationEmail
+    sendCancellationEmail,
+    sendUserRemovalEmail,
+    sendLessonCancellationEmail
 };

@@ -1,5 +1,7 @@
 const genericService = require('../services/genericService');
 const usersService = require('../services/usersService');
+const { sendUserRemovalEmail, sendLessonCancellationEmail } = require('./emailController');
+
 
 async function createUser(userData) {
     try {
@@ -27,16 +29,12 @@ async function getUsers(filters = {}) {
         }
 
         if (filters.type) {
-            // קבלת הנתונים הגולמיים מהסרוויס
             const rawData = await usersService.getAllUsersByType(filters.type);
-            
-            // עיבוד הנתונים - ארגון השיעורים תחת כל משתמש
+
             const usersMap = new Map();
-            
             rawData.forEach(row => {
                 const userId = row.user_id;
-                
-                // אם המשתמש עדיין לא קיים במפה, צור אותו
+
                 if (!usersMap.has(userId)) {
                     usersMap.set(userId, {
                         user_id: row.user_id,
@@ -47,8 +45,7 @@ async function getUsers(filters = {}) {
                         lessons: []
                     });
                 }
-                
-                // אם יש שיעור (lesson_id לא null), הוסף אותו למערך השיעורים
+
                 if (row.lesson_id) {
                     const lesson = {
                         lesson_id: row.lesson_id,
@@ -66,28 +63,23 @@ async function getUsers(filters = {}) {
                         lesson_is_active: row.lesson_is_active,
                         num_registered: row.num_registered
                     };
-                    
-                    // עבור תלמידים, הוסף גם פרטי הרשמה
+
                     if (row.type_name === 'student' && row.registration_id) {
                         lesson.registration_id = row.registration_id;
                         lesson.registration_date = row.registration_date;
                         lesson.registration_status = row.registration_status;
                     }
-                    
-                    // בדיקה שהשיעור לא קיים כבר (למניעת כפילויות)
                     const existingLesson = usersMap.get(userId).lessons.find(l => l.lesson_id === lesson.lesson_id);
                     if (!existingLesson) {
                         usersMap.get(userId).lessons.push(lesson);
                     }
                 }
             });
-            
-            // החזרת מערך של משתמשים מעובדים
+
             return Array.from(usersMap.values());
         }
 
         return await genericService.get('users', filters);
-
     } catch (error) {
         throw error;
     }
@@ -106,14 +98,122 @@ async function updateUser(id, updateData) {
     }
 }
 
-async function deleteUser(id) {
+
+// החלף את הפונקציה deleteUser הקיימת בזו:
+// async function deleteUser(id, additionalData = null) {
+//     try {
+//         // בדיקה אם מדובר בתלמיד
+//         if (additionalData && additionalData.userType === 'students') {
+//             // קבלת פרטי התלמיד לפני המחיקה
+//             const student = await usersService.getUserById(id);
+//             if (!student) {
+//                 throw new Error('Student not found');
+//             }
+
+//             const cancelledLessons = await usersService.deleteStudent(id);
+
+//             if (cancelledLessons && cancelledLessons.length > 0) {
+//                 for (const lessonData of cancelledLessons) {
+//                     // שליחת מייל רק לשיעורים פרטיים
+//                     if (lessonData.lesson_type === 'private') {
+//                         try {
+//                             await sendLessonCancellationEmail(
+//                                 lessonData.teacher_email,
+//                                 lessonData.teacher_name,
+//                                 lessonData
+//                             );
+//                         } catch (emailError) {
+//                             console.error(`Failed to send cancellation email to teacher ${lessonData.teacher_email}:`, emailError);
+//                             // ממשיכים גם אם המייל נכשל
+//                         }
+//                     }
+//                 }
+//             }
+
+//             // שליחת מייל לתלמיד על הסרתו מהמערכת
+//             try {
+//                 await sendUserRemovalEmail(student.email, student.name, 'students');
+//             } catch (emailError) {
+//                 console.error(`Failed to send removal email to student ${student.email}:`, emailError);
+//                 // ממשיכים גם אם המייל נכשל
+//             }
+
+//             return { message: 'Student deleted successfully' };
+//         } else {
+//             // מחיקה רגילה למשתמשים אחרים
+//             await genericService.remove('users', id);
+//             return { message: 'User deleted successfully' };
+//         }
+//     } catch (error) {
+//         throw error;
+//     }
+// }
+
+async function deleteUser(id, additionalData = null) {
     try {
-        await genericService.remove('users', id);
-        return { message: 'User deleted successfully' };
+        // בדיקה אם מדובר בתלמיד
+        if (additionalData && additionalData.userType === 'students') {
+            console.log('🔍 Deleting student with ID:', id);
+            
+            // קבלת פרטי התלמיד לפני המחיקה
+            const student = await usersService.getUserById(id);
+            if (!student) {
+                throw new Error('Student not found');
+            }
+            console.log('👤 Student found:', student.name);
+
+            // מחיקת התלמיד וקבלת רשימת המורים והשיעורים שבוטלו
+            const cancelledLessons = await usersService.deleteStudent(id);
+            console.log('📚 Cancelled lessons:', cancelledLessons.length);
+            console.log('📋 Lessons data:', cancelledLessons);
+
+            // שליחת מיילים למורים של שיעורים פרטיים שבוטלו
+            if (cancelledLessons && cancelledLessons.length > 0) {
+                for (const lessonData of cancelledLessons) {
+                    console.log('🔍 Checking lesson type:', lessonData.lesson_type);
+                    
+                    // שליחת מייל רק לשיעורים פרטיים
+                    if (lessonData.lesson_type === 'private') {
+                        console.log('📧 Sending email to teacher:', lessonData.teacher_email);
+                        try {
+                            const emailResult = await sendLessonCancellationEmail(
+                                lessonData.teacher_email,
+                                lessonData.teacher_name,
+                                lessonData
+                            );
+                            console.log('✅ Email sent successfully:', emailResult);
+                        } catch (emailError) {
+                            console.error(`❌ Failed to send cancellation email to teacher ${lessonData.teacher_email}:`, emailError);
+                        }
+                    } else {
+                        console.log('⏭️ Skipping non-private lesson');
+                    }
+                }
+            } else {
+                console.log('📭 No cancelled lessons found');
+            }
+
+            // שליחת מייל לתלמיד על הסרתו מהמערכת
+            console.log('📧 Sending removal email to student:', student.email);
+            try {
+                const studentEmailResult = await sendUserRemovalEmail(student.email, student.name, 'students');
+                console.log('✅ Student removal email sent:', studentEmailResult);
+            } catch (emailError) {
+                console.error(`❌ Failed to send removal email to student ${student.email}:`, emailError);
+            }
+
+            return { message: 'Student deleted successfully' };
+        } else {
+            // מחיקה רגילה למשתמשים אחרים
+            await genericService.remove('users', id);
+            return { message: 'User deleted successfully' };
+        }
     } catch (error) {
         throw error;
     }
 }
+
+
 
 module.exports = {
     createUser,

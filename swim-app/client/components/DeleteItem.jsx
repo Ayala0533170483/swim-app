@@ -10,20 +10,28 @@ function Delete({
     deleteDisplay, 
     setDisplayChanged = () => { }, 
     dependent, 
-    nameButton = "", // 🎯 הפרמטר הזה כבר קיים
-    text = "" // 🎯 נוסיף גם text כאופציה נוספת
+    nameButton = "",
+    text = "",
+    additionalData = null  // פרמטר חדש אופציונלי
 }) {
     const { handleError } = useHandleError();
 
-    const sendDeleteRequest = async (token, url) => {
-        return await fetch(url, {
+    const sendDeleteRequest = async (token, url, body = null) => {
+        const options = {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 ...(token && { Authorization: `Bearer ${token}` }),
             },
             credentials: 'include',
-        });
+        };
+        
+        // אם יש נתונים נוספים, נוסיף אותם לגוף הבקשה
+        if (body) {
+            options.body = JSON.stringify(body);
+        }
+        
+        return await fetch(url, options);
     };
 
     async function deleteItem() {
@@ -58,11 +66,11 @@ function Delete({
                 }
             }
 
-            let response = await sendDeleteRequest(token, `http://localhost:3000/${type}/${id}`);
+            let response = await sendDeleteRequest(token, `http://localhost:3000/${type}/${id}`, additionalData);
 
             if (response.status === 401 || response.status === 403) {
                 token = await refreshToken();
-                response = await sendDeleteRequest(token, `http://localhost:3000/${type}/${id}`);
+                response = await sendDeleteRequest(token, `http://localhost:3000/${type}/${id}`, additionalData);
             }
 
             if (response.ok) {
@@ -76,13 +84,12 @@ function Delete({
         }
     }
 
-    // 🎯 קביעת הטקסט שיוצג
     const displayText = nameButton || text || "";
 
     return (
         <button className="edit-button delete-variant" onClick={deleteItem}>
             <FaTrash className="edit-icon" />
-            {displayText} {/* 🎯 הצגת הטקסט */}
+            {displayText} 
         </button>
     )
 }
