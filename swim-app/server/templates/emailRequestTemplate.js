@@ -1,4 +1,4 @@
-const createLessonConfirmationTemplate = (studentName, lessonData) => {
+const emailRequestTemplate = (studentName, lessonData) => {
     const lessonDate = new Date(lessonData.lesson_date);
     const formattedDate = lessonDate.toLocaleDateString('he-IL', {
         weekday: 'long',
@@ -169,7 +169,7 @@ const createLessonConfirmationTemplate = (studentName, lessonData) => {
             </div>
             <div class="footer">
                 <p><strong>🌊 בהצלחה בשיעור!</strong> </p>
-                <p>swinSchool | צוות השירות</p>
+                <p>swimSchool | צוות השירות</p>
             </div>
         </div>
     </body>
@@ -179,5 +179,5 @@ const createLessonConfirmationTemplate = (studentName, lessonData) => {
 
 
 module.exports = {
-    createLessonConfirmationTemplate
+    emailRequestTemplate
 };

@@ -1,196 +1,38 @@
-// const pool = require('../services/connection');
-
-// // יצירת בקשה חדשה
-// async function createRequest(req, res) {
-//     try {
-//         const { student_id, teacher_id, request_date, start_time, end_time, note } = req.body;
-        
-//         const sql = `
-//             INSERT INTO lesson_requests 
-//             (student_id, teacher_id, request_date, start_time, end_time, note, requested_date, status, is_active)
-//             VALUES (?, ?, ?, ?, ?, ?, NOW(), 'pending', 1)
-//         `;
-        
-//         const [result] = await pool.query(sql, [
-//             student_id, teacher_id, request_date, start_time, end_time, note || null
-//         ]);
-        
-//         // החזר את הבקשה החדשה
-//         const [newRequest] = await pool.query(`
-//             SELECT lr.*, u.name as teacher_name 
-//             FROM lesson_requests lr
-//             JOIN users u ON lr.teacher_id = u.user_id
-//             WHERE lr.request_id = ?
-//         `, [result.insertId]);
-        
-//         res.json({
-//             success: true,
-//             message: 'הבקשה נשלחה בהצלחה',
-//             data: newRequest[0]
-//         });
-        
-//     } catch (error) {
-//         console.error('Error creating lesson request:', error);
-//         res.status(500).json({
-//             success: false,
-//             message: 'שגיאה ביצירת הבקשה'
-//         });
-//     }
-// }
-
-// // קבלת בקשות של מורה
-// async function getTeacherRequests(req, res) {
-//     try {
-//         const { teacherId } = req.params;
-        
-//         const sql = `
-//             SELECT lr.*, 
-//                    s.name as student_name, 
-//                    s.email as student_email
-//             FROM lesson_requests lr
-//             JOIN users s ON lr.student_id = s.user_id
-//             WHERE lr.teacher_id = ? AND lr.is_active = 1
-//             ORDER BY lr.requested_date DESC
-//         `;
-        
-//         const [requests] = await pool.query(sql, [teacherId]);
-        
-//         res.json({
-//             success: true,
-//             data: requests
-//         });
-        
-//     } catch (error) {
-//         console.error('Error fetching teacher requests:', error);
-//         res.status(500).json({
-//             success: false,
-//             message: 'שגיאה בטעינת הבקשות'
-//         });
-//     }
-// }
-
-// // קבלת בקשות של תלמיד
-// async function getStudentRequests(req, res) {
-//     try {
-//         const { studentId } = req.params;
-        
-//         const sql = `
-//             SELECT lr.*, 
-//                    t.name as teacher_name
-//             FROM lesson_requests lr
-//             JOIN users t ON lr.teacher_id = t.user_id
-//             WHERE lr.student_id = ? AND lr.is_active = 1
-//             ORDER BY lr.requested_date DESC
-//         `;
-        
-//         const [requests] = await pool.query(sql, [studentId]);
-        
-//         res.json({
-//             success: true,
-//             data: requests
-//         });
-        
-//     } catch (error) {
-//         console.error('Error fetching student requests:', error);
-//         res.status(500).json({
-//             success: false,
-//             message: 'שגיאה בטעינת הבקשות'
-//         });
-//     }
-// }
-
-// // קבלת רשימת מורים
-// async function getTeachers(req, res) {
-//     try {
-//         const sql = `
-//             SELECT user_id, name, email 
-//             FROM users 
-//             WHERE type_name = 'teacher' AND is_active = 1
-//             ORDER BY name
-//         `;
-        
-//         const [teachers] = await pool.query(sql);
-        
-//         res.json({
-//             success: true,
-//             data: teachers
-//         });
-        
-//     } catch (error) {
-//         console.error('Error fetching teachers:', error);
-//         res.status(500).json({
-//             success: false,
-//             message: 'שגיאה בטעינת המורים'
-//         });
-//     }
-// }
-
-// // עדכון סטטוס בקשה
-// async function updateRequestStatus(req, res) {
-//     try {
-//         const { requestId } = req.params;
-//         const { status, teacher_id } = req.body;
-        
-//         // וודא שהמורה מעדכן רק את הבקשות שלו
-//         const sql = `
-//             UPDATE lesson_requests 
-//             SET status = ? 
-//             WHERE request_id = ? AND teacher_id = ? AND is_active = 1
-//         `;
-        
-//         const [result] = await pool.query(sql, [status, requestId, teacher_id]);
-        
-//         if (result.affectedRows === 0) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: 'בקשה לא נמצאה'
-//             });
-//         }
-        
-//         res.json({
-//             success: true,
-//             message: status === 'approved' ? 'הבקשה אושרה' : 'הבקשה נדחתה'
-//         });
-        
-//     } catch (error) {
-//         console.error('Error updating request status:', error);
-//         res.status(500).json({
-//             success: false,
-//             message: 'שגיאה בעדכון הבקשה'
-//         });
-//     }
-// }
-
-// module.exports = {
-//     createRequest,
-//     getTeacherRequests,
-//     getStudentRequests,
-//     getTeachers,
-//     updateRequestStatus
-// };
-
-
-const genericService = require('../services/genericService');
+const lessonRequestsService = require('../services/lessonRequestsService');
 const usersController = require('../controllers/usersController');
+const { sendLessonRequestStatusEmail } = require('./emailController');
 
-// יצירת בקשה חדשה - דרך הסרוויס הגנרי
 async function createRequest(req, res) {
     try {
-        const { student_id, teacher_id, request_date, start_time, end_time, note } = req.body;
+        const { 
+            student_id, 
+            teacher_id, 
+            pool_id, 
+            request_date, 
+            start_time, 
+            end_time, 
+            min_age, 
+            max_age, 
+            level, 
+            note 
+        } = req.body;
         
         const requestData = {
             student_id,
             teacher_id,
+            pool_id,
             request_date,
             start_time,
             end_time,
+            min_age,
+            max_age,
+            level,
             note: note || null,
             requested_date: new Date(),
             status: 'pending'
         };
         
-        // שימוש בסרוויס הגנרי
-        const result = await genericService.create('lesson_requests', requestData);
+        const result = await lessonRequestsService.createRequest(requestData);
         
         res.json({
             success: true,
@@ -207,15 +49,11 @@ async function createRequest(req, res) {
     }
 }
 
-// קבלת בקשות של מורה
 async function getTeacherRequests(req, res) {
     try {
-        const { teacherId } = req.params;
+        const teacherId = req.user.id;
         
-        // שימוש בסרוויס הגנרי
-        const requests = await genericService.get('lesson_requests', { 
-            teacher_id: teacherId
-        });
+        const requests = await lessonRequestsService.getTeacherRequests(teacherId);
         
         res.json({
             success: true,
@@ -231,15 +69,11 @@ async function getTeacherRequests(req, res) {
     }
 }
 
-// קבלת בקשות של תלמיד
 async function getStudentRequests(req, res) {
     try {
-        const { studentId } = req.params;
+        const studentId = req.user.id;
         
-        // שימוש בסרוויס הגנרי
-        const requests = await genericService.get('lesson_requests', { 
-            student_id: studentId
-        });
+        const requests = await lessonRequestsService.getStudentRequests(studentId);
         
         res.json({
             success: true,
@@ -255,10 +89,8 @@ async function getStudentRequests(req, res) {
     }
 }
 
-// קבלת רשימת מורים - דרך הקונטרולר הקיים
 async function getTeachers(req, res) {
     try {
-        // שימוש בקונטרולר המשתמשים הקיים
         const teachers = await usersController.getUsers({ type: 'teachers' });
         
         res.json({
@@ -275,17 +107,14 @@ async function getTeachers(req, res) {
     }
 }
 
-// עדכון סטטוס בקשה
 async function updateRequestStatus(req, res) {
     try {
         const { requestId } = req.params;
-        const { status, teacher_id } = req.body;
+        const { status } = req.body;
+        const teacherId = req.user.id;
         
-        // בדיקה שהמורה מעדכן רק את הבקשות שלו
-        const existingRequest = await genericService.get('lesson_requests', { 
-            request_id: requestId,
-            teacher_id: teacher_id
-        });
+        // קבל את פרטי הבקשה לפני העדכון
+        const existingRequest = await lessonRequestsService.getRequestById(requestId, teacherId);
         
         if (!existingRequest || existingRequest.length === 0) {
             return res.status(404).json({
@@ -293,13 +122,29 @@ async function updateRequestStatus(req, res) {
                 message: 'בקשה לא נמצאה'
             });
         }
+
+        const requestData = existingRequest[0];
         
-        // עדכון הסטטוס
-        await genericService.update('lesson_requests', requestId, { status });
+        // עדכן את הסטטוס (הטריגר יטפל ביצירת השיעור)
+        await lessonRequestsService.updateRequestStatus(requestId, { status });
+        
+        // שלח מייל לתלמיד
+        try {
+            await sendLessonRequestStatusEmail(
+                requestData.student_email,
+                requestData.student_name,
+                requestData.teacher_name,
+                requestData,
+                status
+            );
+        } catch (emailError) {
+            console.error('Failed to send status email:', emailError);
+            // ממשיכים גם אם המייל נכשל
+        }
         
         res.json({
             success: true,
-            message: status === 'approved' ? 'הבקשה אושרה' : 'הבקשה נדחתה'
+            message: status === 'approved' ? 'הבקשה אושרה ושיעור נוצר במערכת' : 'הבקשה נדחתה'
         });
         
     } catch (error) {
@@ -311,10 +156,60 @@ async function updateRequestStatus(req, res) {
     }
 }
 
+// הוסף את הפונקציה הזו בסוף הקונטרולר:
+
+async function deleteRequest(req, res) {
+    try {
+        const { requestId } = req.params;
+        const teacherId = req.user.id;
+        
+        // קבל את פרטי הבקשה לפני המחיקה
+        const existingRequest = await lessonRequestsService.getRequestById(requestId, teacherId);
+        
+        if (!existingRequest || existingRequest.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'בקשה לא נמצאה'
+            });
+        }
+
+        const requestData = existingRequest[0];
+        
+        // עדכן את הסטטוס לנדחה
+        await lessonRequestsService.updateRequestStatus(requestId, { status: 'rejected' });
+        
+        // שלח מייל לתלמיד
+        try {
+            await sendLessonRequestStatusEmail(
+                requestData.student_email,
+                requestData.student_name,
+                requestData.teacher_name,
+                requestData,
+                'rejected'
+            );
+        } catch (emailError) {
+            console.error('Failed to send rejection email:', emailError);
+        }
+        
+        res.json({
+            success: true,
+            message: 'הבקשה נדחתה'
+        });
+        
+    } catch (error) {
+        console.error('Error rejecting request:', error);
+        res.status(500).json({
+            success: false,
+            message: 'שגיאה בדחיית הבקשה'
+        });
+    }
+}
+
 module.exports = {
     createRequest,
     getTeacherRequests,
     getStudentRequests,
     getTeachers,
-    updateRequestStatus
+    updateRequestStatus,
+    deleteRequest  
 };

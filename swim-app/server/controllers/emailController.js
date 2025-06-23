@@ -1,15 +1,16 @@
 const { createTransporter } = require('../config/emailTransporter');
-const { createLessonConfirmationTemplate } = require('../templates/emailRegisterlessonsTemplate');
+const { createLessonConfirmationTemplate } = require('../templates/emailRequestTemplate');
 const { createGeneralMessageTemplate } = require('../templates/emailGeneralMessageTemplate');
 const { createUserRemovalTemplate } = require('../templates/emailUserRemovalTemplate');
 const { createLessonCancellationTemplate } = require('../templates/emailLessonCancellationTemplate');
+const { emailRegisterlessonsTemplate } = require('../templates/emailLessonRequestTemplate');
+
 const cleanFileName = (originalName) => {
     return originalName
         .replace(/[^\w\s.-]/g, '') // הסרת תווים מיוחדים
         .replace(/\s+/g, '_')      // החלפת רווחים בקו תחתון
         .trim();
 };
-
 
 const sendLessonConfirmationEmail = async (studentEmail, studentName, lessonData, icsContent) => {
     try {
@@ -162,10 +163,38 @@ const sendLessonCancellationEmail = async (teacherEmail, teacherName, lessonData
     }
 };
 
+// הפונקציה החדשה לשליחת מייל סטטוס בקשה
+const sendLessonRequestStatusEmail = async (studentEmail, studentName, teacherName, requestData, status) => {
+    try {
+        const transporter = createTransporter();
+        const htmlContent = emailRegisterlessonsTemplate(studentName, teacherName, requestData, status);
+
+        const subject = status === 'approved'
+            ? `🎉 SWIMWISE - בקשת השיעור שלך אושרה!`
+            : `😔 SWIMWISE - בקשת השיעור שלך נדחתה`;
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: studentEmail,
+            subject: subject,
+            html: htmlContent
+        };
+
+        const result = await transporter.sendMail(mailOptions);
+        console.log(`Lesson request status email sent to ${studentEmail}:`, result.messageId);
+        return { success: true, messageId: result.messageId };
+
+    } catch (error) {
+        console.error(`Error sending lesson request status email to ${studentEmail}:`, error);
+        return { success: false, error: error.message };
+    }
+};
+
 module.exports = {
     sendLessonConfirmationEmail,
     sendGeneralMessage,
     sendCancellationEmail,
     sendUserRemovalEmail,
-    sendLessonCancellationEmail
+    sendLessonCancellationEmail,
+    sendLessonRequestStatusEmail
 };
