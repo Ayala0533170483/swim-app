@@ -6,8 +6,8 @@ const createLessonCancellationTemplate = (teacherName, lessonData) => {
         month: 'long',
         day: 'numeric'
     });
-
-    return `
+//
+    return `   
     <!DOCTYPE html>
     <html dir="rtl" lang="he">
     <head>
