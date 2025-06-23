@@ -210,7 +210,7 @@ function UserManagement({ userType }) {
                     key={key}
                     {...(isPoolManagement ?
                       { pool: item, updateDisplay, deleteDisplay, setDisplayChanged } :
-                      { user: item, userType }
+                      { user: item, userType, onUserDeleted: deleteDisplay }
                     )}
                   />
                 );

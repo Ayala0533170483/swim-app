@@ -49,7 +49,7 @@ function UserCard({ user, userType, onUserDeleted }) {
             <FaEye className="action-icon" />
             <span>צפה בשיעורים</span>
           </button>
-          
+
           <DeleteItem
             id={user.user_id}
             type="users"

@@ -7,7 +7,6 @@ export const getTimeDifferenceInMinutes = (startTime, endTime) => {
   return endTotalMin - startTotalMin;
 };
 
-// פונקציות תצוגה ופורמטים
 export const getLessonIcon = (type) => {
   switch (type?.toLowerCase()) {
     case 'private': return '👤';
@@ -34,7 +33,12 @@ export const formatAgeRange = (minAge, maxAge) => {
 
 export const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('he-IL');
+  return date.toLocaleDateString('he-IL', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 };
 
 export const formatTime = (timeString) => {
@@ -58,7 +62,37 @@ export const translateLevel = (level) => {
   }
 };
 
-// פונקציה חדשה לפורמט שיעור קיים למודל קונפליקט
+export const formatLessonDetails = (lesson) => {
+  return {
+    title: `${getLessonIcon(lesson.lesson_type)} ${translateLessonType(lesson.lesson_type)} - ${translateLevel(lesson.level)}`,
+    type: translateLessonType(lesson.lesson_type),
+    level: translateLevel(lesson.level),
+    ageRange: formatAgeRange(lesson.min_age, lesson.max_age),
+    timeRange: `${formatTime(lesson.start_time)} - ${formatTime(lesson.end_time)}`,
+    duration: getTimeDifferenceInMinutes(lesson.start_time, lesson.end_time),
+    poolInfo: lesson.pool_name || 'לא צויין',
+    maxParticipants: lesson.max_participants || 'לא מוגבל',
+    formattedDate: formatDate(lesson.lesson_date)
+  };
+};
+
+export const getEventStyleByLevel = (level) => {
+  const backgroundColor = getLevelColor(level);
+
+  return {
+    style: {
+      backgroundColor,
+      borderRadius: '5px',
+      opacity: 0.9,
+      color: 'white',
+      border: '0px',
+      display: 'block',
+      fontSize: '12px',
+      padding: '2px 5px',
+      fontWeight: 'bold'
+    }
+  };
+};
 
 export const createLessonKeys = (pools) => [
   {
@@ -247,7 +281,6 @@ export const createLessonValidationRules = () => ({
     return null;
   }
 });
-
 export const defaultLessonValues = (userId = null) => ({
   lesson_date: '',
   start_time: '',
@@ -294,7 +327,6 @@ export const createLessonUpdateConfig = (lesson, pools) => {
 };
 
 // הוסף את הפונקציות החסרות בסוף הקובץ:
-
 export const formatConflictLessonForModal = (conflictLesson) => {
   return {
     lesson_id: conflictLesson.lesson_id,
@@ -336,5 +368,72 @@ export const getWarningTitle = (warningType) => {
       return 'שים לב';
   }
 };
+// הוסף את הפונקציה הזו בסוף הקובץ:
 
+export const convertLessonToCalendarEvent = (lesson) => {
+  console.log('🔍 Processing lesson:', lesson);
+
+  let startDate, endDate;
+
+  try {
+    if (lesson.date && lesson.start_time) {
+      console.log('📅 Using date + time format');
+      startDate = new Date(lesson.date + 'T' + lesson.start_time);
+      endDate = new Date(lesson.date + 'T' + lesson.end_time);
+    }
+    else if (lesson.start && lesson.end) {
+      console.log('📅 Using start/end format');
+      startDate = new Date(lesson.start);
+      endDate = new Date(lesson.end);
+    }
+    else if (lesson.lesson_date) {
+      console.log('📅 Using lesson_date format');
+      const dateStr = lesson.lesson_date.split('T')[0];
+      startDate = new Date(dateStr + 'T' + (lesson.start_time || '10:00'));
+      endDate = new Date(dateStr + 'T' + (lesson.end_time || '11:00'));
+    }
+    else {
+      console.log('📅 Using default dates');
+      const now = new Date();
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 10, 0);
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 11, 0);
+    }
+
+    console.log('✅ Final dates - Start:', startDate, 'End:', endDate);
+
+  } catch (error) {
+    console.error('❌ Error parsing lesson date:', lesson, error);
+    const now = new Date();
+    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 10, 0);
+    endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 11, 0);
+  }
+
+  const event = {
+    id: lesson.lesson_id,
+    title: lesson.title || `שיעור ${translateLessonType(lesson.lesson_type || '')}`,
+    start: startDate,
+    end: endDate,
+    location: lesson.pool_name || 'לא צויין',
+    description: `רמה: ${translateLevel(lesson.level || '')}`,
+    // שמירת כל הנתונים המקוריים לשימוש במודל
+    lesson_type: lesson.lesson_type,
+    level: lesson.level,
+    pool_id: lesson.pool_id,
+    min_age: lesson.min_age,
+    max_age: lesson.max_age,
+    teacher_name: lesson.teacher_name,
+    registrations: lesson.registrations
+  };
+
+  console.log('🎯 Final event:', event);
+  return event;
+};
+
+export const getLessonDetailsMessage = (event) => {
+  return `🏊‍♂️ ${event.title}
+🕒 ${format(event.start, 'HH:mm', { locale: he })} - ${format(event.end, 'HH:mm', { locale: he })}
+📅 ${format(event.start, 'dd/MM/yyyy', { locale: he })}
+📍 ${event.location}
+${event.description ? `📝 ${event.description}` : ''}`;
+};
 

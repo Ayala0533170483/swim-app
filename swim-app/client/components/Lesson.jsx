@@ -1,7 +1,7 @@
-
 import React, { useState, useContext } from "react";
 import '../styles/Lesson.css';
 import '../styles/Update.css';
+import '../styles/LessonModal.css'; // נוסיף קובץ CSS חדש למודל
 import { LessonsContext } from "./MyLessons";
 import { RegisterLessonsContext } from "./RegisterLesson";
 import { userContext } from "./App";
@@ -19,7 +19,7 @@ import {
     translateLevel
 } from "../structures/lessonStructures";
 
-function Lesson({ lesson, pools, mode = "view" }) {
+function Lesson({ lesson, pools, mode = "view", showAsModal = false }) {
     const { userData } = useContext(userContext);
 
     const lessonsContext = useContext(LessonsContext);
@@ -29,6 +29,7 @@ function Lesson({ lesson, pools, mode = "view" }) {
     const { addRegistration } = registerContext || {};
 
     const [showParticipants, setShowParticipants] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(showAsModal);
 
     const isTeacher = userData?.type_name === 'teacher';
     const isRegisterMode = mode === 'register';
@@ -38,8 +39,39 @@ function Lesson({ lesson, pools, mode = "view" }) {
 
     const updateConfig = createLessonUpdateConfig(lesson, pools);
 
-    return (
-        <div className={`lesson-card ${isConflictMode ? 'conflict-lesson-card' : ''}`}>
+    // פונקציות לניהול המודל
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
+    // טיפול בלחיצה על הרקע
+    const handleOverlayClick = (e) => {
+        if (e.target === e.currentTarget) {
+            closeModal();
+        }
+    };
+
+    // טיפול בלחיצה על ESC
+    React.useEffect(() => {
+        if (isModalOpen) {
+            const handleEsc = (e) => {
+                if (e.keyCode === 27) {
+                    closeModal();
+                }
+            };
+            document.addEventListener('keydown', handleEsc);
+            document.body.style.overflow = 'hidden'; // מונע גלילה ברקע
+
+            return () => {
+                document.removeEventListener('keydown', handleEsc);
+                document.body.style.overflow = 'unset';
+            };
+        }
+    }, [isModalOpen]);
+
+    // תוכן השיעור (אותו JSX כמו קודם)
+    const lessonContent = (
+        <div className={`lesson-card ${isConflictMode ? 'conflict-lesson-card' : ''} ${showAsModal ? 'lesson-modal-content' : ''}`}>
             <div className="lesson-header">
                 <div className="lesson-icon">
                     {getLessonIcon(lesson.lesson_type)}
@@ -111,7 +143,7 @@ function Lesson({ lesson, pools, mode = "view" }) {
                 </div>
             </div>
 
-            {!isConflictMode && (
+            {!isConflictMode && !showAsModal && (
                 <div className="lesson-actions">
                     {isRegisterMode ? (
                         <AddItem
@@ -158,7 +190,7 @@ function Lesson({ lesson, pools, mode = "view" }) {
                 </div>
             )}
 
-            {!isRegisterMode && !isConflictMode && showParticipants && hasRegistrations && (
+            {!isRegisterMode && !isConflictMode && !showAsModal && showParticipants && hasRegistrations && (
                 <div className="participants-section">
                     <h4>משתתפים בשיעור:</h4>
                     <div className="participants-list">
@@ -172,6 +204,27 @@ function Lesson({ lesson, pools, mode = "view" }) {
                     </div>
                 </div>
             )}
+        </div>
+    );
+
+    // אם showAsModal = false, מחזיר את התוכן הרגיל
+    if (!showAsModal) {
+        return lessonContent;
+    }
+
+    // אם showAsModal = true, מחזיר את התוכן במודל
+    if (!isModalOpen) {
+        return null;
+    }
+
+    return (
+        <div className="lesson-modal-overlay" onClick={handleOverlayClick}>
+            <div className="lesson-modal">
+                <button className="lesson-modal-close" onClick={closeModal}>
+                    ✕
+                </button>
+                {lessonContent}
+            </div>
         </div>
     );
 }
