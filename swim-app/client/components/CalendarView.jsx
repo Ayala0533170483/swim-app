@@ -27,7 +27,6 @@ export default function CalendarView({ events }) {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   const handleSelectEvent = (event) => {
-    // המרת האירוע חזרה לפורמט של שיעור
     const lessonData = {
       lesson_id: event.id,
       lesson_date: event.start,

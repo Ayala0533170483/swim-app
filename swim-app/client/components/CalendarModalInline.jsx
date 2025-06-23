@@ -31,10 +31,6 @@ export default function CalendarInline({ lessons, userName }) {
                             <span className="legend-color advanced"></span>
                             <span>מתקדם</span>
                         </div>
-                        <div className="legend-item">
-                            <span className="legend-color default"></span>
-                            <span>כללי</span>
-                        </div>
                     </div>
                 )}
             </div>

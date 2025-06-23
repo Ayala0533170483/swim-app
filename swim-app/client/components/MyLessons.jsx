@@ -238,28 +238,29 @@ function MyLessons() {
                 <p>ברוך הבא {userData.name}, כאן תוכל לראות את כל השיעורים שלך</p>
               </div>
 
-              {lessons.length > 0 && (
-                <div className="page-header-actions">
-                  {/* <button 
-                    className="calendar-main-btn" 
-                    onClick={openCalendar}
-                    title="הצג את כל השיעורים בלוח שנה"
-                  >
-                    📅 לוח שנה
-                  </button> */}
-                  <button className="calendar-main-btn" onClick={openCalendar}>📅 לוח שנה (Modal)</button>
+      
+{lessons.length > 0 && (
+  <div className="page-header-actions">
 
-                  {/* ה־Checkbox החדש */}
-                  <label style={{ marginLeft: 16, display: 'flex', alignItems: 'center' }}>
-                    <input
-                      type="checkbox"
-                      checked={viewMode === 'calendar'}
-                      onChange={() => setViewMode(prev => prev === 'cards' ? 'calendar' : 'cards')}
-                    />
-                    <span style={{ marginLeft: 8 }}>לוח שנה במקום כרטיסים</span>
-                  </label>
-                </div>
-              )}
+    <div className="view-toggle-container">
+      <div className="view-toggle">
+        <button 
+          className={`toggle-btn ${viewMode === 'cards' ? 'active' : ''}`}
+          onClick={() => setViewMode('cards')}
+        >
+          📋 כרטיסים
+        </button>
+        <button 
+          className={`toggle-btn ${viewMode === 'calendar' ? 'active' : ''}`}
+          onClick={() => setViewMode('calendar')}
+        >
+          📅 לוח שנה
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
             </div>
           </div>
 
