@@ -3,12 +3,9 @@ const { deleteOldImage } = require('../services/fileService');
 
 async function getBranches(filters = {}) {
     try {
-        console.log('getBranches called with filters:', filters); 
         const branches = await genericService.get('pools', filters);
-        console.log('getBranches result:', branches); 
         return branches;
     } catch (error) {
-        console.error('Error getting branches:', error);
         throw error;
     }
 }
@@ -54,13 +51,10 @@ async function updateBranch(id, branchData, imageFile) {
         }
 
         const actualId = pool_id || id;
-        console.log('Using ID:', actualId, 'Update data:', updateData);
         const updatedBranch = await genericService.update('pools', actualId, updateData);
-        console.log('Updated branch result:', updatedBranch);
 
         return updatedBranch;
     } catch (error) {
-        console.error('Error updating branch:', error);
         if (imageFile) {
             deleteOldImage(imageFile.filename);
         }
@@ -69,20 +63,16 @@ async function updateBranch(id, branchData, imageFile) {
     }
 }
 
-// פונקציה למחיקה (soft delete)
 async function deleteBranch(id) {
     try {
         console.log('Deleting branch with ID:', id);
 
-        // קבל את הנתונים לפני המחיקה כדי למחוק את התמונה
         const branch = await genericService.get('pools', { pool_id: id });
         const imagePath = branch[0]?.image_path;
 
         const result = await genericService.remove('pools', id);
-        console.log('Delete result:', result);
 
         if (result) {
-            // מחק את התמונה מהשרת
             if (imagePath) {
                 deleteOldImage(imagePath);
             }
