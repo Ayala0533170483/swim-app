@@ -16,8 +16,7 @@ import UserManagement from './ItemManagement ';
 import Management from './Management';
 import Messages from './Messages'
 import SendMessages from './SendMessages'
-import RequestLesson from './RequestLesson';       
-import TeacherRequests from './TeacherRequests';    
+import LessonRequestsManager from './LessonRequestsManager';    // ← שינוי כאן
 
 export const userContext = createContext();
 
@@ -37,8 +36,7 @@ export default function App() {
                     <Route path="/my-lessons" element={<MyLessons />} />
                     <Route path=":username/my-lessons" element={<MyLessons />} />
                     <Route path=":username/register-lesson" element={<RegisterLesson />} />
-                    <Route path=":username/request-lesson" element={<RequestLesson />} />           {/* ← הוסף את זה */}
-                    <Route path=":username/requests" element={<TeacherRequests />} />       {/* ← הוסף את זה */}
+                    <Route path=":username/lesson-requests" element={<LessonRequestsManager />} />   
                     <Route path=":username/students" element={<UserManagement userType="students" />} />
                     <Route path=":username/teachers" element={<UserManagement userType="teachers" />} />
                     <Route path=":username/pools" element={<UserManagement userType="pools" />} />

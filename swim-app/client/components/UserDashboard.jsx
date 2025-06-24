@@ -31,14 +31,13 @@ function UserDashboard() {
         return [
           { path: `/${usernameForUrl}/my-lessons`, label: 'השיעורים שלי' },
           { path: `/${usernameForUrl}/register-lesson`, label: 'רישום לשיעור חדש' },
-          { path: `/${usernameForUrl}/request-lesson`, label: 'בקשת שיעור' }, // ← הוסף את זה
+          { path: `/${usernameForUrl}/lesson-requests`, label: 'בקשות שיעורים' }, 
           { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
         ];
       case "teacher":
         return [
           { path: `/${usernameForUrl}/my-lessons`, label: 'השיעורים שלי' },
-          { path: `/${usernameForUrl}/requests`, label: 'בקשות ממתינות' },
-          { path: `/${usernameForUrl}/teacher-requests`, label: 'בקשות שיעורים' }, // ← הוסף את זה
+          { path: `/${usernameForUrl}/lesson-requests`, label: 'בקשות שיעורים' }, 
           { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
         ];
       case "admin":
