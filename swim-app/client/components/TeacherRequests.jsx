@@ -75,12 +75,30 @@ function TeacherRequests() {
         };
     }, [userData?.user_id, displayChanged]);
 
-    const filteredRequests = requests.filter(request => {
+    // הסתר בקשות שאושרו או נדחו מהתצוגה הראשית
+    const visibleRequests = requests.filter(request => request.status === 'pending');
+
+    const filteredRequests = visibleRequests.filter(request => {
         if (filter === 'all') return true;
         return request.status === filter;
     });
 
-    const pendingCount = requests.filter(req => req.status === 'pending').length;
+    const pendingCount = visibleRequests.length;
+
+    // פונקציה לטיפול באישור בקשה
+    const handleApproveRequest = (requestId) => {
+        // עדכן את הסטטוס ב-state המקומי
+        updateRequests({
+            request_id: requestId,
+            status: 'approved'
+        });
+    };
+
+    // פונקציה לטיפול בדחיית בקשה
+    const handleRejectRequest = (requestId) => {
+        // הסר את הבקשה מה-state המקומי
+        deleteRequests(requestId);
+    };
 
     if (!userData) {
         return <div className="loading">טוען נתוני משתמש...</div>;
@@ -117,15 +135,9 @@ function TeacherRequests() {
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                     >
-                        <option value="all">הכל ({requests.length})</option>
+                        <option value="all">הכל ({visibleRequests.length})</option>
                         <option value="pending">
-                            ממתינות ({requests.filter(r => r.status === 'pending').length})
-                        </option>
-                        <option value="approved">
-                            מאושרות ({requests.filter(r => r.status === 'approved').length})
-                        </option>
-                        <option value="rejected">
-                            נדחות ({requests.filter(r => r.status === 'rejected').length})
+                            ממתינות ({visibleRequests.filter(r => r.status === 'pending').length})
                         </option>
                     </select>
                 </div>
@@ -136,11 +148,11 @@ function TeacherRequests() {
             ) : filteredRequests.length === 0 ? (
                 <div className="no-requests">
                     <h3>
-                        {filter === 'all' ? 'אין בקשות' : `אין בקשות ${getStatusText(filter)}`}
+                        {filter === 'all' ? 'אין בקשות ממתינות' : `אין בקשות ${getStatusText(filter)}`}
                     </h3>
                     <p>
                         {filter === 'all'
-                            ? 'כרגע אין לך בקשות שיעורים'
+                            ? 'כרגע אין לך בקשות שיעורים ממתינות'
                             : `כרגע אין לך בקשות ${getStatusText(filter)}`
                         }
                     </p>
@@ -215,7 +227,10 @@ function TeacherRequests() {
                                                 request_id: request.request_id
                                             }}
                                             type="lessonRequests"
-                                            updateDisplay={updateRequests}
+                                            updateDisplay={(updatedData) => {
+                                                updateRequests(updatedData);
+                                                handleApproveRequest(request.request_id);
+                                            }}
                                             nameButton="✅ אשר בקשה"
                                             setDisplayChanged={setDisplayChanged}
                                             directUpdateData={{ status: 'approved' }}
@@ -223,7 +238,10 @@ function TeacherRequests() {
                                         <Delete
                                             id={request.request_id}
                                             type="lessonRequests"
-                                            deleteDisplay={deleteRequests}
+                                            deleteDisplay={(deletedId) => {
+                                                deleteRequests(deletedId);
+                                                handleRejectRequest(deletedId);
+                                            }}
                                             setDisplayChanged={setDisplayChanged}
                                             nameButton="❌ דחה בקשה"
                                         />

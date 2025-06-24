@@ -1,4 +1,4 @@
-import { useState } from "react"; // הסר את React אם לא משתמש בו
+import { useState } from "react";
 
 export default function useHandleDisplay(initialItems = null) {
     const [items, setItems] = useState(initialItems);
@@ -9,17 +9,16 @@ export default function useHandleDisplay(initialItems = null) {
         console.log('current items:', items);
 
         setItems((prevItems) => {
-            // וודא שprevItems הוא מערך
             if (!Array.isArray(prevItems)) {
                 console.warn('prevItems is not an array:', prevItems);
                 return prevItems;
             }
-            
+
             return prevItems.map((item) => {
                 console.log('checking item:', item);
 
-                const itemId = item.lesson_id || item.id || item.pool_id || item.user_id || item.contact_id;
-                const updatedId = updatedFields.lesson_id || updatedFields.id || updatedFields.pool_id || updatedFields.user_id || updatedFields.contact_id;
+                const itemId = item.lesson_id || item.id || item.pool_id || item.user_id || item.contact_id || item.request_id;
+                const updatedId = updatedFields.lesson_id || updatedFields.id || updatedFields.pool_id || updatedFields.user_id || updatedFields.contact_id || updatedFields.request_id;
 
                 console.log('itemId:', itemId, 'updatedId:', updatedId);
 
@@ -42,9 +41,9 @@ export default function useHandleDisplay(initialItems = null) {
                 console.warn('prevItems is not an array:', prevItems);
                 return prevItems;
             }
-            
+
             return prevItems.filter((item) => {
-                const itemId = item.lesson_id || item.id || item.pool_id || item.user_id || item.contact_id;
+                const itemId = item.lesson_id || item.id || item.pool_id || item.user_id || item.contact_id || item.request_id;
                 return itemId !== deleteId;
             });
         });
