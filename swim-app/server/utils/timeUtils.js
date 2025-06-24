@@ -78,17 +78,14 @@ function checkTimeConflict(newLesson, existingLessons) {
         );
         
         if (hasOverlap) {
-            console.log('🚫 TIME CONFLICT DETECTED!');
             return existingLesson;
         }
     }
     
-    console.log('✅ No time conflicts found');
     return null;
 }
 
 function checkQuarterHourWarnings(newLesson, existingLessons) {
-    console.log('🔍 === CHECKING QUARTER HOUR WARNINGS ===');
     const warnings = [];
     
     for (const existingLesson of existingLessons) {

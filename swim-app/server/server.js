@@ -4,6 +4,7 @@ const app = express();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const verifyToken = require('./middlewares/verifyToken.js');
+const errorHandler = require('./middlewares/errorHandler.js');
 
 app.use(cors({
     origin: ['http://localhost:5173', 'http://localhost:5174'],
@@ -33,6 +34,7 @@ app.use('/branches', branchesRouter);
 app.use('/email', verifyToken, emailRouter);
 app.use('/lessonRequests', verifyToken, lessonRequestsRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(errorHandler);
 
 const PORT = 3000;
 app.listen(PORT, () => {

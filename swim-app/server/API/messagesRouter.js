@@ -3,61 +3,39 @@ const router = express.Router();
 const messagesController = require('../controllers/messagesController');
 const verifyToken = require('../middlewares/verifyToken');
 
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', verifyToken, async (req, res, next) => {
     try {
         const result = await messagesController.getMessages(req.query, req.user);
         res.json(result);
     } catch (error) {
-        res.status(error.statusCode || 500).json({
-            success: false,
-            message: error.message,
-            error: error.error
-        });
+        next(error);
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
         const result = await messagesController.createMessage(req.body);
         res.status(201).json(result);
     } catch (error) {
-        const response = {
-            success: false,
-            message: error.message,
-            error: error.error
-        };
-
-        if (error.received) {
-            response.received = error.received;
-        }
-
-        res.status(error.statusCode || 500).json(response);
+        next(error);
     }
 });
 
-router.put('/:id', verifyToken, async (req, res) => {
+router.put('/:id', verifyToken, async (req, res, next) => {
     try {
         const result = await messagesController.updateMessage(req.params.id, req.body);
         res.json(result);
     } catch (error) {
-        res.status(error.statusCode || 500).json({
-            success: false,
-            message: error.message,
-            error: error.error
-        });
+        next(error);
     }
 });
 
-router.delete('/:id', verifyToken, async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res, next) => {
     try {
         const result = await messagesController.deleteMessage(req.params.id);
         res.json(result);
     } catch (error) {
-        res.status(error.statusCode || 500).json({
-            success: false,
-            message: error.message,
-            error: error.error
-        });
+        next(error);
     }
 });
 

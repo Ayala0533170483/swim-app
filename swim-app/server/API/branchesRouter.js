@@ -4,9 +4,9 @@ const branchesController = require('../controllers/branchesController');
 const verifyToken = require('../middlewares/verifyToken');
 const { uploadPoolImage } = require('../services/fileService');
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
-        console.log('GET /branches called with query:', req.query); 
+        console.log('GET /branches called with query:', req.query);
         const query = { ...req.query };
         const branches = await branchesController.getBranches(query);
         res.json({
@@ -15,17 +15,12 @@ router.get('/', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error fetching branches:', error);
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
+        next(error);
     }
 });
 
-router.post('/', verifyToken, uploadPoolImage.single('image'), async (req, res) => {
+router.post('/', verifyToken, uploadPoolImage.single('image'), async (req, res, next) => {
     try {
-
         const branchData = req.body;
         const imageFile = req.file;
         const newBranch = await branchesController.createBranch(branchData, imageFile);
@@ -37,32 +32,17 @@ router.post('/', verifyToken, uploadPoolImage.single('image'), async (req, res) 
         });
 
     } catch (error) {
-
-        let errorMessage = 'Error creating branch';
-        if (error.message.includes('Image is required')) {
-            errorMessage = 'תמונה נדרשת ליצירת בריכה';
-        } else if (error.message.includes('רק קבצי תמונה מותרים')) {
-            errorMessage = error.message;
-        } else if (error.code === 'LIMIT_FILE_SIZE') {
-            errorMessage = 'גודל התמונה גדול מדי (מקסימום 5MB)';
-        }
-
-        res.status(500).json({
-            success: false,
-            message: errorMessage,
-            error: error.message
-        });
+        next(error);
     }
 });
 
-router.put('/:id', verifyToken, uploadPoolImage.single('image'), async (req, res) => {
+router.put('/:id', verifyToken, uploadPoolImage.single('image'), async (req, res, next) => {
     try {
         const branchId = req.params.id;
         const branchData = req.body;
-        const imageFile = req.file; 
+        const imageFile = req.file;
 
         const updatedBranch = await branchesController.updateBranch(branchId, branchData, imageFile);
-
 
         res.json({
             success: true,
@@ -71,23 +51,11 @@ router.put('/:id', verifyToken, uploadPoolImage.single('image'), async (req, res
         });
 
     } catch (error) {
-
-        let errorMessage = 'Error updating branch';
-        if (error.message.includes('רק קבצי תמונה מותרים')) {
-            errorMessage = error.message;
-        } else if (error.code === 'LIMIT_FILE_SIZE') {
-            errorMessage = 'גודל התמונה גדול מדי (מקסימום 5MB)';
-        }
-
-        res.status(500).json({
-            success: false,
-            message: errorMessage,
-            error: error.message
-        });
+        next(error);
     }
 });
 
-router.delete('/:id', verifyToken, async (req, res) => {
+router.delete('/:id', verifyToken, async (req, res, next) => {
     try {
         const branchId = req.params.id;
         await branchesController.deleteBranch(branchId);
@@ -98,12 +66,7 @@ router.delete('/:id', verifyToken, async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error deleting branch:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error deleting branch',
-            error: error.message
-        });
+        next(error);
     }
 });
 

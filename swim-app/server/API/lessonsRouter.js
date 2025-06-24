@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const lessonsController = require('../controllers/lessonsController');
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         if (Object.keys(req.query).length === 0) {
-            const studentId = req.user.id; 
+            const studentId = req.user.id;
             const availableLessons = await lessonsController.getAvailableLessons(studentId);
             return res.json({ data: availableLessons });
         }
@@ -21,11 +21,11 @@ router.get('/', async (req, res) => {
         const lessons = await lessonsController.getMyLessons(filters);
         res.json({ data: lessons });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        next(error);
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
         const lessonData = req.body;
 
@@ -47,32 +47,11 @@ router.post('/', async (req, res) => {
         }
 
     } catch (error) {
-        console.error('Error creating lesson:', error);
-
-        if (error.message.startsWith('{"type":"SCHEDULE_CONFLICT"')) {
-            try {
-                const conflictData = JSON.parse(error.message);
-                res.status(409).json({
-                    success: false,
-                    type: 'SCHEDULE_CONFLICT',
-                    message: conflictData.message,
-                    conflicts: conflictData.conflicts
-                });
-                return;
-            } catch (parseError) {
-                console.error('Error parsing conflict data:', parseError);
-            }
-        }
-
-        res.status(500).json({
-            success: false,
-            message: 'Error creating lesson',
-            error: error.message
-        });
+        next(error);
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
     try {
         const lesson_id = req.params.id;
         const updateData = req.body;
@@ -85,16 +64,11 @@ router.put('/:id', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error updating lesson:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error updating lesson',
-            error: error.message
-        });
+        next(error);
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
     try {
         const lessonId = req.params.id;
 
@@ -106,12 +80,7 @@ router.delete('/:id', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error deleting lesson:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error deleting lesson',
-            error: error.message
-        });
+        next(error);
     }
 });
 

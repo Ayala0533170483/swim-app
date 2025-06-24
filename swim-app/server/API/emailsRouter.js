@@ -27,36 +27,28 @@ const upload = multer({
     }
 });
 
-router.post('/send-general-message', upload.single('attachedFile'), async (req, res) => {
+router.post('/send-general-message', upload.single('attachedFile'), async (req, res, next) => {
     try {
         const { userIds, subject, messageContent, recipients } = req.body;
 
         if (!userIds || !Array.isArray(JSON.parse(userIds)) || JSON.parse(userIds).length === 0) {
-            return res.status(400).json({
-                success: false,
-                error: 'נדרש לבחור לפחות משתמש אחד'
-            });
+            const error = new Error('נדרש לבחור לפחות משתמש אחד');
+            throw error;
         }
 
         if (!subject || !subject.trim()) {
-            return res.status(400).json({
-                success: false,
-                error: 'נדרש נושא להודעה'
-            });
+            const error = new Error('נדרש נושא להודעה');
+            throw error;
         }
 
         if (!messageContent || !messageContent.trim()) {
-            return res.status(400).json({
-                success: false,
-                error: 'נדרש תוכן להודעה'
-            });
+            const error = new Error('נדרש תוכן להודעה');
+            throw error;
         }
 
         if (!recipients || !Array.isArray(JSON.parse(recipients)) || JSON.parse(recipients).length === 0) {
-            return res.status(400).json({
-                success: false,
-                error: 'נדרשים פרטי נמענים'
-            });
+            const error = new Error('נדרשים פרטי נמענים');
+            throw error;
         }
 
         const recipientsList = JSON.parse(recipients);
@@ -68,7 +60,6 @@ router.post('/send-general-message', upload.single('attachedFile'), async (req, 
         );
 
         if (result.totalSent > 0) {
-
             res.json({
                 success: true,
                 message: `ההודעה נשלחה בהצלחה ל-${result.totalSent} משתמשים`,
@@ -77,21 +68,15 @@ router.post('/send-general-message', upload.single('attachedFile'), async (req, 
                 details: result.results
             });
         } else {
-            res.status(500).json({
-                success: false,
-                error: 'שגיאה בשליחת ההודעות',
-                totalSent: result.totalSent,
-                totalFailed: result.totalFailed,
-                details: result.results
-            });
+            const error = new Error('שגיאה בשליחת ההודעות');
+            error.totalSent = result.totalSent;
+            error.totalFailed = result.totalFailed;
+            error.details = result.results;
+            throw error;
         }
 
     } catch (error) {
-        console.error('Error in send-general-message route:', error);
-        res.status(500).json({
-            success: false,
-            error: 'שגיאה בשרת: ' + error.message
-        });
+        next(error); 
     }
 });
 

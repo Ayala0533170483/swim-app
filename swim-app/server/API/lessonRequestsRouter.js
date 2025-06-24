@@ -2,65 +2,91 @@ const express = require('express');
 const router = express.Router();
 const lessonRequestsController = require('../controllers/lessonRequestsController');
 
-router.post('/', (req, res) => {
-    const { student_id, teacher_id, request_date, start_time, end_time } = req.body;
+router.post('/', (req, res, next) => {
+    try {
+        if (!req.body || Object.keys(req.body).length === 0) {
+            const error = new Error('חסרים נתונים נדרשים');
+            throw error;
+        }
 
-    if (!student_id || !teacher_id || !request_date || !start_time || !end_time) {
-        return res.status(400).json({
-            success: false,
-            message: 'חסרים נתונים נדרשים'
-        });
-    }
+        const { student_id, teacher_id, request_date, start_time, end_time } = req.body;
 
-    lessonRequestsController.createRequest(req, res);
-});
+        if (!student_id || !teacher_id || !request_date || !start_time || !end_time) {
+            const error = new Error('חסרים נתונים נדרשים');
+            throw error;
+        }
 
-router.get('/', (req, res) => {
-    const role = req.user.role;
-
-    if (role) {
-        const functionName = `get${role.charAt(0).toUpperCase() + role.slice(1)}Requests`;
-        lessonRequestsController[functionName](req, res);
-    } else {
-        return res.status(403).json({
-            success: false,
-            message: 'גישה לא מורשית'
-        });
+        lessonRequestsController.createRequest(req, res);
+    } catch (error) {
+        next(error);
     }
 });
 
-router.put('/:requestId', (req, res) => {
-    const { status } = req.body;
-    const userRole = req.user.role;
+router.get('/', (req, res, next) => {
+    try {
+        if (!req.user) {
+            const error = new Error('גישה לא מורשית - נדרש אימות');
+            throw error;
+        }
 
-    if (userRole !== 'teacher') {
-        return res.status(403).json({
-            success: false,
-            message: 'רק מורים יכולים לעדכן סטטוס בקשות'
-        });
+        const role = req.user.role;
+
+        if (role) {
+            const functionName = `get${role.charAt(0).toUpperCase() + role.slice(1)}Requests`;
+            lessonRequestsController[functionName](req, res);
+        } else {
+            const error = new Error('גישה לא מורשית');
+            throw error;
+        }
+    } catch (error) {
+        next(error);
     }
-
-    if (!status || !['approved', 'rejected'].includes(status)) {
-        return res.status(400).json({
-            success: false,
-            message: 'סטטוס לא תקין'
-        });
-    }
-
-    lessonRequestsController.updateRequestStatus(req, res);
 });
 
-router.delete('/:requestId', (req, res) => {
-    const userRole = req.user.role;
+router.put('/:requestId', (req, res, next) => {
+    try {
+        if (!req.user) {
+            const error = new Error('גישה לא מורשית - נדרש אימות');
+            throw error;
+        }
 
-    if (userRole !== 'teacher') {
-        return res.status(403).json({
-            success: false,
-            message: 'רק מורים יכולים למחוק בקשות'
-        });
+        const { status } = req.body;
+        const userRole = req.user.role;
+
+        if (userRole !== 'teacher') {
+            const error = new Error('רק מורים יכולים לעדכן סטטוס בקשות');
+            throw error;
+        }
+
+        if (!status || !['approved', 'rejected'].includes(status)) {
+            const error = new Error('סטטוס לא תקין');
+            throw error;
+        }
+
+        lessonRequestsController.updateRequestStatus(req, res);
+    } catch (error) {
+        next(error);
     }
+});
 
-    lessonRequestsController.deleteRequest(req, res);
+router.delete('/:requestId', (req, res, next) => {
+    try {
+        if (!req.user) {
+            const error = new Error('גישה לא מורשית - נדרש אימות');
+            throw error;
+        }
+
+        const userRole = req.user.role;
+
+        if (userRole !== 'teacher') {
+            const error = new Error('רק מורים יכולים למחוק בקשות');
+            throw error;
+        }
+
+        lessonRequestsController.deleteRequest(req, res);
+    } catch (error) {
+        next(error);
+    }
 });
 
 module.exports = router;

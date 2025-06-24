@@ -14,21 +14,30 @@ function verifyToken(req, res, next) {
     if (path.includes(req.path)) {
         return next();
     }
+
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
+
     if (!token) {
-        return res.status(401).json({ error: 'Access token required' });
+        const error = new Error('Access token required');
+        error.status = 401;
+        return next(error);
     }
 
     jwt.verify(token, SECRET, (err, payload) => {
         if (err) {
-            return res.status(403).json({ error: 'Invalid or expired token' });
+            const error = new Error('Invalid or expired token');
+            error.status = 403;
+            return next(error);
         }
 
         const requestIp = getRequestIp(req);
         if (payload.ip !== requestIp) {
-            return res.status(403).json({ error: 'IP mismatch' });
+            const error = new Error('IP mismatch');
+            error.status = 403;
+            return next(error);
         }
+
         req.user = payload;
         next();
     });

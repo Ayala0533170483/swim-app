@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const usersController = require('../controllers/usersController');
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         let query = { ...req.query };
 
@@ -19,12 +19,11 @@ router.get('/', async (req, res) => {
         const users = await usersController.getUsers(query);
         res.json(users);
     } catch (error) {
-        console.error('❌ Router Error:', error);
-        res.status(500).json({ error: error.message });
+        next(error); 
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try {
         const userData = req.body;
         const newUser = await usersController.createUser(userData);
@@ -36,16 +35,11 @@ router.post('/', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error creating user:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error creating user',
-            error: error.message
-        });
+        next(error); 
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
         const updateData = req.body;
@@ -59,16 +53,11 @@ router.put('/:id', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error updating user:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error updating user',
-            error: error.message
-        });
+        next(error); 
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
         const additionalData = req.body;
@@ -82,12 +71,7 @@ router.delete('/:id', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error deleting user:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Error deleting user',
-            error: error.message
-        });
+        next(error);
     }
 });
 
