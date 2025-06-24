@@ -119,7 +119,6 @@ export default function CalendarView({ events }) {
 
   return (
     <div className="calendar-wrapper">
-      {/* Toolbar מותאם אישית */}
       <div className="custom-calendar-toolbar">
         <button 
           className="nav-btn next-btn"
@@ -162,8 +161,7 @@ export default function CalendarView({ events }) {
         toolbar={false}
       />
 
-      {/* הצגת המודל עם השיעור */}
-      {selectedEvent && (
+      {selectedEvent && (   
         <Lesson 
           lesson={selectedEvent}
           pools={[]}

@@ -9,13 +9,13 @@ function hasTimeOverlap(start1, end1, start2, end2) {
     const start2Minutes = timeToMinutes(start2);
     const end2Minutes = timeToMinutes(end2);
     
-    console.log('🔍 Checking overlap:', {
+    console.log('  Checking overlap:', {
         lesson1: `${start1}(${start1Minutes}) - ${end1}(${end1Minutes})`,
         lesson2: `${start2}(${start2Minutes}) - ${end2}(${end2Minutes})`
     });
     
     const overlap = start1Minutes < end2Minutes && end1Minutes > start2Minutes;
-    console.log('🔍 Has overlap:', overlap);
+    console.log('  Has overlap:', overlap);
     
     return overlap;
 }
@@ -26,13 +26,13 @@ function calculateGapBetweenLessons(newStart, newEnd, existingStart, existingEnd
     const existingStartMinutes = timeToMinutes(existingStart);
     const existingEndMinutes = timeToMinutes(existingEnd);
     
-    console.log('🔍 Gap calculation:', {
+    console.log('  Gap calculation:', {
         newLesson: `${newStart}(${newStartMinutes}) - ${newEnd}(${newEndMinutes})`,
         existingLesson: `${existingStart}(${existingStartMinutes}) - ${existingEnd}(${existingEndMinutes})`
     });
     
     if (newStartMinutes < existingEndMinutes && newEndMinutes > existingStartMinutes) {
-        console.log('🔍 Gap calculation: overlap detected, gap = -1');
+        console.log('  Gap calculation: overlap detected, gap = -1');
         return -1;
     }
     
@@ -40,31 +40,31 @@ function calculateGapBetweenLessons(newStart, newEnd, existingStart, existingEnd
     
     if (newStartMinutes >= existingEndMinutes) {
         gap = newStartMinutes - existingEndMinutes;
-        console.log(`🔍 New lesson starts after existing ends: gap = ${gap} minutes`);
+        console.log(`  New lesson starts after existing ends: gap = ${gap} minutes`);
     }
     else if (existingStartMinutes >= newEndMinutes) {
         gap = existingStartMinutes - newEndMinutes;
-        console.log(`🔍 Existing lesson starts after new ends: gap = ${gap} minutes`);
+        console.log(`  Existing lesson starts after new ends: gap = ${gap} minutes`);
     }
     else {
         gap = -1;
-        console.log('🔍 Unexpected case in gap calculation');
+        console.log('  Unexpected case in gap calculation');
     }
     
-    console.log(`🔍 FINAL GAP: ${gap} minutes`);
+    console.log(`  FINAL GAP: ${gap} minutes`);
     return gap;
 }
 
 function checkTimeConflict(newLesson, existingLessons) {
-    console.log('🔍 === CHECKING TIME CONFLICTS ===');
-    console.log('🔍 New lesson:', {
+    console.log('  === CHECKING TIME CONFLICTS ===');
+    console.log('  New lesson:', {
         start: newLesson.start_time,
         end: newLesson.end_time,
         pool: newLesson.pool_id || newLesson.pool_name
     });
     
     for (const existingLesson of existingLessons) {
-        console.log(`\n🔍 Checking against lesson ${existingLesson.lesson_id}:`, {
+        console.log(`\n  Checking against lesson ${existingLesson.lesson_id}:`, {
             start: existingLesson.start_time,
             end: existingLesson.end_time,
             pool: existingLesson.pool_id || existingLesson.pool_name
@@ -81,7 +81,6 @@ function checkTimeConflict(newLesson, existingLessons) {
             return existingLesson;
         }
     }
-    
     return null;
 }
 
@@ -90,7 +89,7 @@ function checkQuarterHourWarnings(newLesson, existingLessons) {
     
     for (const existingLesson of existingLessons) {
         if (existingLesson.pool_id === newLesson.pool_id) {
-            console.log(`🔍 Same pool (${existingLesson.pool_id}) - skipping warning check`);
+            console.log(`  Same pool (${existingLesson.pool_id}) - skipping warning check`);
             continue;
         }
         
@@ -121,14 +120,26 @@ function checkQuarterHourWarnings(newLesson, existingLessons) {
         }
     }
     
-    console.log(`🔍 Found ${warnings.length} quarter hour warnings`);
+    console.log(`  Found ${warnings.length} quarter hour warnings`);
     return warnings;
 }
+
+function checkScheduleConflict(newLesson, existingLessons) {
+  const conflictingLesson = checkTimeConflict(newLesson, existingLessons);
+  const hasConflict = !!conflictingLesson;
+  const warnings = hasConflict
+    ? []
+    : checkQuarterHourWarnings(newLesson, existingLessons);
+
+  return { hasConflict, conflictingLesson, warnings };
+}
+
 
 module.exports = {
     timeToMinutes,
     hasTimeOverlap,
     calculateGapBetweenLessons,
     checkTimeConflict,
-    checkQuarterHourWarnings
+    checkQuarterHourWarnings,
+    checkScheduleConflict
 };

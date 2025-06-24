@@ -19,9 +19,12 @@ async function signup(userData, ip) {
         const accessToken = createAccessToken(newUser, ip);
         const refreshToken = createRefreshToken(newUser, ip);
 
+        log('User signup successful', { userId: newUser.user_id, email: userData.email, ip: ip });
+
         return { user: newUser, accessToken, refreshToken };
 
     } catch (err) {
+        log('User signup failed', { email: userData.email, error: err.message, ip: ip });
         throw err;
     }
 
@@ -43,8 +46,11 @@ async function login(email, password, ip) {
         const accessToken = createAccessToken(userWithoutPassword, ip);
         const refreshToken = createRefreshToken(userWithoutPassword, ip);
 
+        log('User login successful', { userId: user.user_id, email: email, role: user.type_name, ip: ip });
+
         return { user: userWithoutPassword, accessToken, refreshToken };
     } catch (err) {
+        log('User login failed', { email: email, error: err.message, ip: ip });
         throw err;
     }
 }
@@ -79,13 +85,14 @@ async function refreshAccessToken(refreshToken, ip) {
 
         const newAccessToken = createAccessToken(user, ip);
 
+        log('Token refresh successful', { userId: user.user_id, email: user.email, ip: ip });
+
         return { user, accessToken: newAccessToken };
 
     } catch (err) {
+        log('Token refresh failed', { error: err.message, ip: ip });
         throw new Error('Invalid refresh token');
     }
 }
 
 module.exports = { signup, login, refreshAccessToken };
-
-//קש 

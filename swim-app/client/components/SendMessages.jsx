@@ -26,10 +26,10 @@ function SendMessages() {
         clearErrors();
 
         const allUsers = await fetchData('users', '', handleError);
-    
+
         if (allUsers) {
           const mapped = allUsers
-            .filter(u => u.type_id !== 1)    // מסננים מנהלים (1)
+            .filter(u => u.type_id !== 1)
             .map(u => ({
               ...u,
               type_name: u.type_id === 2
@@ -113,15 +113,13 @@ function SendMessages() {
     setSelectAllTeachers(selectedTeachers.length === teachers.length && teachers.length > 0);
   };
 
-  // פונקציה פשוטה לטיפול בשינוי קובץ
   const handleFileChange = (file) => {
     setAttachedFile(file);
     if (file) {
-      clearErrors(); // נקה שגיאות אם יש קובץ תקין
+      clearErrors();
     }
   };
 
-  // פונקציה לטיפול בשגיאות קובץ
   const handleFileError = (error) => {
     handleError('addError', error);
   };
@@ -146,8 +144,6 @@ function SendMessages() {
       }
 
       setSending(true);
-
-      // יצירת רשימת נמענים עם הפרטים הנדרשים
       const recipients = users
         .filter(user => selectedUsers.includes(user.user_id))
         .map(user => ({
@@ -155,18 +151,16 @@ function SendMessages() {
           email: user.email
         }));
 
-      // יצירת FormData לשליחת הנתונים עם קובץ
       const formData = new FormData();
       formData.append('userIds', JSON.stringify(selectedUsers));
       formData.append('recipients', JSON.stringify(recipients));
       formData.append('subject', subject.trim());
       formData.append('messageContent', messageContent.trim());
-      
+
       if (attachedFile) {
         formData.append('attachedFile', attachedFile);
       }
 
-      // שליחת הבקשה לשרת
       const token = Cookies.get("accessToken");
       const response = await fetch('http://localhost:3000/email/send-general-message', {
         method: 'POST',
@@ -180,12 +174,11 @@ function SendMessages() {
       const result = await response.json();
 
       if (response.ok && result.totalSent > 0) {
-        const message = result.totalFailed > 0 
+        const message = result.totalFailed > 0
           ? `ההודעה נשלחה ל-${result.totalSent} מתוך ${result.totalSent + result.totalFailed} משתמשים`
           : `ההודעה נשלחה בהצלחה ל-${result.totalSent} משתמשים!`;
         alert(message);
-        
-        // איפוס הטופס
+
         setSelectedUsers([]);
         setSelectAllStudents(false);
         setSelectAllTeachers(false);

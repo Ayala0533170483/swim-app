@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const messagesController = require('../controllers/messagesController');
 const verifyToken = require('../middlewares/verifyToken');
+const authorization = require('../middlewares/authorization.js');
 
-router.get('/', verifyToken, async (req, res, next) => {
+router.get('/', verifyToken,authorization, async (req, res, next) => {
     try {
         const result = await messagesController.getMessages(req.query, req.user);
         res.json(result);
@@ -21,7 +22,7 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-router.put('/:id', verifyToken, async (req, res, next) => {
+router.put('/:id', verifyToken,authorization, async (req, res, next) => {
     try {
         const result = await messagesController.updateMessage(req.params.id, req.body);
         res.json(result);
@@ -30,7 +31,7 @@ router.put('/:id', verifyToken, async (req, res, next) => {
     }
 });
 
-router.delete('/:id', verifyToken, async (req, res, next) => {
+router.delete('/:id', verifyToken,authorization, async (req, res, next) => {
     try {
         const result = await messagesController.deleteMessage(req.params.id);
         res.json(result);

@@ -1,0 +1,14 @@
+[2025-06-24T22:47:09.035Z] Branch updated successfully | {"branchId":4,"updatedFields":["name","city","latitude","longitude","phone","description","is_active","image_path"]}
+[2025-06-24T22:54:15.095Z] Branch updated successfully | {"branchId":"4","updatedFields":["name","city","latitude","longitude","phone","description","is_active","image_path"]}
+[2025-06-24T22:57:38.028Z] Failed to create branch | {"name":"קקי","city":"y-m","error":"Field 'phone' doesn't have a default value"}
+[2025-06-24T22:58:47.719Z] Branch created successfully | {"branchId":7,"name":"dd","city":"ddd"}
+[2025-06-24T23:02:55.086Z] Branch updated successfully | {"branchId":"4","updatedFields":["name","city","latitude","longitude","phone","description","is_active","image_path"]}
+[2025-06-24T23:03:21.702Z] Branch updated successfully | {"branchId":"4","updatedFields":["name","city","latitude","longitude","phone","description","is_active","image_path"]}
+[2025-06-24T23:05:48.244Z] Branch updated successfully | {"branchId":"4","updatedFields":["name","city","latitude","longitude","phone","description","is_active","image_path"]}
+[2025-06-24T23:08:02.816Z] Branch updated successfully | {"branchId":"4","updatedFields":["name","city","latitude","longitude","phone","description","is_active","image_path"]}
+[2025-06-24T23:08:09.630Z] Branch deleted successfully | {"branchId":"4","imagePath":"pool_1750806482766.jpg"}
+[2025-06-24T23:08:24.227Z] Branch updated successfully | {"branchId":"7","updatedFields":["name","city","latitude","longitude","phone","description","is_active","image_path"]}
+[2025-06-24T23:08:30.349Z] Branch deleted successfully | {"branchId":"7","imagePath":"pool_1750806504177.jpg"}
+[2025-06-24T23:14:25.758Z] Branch created successfully | {"branchId":8,"name":"גג","city":"צצ"}
+[2025-06-24T23:14:38.637Z] Branch updated successfully | {"branchId":"8","updatedFields":["name","city","latitude","longitude","phone","description","is_active","image_path"]}
+[2025-06-24T23:14:43.591Z] Branch deleted successfully | {"branchId":"8","imagePath":"uploads/pools/pool_1750806878587.jpg"}

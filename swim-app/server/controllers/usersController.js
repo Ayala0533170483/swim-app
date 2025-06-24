@@ -1,6 +1,7 @@
 const genericService = require('../services/genericService');
 const usersService = require('../services/usersService');
 const { sendUserRemovalEmail, sendLessonCancellationEmail } = require('./emailsController');
+const { log } = require('../utils/logger');
 
 
 async function createUser(userData) {
@@ -12,8 +13,11 @@ async function createUser(userData) {
             delete newUser.id;
         }
 
+        log('User created successfully', { userId: newUser.user_id, email: userData.email, type: userData.type });
+
         return newUser;
     } catch (error) {
+        log('Failed to create user', { error: error.message, email: userData.email });
         throw error;
     }
 }
@@ -92,123 +96,63 @@ async function updateUser(id, updateData) {
 
         await genericService.update('users', id, updateData);
 
+        log('User updated successfully', { userId: id, updatedFields: Object.keys(updateData) });
+
         return { message: 'User updated successfully' };
     } catch (error) {
+        log('Failed to update user', { userId: id, error: error.message });
         throw error;
     }
 }
 
-
-// החלף את הפונקציה deleteUser הקיימת בזו:
-// async function deleteUser(id, additionalData = null) {
-//     try {
-//         // בדיקה אם מדובר בתלמיד
-//         if (additionalData && additionalData.userType === 'students') {
-//             // קבלת פרטי התלמיד לפני המחיקה
-//             const student = await usersService.getUserById(id);
-//             if (!student) {
-//                 throw new Error('Student not found');
-//             }
-
-//             const cancelledLessons = await usersService.deleteStudent(id);
-
-//             if (cancelledLessons && cancelledLessons.length > 0) {
-//                 for (const lessonData of cancelledLessons) {
-//                     // שליחת מייל רק לשיעורים פרטיים
-//                     if (lessonData.lesson_type === 'private') {
-//                         try {
-//                             await sendLessonCancellationEmail(
-//                                 lessonData.teacher_email,
-//                                 lessonData.teacher_name,
-//                                 lessonData
-//                             );
-//                         } catch (emailError) {
-//                             console.error(`Failed to send cancellation email to teacher ${lessonData.teacher_email}:`, emailError);
-//                             // ממשיכים גם אם המייל נכשל
-//                         }
-//                     }
-//                 }
-//             }
-
-//             // שליחת מייל לתלמיד על הסרתו מהמערכת
-//             try {
-//                 await sendUserRemovalEmail(student.email, student.name, 'students');
-//             } catch (emailError) {
-//                 console.error(`Failed to send removal email to student ${student.email}:`, emailError);
-//                 // ממשיכים גם אם המייל נכשל
-//             }
-
-//             return { message: 'Student deleted successfully' };
-//         } else {
-//             // מחיקה רגילה למשתמשים אחרים
-//             await genericService.remove('users', id);
-//             return { message: 'User deleted successfully' };
-//         }
-//     } catch (error) {
-//         throw error;
-//     }
-// }
-
 async function deleteUser(id, additionalData = null) {
     try {
-        // בדיקה אם מדובר בתלמיד
         if (additionalData && additionalData.userType === 'students') {
-            console.log('🔍 Deleting student with ID:', id);
 
-            // קבלת פרטי התלמיד לפני המחיקה
             const student = await usersService.getUserById(id);
             if (!student) {
                 throw new Error('Student not found');
             }
-            console.log('👤 Student found:', student.name);
 
-            // מחיקת התלמיד וקבלת רשימת המורים והשיעורים שבוטלו
             const cancelledLessons = await usersService.deleteStudent(id);
-            console.log('📚 Cancelled lessons:', cancelledLessons.length);
-            console.log('📋 Lessons data:', cancelledLessons);
-
-            // שליחת מיילים למורים של שיעורים פרטיים שבוטלו
             if (cancelledLessons && cancelledLessons.length > 0) {
                 for (const lessonData of cancelledLessons) {
-                    console.log('🔍 Checking lesson type:', lessonData.lesson_type);
 
-                    // שליחת מייל רק לשיעורים פרטיים
                     if (lessonData.lesson_type === 'private') {
-                        console.log('📧 Sending email to teacher:', lessonData.teacher_email);
                         try {
                             const emailResult = await sendLessonCancellationEmail(
                                 lessonData.teacher_email,
                                 lessonData.teacher_name,
                                 lessonData
                             );
-                            console.log('✅ Email sent successfully:', emailResult);
                         } catch (emailError) {
-                            console.error(`❌ Failed to send cancellation email to teacher ${lessonData.teacher_email}:`, emailError);
                         }
                     } else {
-                        console.log('⏭️ Skipping non-private lesson');
+                        console.log(' Skipping non-private lesson');
                     }
                 }
             } else {
-                console.log('📭 No cancelled lessons found');
+                console.log(' No cancelled lessons found');
             }
 
-            // שליחת מייל לתלמיד על הסרתו מהמערכת
-            console.log('📧 Sending removal email to student:', student.email);
             try {
                 const studentEmailResult = await sendUserRemovalEmail(student.email, student.name, 'students');
-                console.log('✅ Student removal email sent:', studentEmailResult);
             } catch (emailError) {
-                console.error(`❌ Failed to send removal email to student ${student.email}:`, emailError);
+                console.error(` Failed to send removal email to student ${student.email}:`, emailError);
             }
+
+            log('Student deleted successfully', { studentId: id, email: student.email, cancelledLessons: cancelledLessons?.length || 0 });
 
             return { message: 'Student deleted successfully' };
         } else {
-            // מחיקה רגילה למשתמשים אחרים
             await genericService.remove('users', id);
+            
+            log('User deleted successfully', { userId: id });
+            
             return { message: 'User deleted successfully' };
         }
     } catch (error) {
+        log('Failed to delete user', { userId: id, error: error.message });
         throw error;
     }
 }

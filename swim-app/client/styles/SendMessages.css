@@ -8,7 +8,6 @@
   min-height: 100vh;
 }
 
-/* כותרת */
 .messages-header {
   text-align: center;
   margin-bottom: 3rem;
@@ -72,7 +71,6 @@
   cursor: not-allowed;
 }
 
-/* רשימת משתמשים */
 .users-section {
   background: white;
   padding: 2rem;
@@ -134,20 +132,21 @@
   font-size: 1.1rem;
   font-weight: 600;
   color: #333;
-  margin-bottom: 0.5rem;
+
 }
 
 .user-details {
   display: flex;
   gap: 1rem;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+
 }
 
 .user-type {
   padding: 0.3rem 0.8rem;
   border-radius: 12px;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: 600;
   text-transform: uppercase;
 }
@@ -167,7 +166,6 @@
   font-size: 0.9rem;
 }
 
-/* טופס שליחת הודעה */
 .message-form {
   background: white;
   padding: 2rem;
@@ -229,7 +227,6 @@
   min-height: 120px;
 }
 
-/* קובץ מצורף */
 .file-info {
   display: flex;
   align-items: center;
@@ -279,7 +276,6 @@
   display: block;
 }
 
-/* כפתור שליחה */
 .send-button {
   width: 100%;
   background: linear-gradient(135deg, #0066cc, #00ccff);
@@ -338,7 +334,6 @@
   font-size: 1.1rem;
 }
 
-/* אנימציות */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -355,7 +350,6 @@
   animation: fadeIn 0.3s ease;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .send-messages-container {
     padding: 1rem;
@@ -434,7 +428,6 @@
   }
 }
 
-/* סקרול בר מותאם */
 .message-users-list::-webkit-scrollbar {
   width: 8px;
 }

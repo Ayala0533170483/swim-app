@@ -3,7 +3,6 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// תיקון לאייקונים של Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -11,7 +10,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// אייקון כחול בולט לבריכות
 const poolIcon = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -21,7 +19,6 @@ const poolIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
-// אייקון אדום לסניף שנבחר
 const selectedPoolIcon = new L.Icon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -35,11 +32,9 @@ function BranchesMap({ branches, selectedBranch, onBranchSelect }) {
   const mapRef = useRef();
   const [hoveredBranch, setHoveredBranch] = useState(null);
 
-  // מרכז ישראל כברירת מחדל
   const defaultCenter = [31.5, 34.75];
   const defaultZoom = 8;
 
-  // כשבוחרים סניף - זום אליו עם אנימציה
   useEffect(() => {
     if (selectedBranch && mapRef.current) {
       const branch = branches.find(b => b.pool_id === selectedBranch);
@@ -51,7 +46,6 @@ function BranchesMap({ branches, selectedBranch, onBranchSelect }) {
     }
   }, [selectedBranch, branches]);
 
-  // סינון בריכות עם קואורדינטות
   const branchesWithCoords = branches.filter(
     branch => branch.latitude && branch.longitude
   );
@@ -89,13 +83,11 @@ function BranchesMap({ branches, selectedBranch, onBranchSelect }) {
                 },
                 mouseover: (e) => {
                   setHoveredBranch(branch.pool_id);
-                  // פתח את הפופאפ
                   setTimeout(() => {
                     e.target.openPopup();
                   }, 100);
                 },
                 mouseout: (e) => {
-                  // עיכוב קטן לפני סגירה - נותן זמן לעבור לפופאפ
                   setTimeout(() => {
                     if (hoveredBranch === branch.pool_id) {
                       setHoveredBranch(null);

@@ -14,7 +14,6 @@ function UserDashboard() {
         setIsOpen(false);
       }
     }
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -31,13 +30,13 @@ function UserDashboard() {
         return [
           { path: `/${usernameForUrl}/my-lessons`, label: 'השיעורים שלי' },
           { path: `/${usernameForUrl}/register-lesson`, label: 'רישום לשיעור חדש' },
-          { path: `/${usernameForUrl}/lesson-requests`, label: 'בקשות שיעורים' }, 
+          { path: `/${usernameForUrl}/lesson-requests`, label: 'בקשות שיעורים' },
           { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
         ];
       case "teacher":
         return [
           { path: `/${usernameForUrl}/my-lessons`, label: 'השיעורים שלי' },
-          { path: `/${usernameForUrl}/lesson-requests`, label: 'בקשות שיעורים' }, 
+          { path: `/${usernameForUrl}/lesson-requests`, label: 'בקשות שיעורים' },
           { path: `/${usernameForUrl}`, label: 'הפרופיל שלי' }
         ];
       case "admin":
@@ -63,12 +62,8 @@ function UserDashboard() {
         className="user-dashboard-trigger"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="welcome-text">
-          שלום, {userData.name}
-        </span>
-        <span className={`dropdown-arrow ${isOpen ? 'open' : ''}`}>
-          ▼
-        </span>
+        <span className="welcome-text">שלום, {userData.name}</span>
+        <span className={`dropdown-arrow ${isOpen ? 'open' : ''}`}>▼</span>
       </button>
 
       {isOpen && (
@@ -81,7 +76,6 @@ function UserDashboard() {
               onClick={() => setIsOpen(false)}
             >
               <span className="item-text">{item.label}</span>
-              <span className="item-icon">{item.icon}</span>
             </Link>
           ))}
         </div>

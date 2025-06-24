@@ -63,8 +63,8 @@ function Signup() {
       Cookies.set("accessToken", accessToken, {
         expires: 0.0104,
         sameSite: "Lax",
-        secure: false, // true בפרודקשן
-        httpOnly: false // כדי שהקליינט יוכל לגשת
+        secure: false, 
+        httpOnly: false 
       });
 
       setUserData(user);
@@ -111,7 +111,7 @@ function Signup() {
             placeholder="כתובת אימייל"
             className="login-input"
             disabled={isStepTwo}
-            defaultValue={stepOneRef.current?.email || ""} // תיקון כאן
+            defaultValue={stepOneRef.current?.email || ""} 
           />
           {err1.email && <span className="error-message">{err1.email.message}</span>}
 
@@ -124,7 +124,7 @@ function Signup() {
             placeholder="סיסמה"
             className="login-input"
             disabled={isStepTwo}
-            defaultValue={stepOneRef.current?.password || ""} // תיקון כאן
+            defaultValue={stepOneRef.current?.password || ""} 
           />
           {err1.password && <span className="error-message">{err1.password.message}</span>}
 
@@ -152,7 +152,6 @@ function Signup() {
             </>
           )}
 
-          {/* שלב 2: פרטים נוספים */}
           {isStepTwo && (
             <form onSubmit={submitStepTwo(onStepTwo)}>
               <input

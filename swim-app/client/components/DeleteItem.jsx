@@ -12,7 +12,7 @@ function Delete({
     dependent, 
     nameButton = "",
     text = "",
-    additionalData = null  // פרמטר חדש אופציונלי
+    additionalData = null 
 }) {
     const { handleError } = useHandleError();
 
@@ -26,7 +26,6 @@ function Delete({
             credentials: 'include',
         };
         
-        // אם יש נתונים נוספים, נוסיף אותם לגוף הבקשה
         if (body) {
             options.body = JSON.stringify(body);
         }

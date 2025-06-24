@@ -123,23 +123,21 @@ body {
   font-weight: 700;
 }
 
-.contact-form {
+.form-group {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.5rem;
+  margin-bottom: 3rem;
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
+
 
 .form-group label {
   color: #333;
@@ -224,7 +222,7 @@ body {
   text-align: center;
 }
 
-/* סקציית רשתות חברתיות - לרוחב כל העמוד */
+
 .social-media-section {
   background: white;
   padding: 3rem;
@@ -293,8 +291,8 @@ body {
 }
 
 .social-icon {
-  font-size: 2rem; /* הקטנתי מ-4rem ל-2rem */
-  margin-bottom: 0.8rem; /* הקטנתי מ-1rem ל-0.8rem */
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
   transition: transform 0.3s ease;
 }
 
@@ -303,14 +301,14 @@ body {
 }
 
 .social-content h3 {
-  font-size: 1.2rem; /* הקטנתי מ-1.5rem ל-1.2rem */
+  font-size: 1.2rem;
   font-weight: 700;
-  margin-bottom: 0.3rem; /* הקטנתי מ-0.5rem ל-0.3rem */
+  margin-bottom: 0.3rem;
   transition: color 0.3s ease;
 }
 
 .social-content span {
-  font-size: 0.9rem; /* הקטנתי מ-1rem ל-0.9rem */
+  font-size: 0.9rem;
   opacity: 0.8;
   transition: opacity 0.3s ease;
 }
@@ -319,7 +317,7 @@ body {
   opacity: 1;
 }
 
-/* עיצוב ספציפי לכל רשת חברתית */
+
 .social-link.facebook {
   background: linear-gradient(135deg, #e8f4fd, #d1e9fc);
   border-color: #1877f2;
@@ -392,7 +390,6 @@ body {
   color: white;
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
   .social-links {
     grid-template-columns: repeat(2, 1fr);
@@ -404,39 +401,39 @@ body {
   .contact-header h1 {
     font-size: 2.2rem;
   }
-  
+
   .contact-content {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
-  
+
   .contact-info,
   .contact-form-section {
     padding: 2rem;
   }
-  
+
   .social-media-section {
     padding: 2.5rem 2rem;
   }
-  
+
   .social-media-section h2 {
     font-size: 1.8rem;
   }
-  
+
   .social-links {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
-  
+
   .social-link {
     padding: 1.2rem 0.8rem;
   }
-  
+
   .social-icon {
     font-size: 1.8rem;
   }
@@ -446,54 +443,55 @@ body {
   .container {
     padding: 0 1rem;
   }
-  
+
   .contact-header {
     padding: 2rem 1rem;
   }
-  
+
   .contact-header h1 {
     font-size: 1.8rem;
   }
-  
+
   .contact-info,
   .contact-form-section {
     padding: 1.5rem;
   }
-  
+
   .contact-method {
     padding: 1rem;
   }
-  
+
   .method-icon {
     font-size: 1.5rem;
     min-width: 40px;
   }
-  
+
   .social-media-section {
     padding: 2rem 1rem;
   }
-  
+
   .social-links {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.8rem;
   }
-  
+
   .social-link {
     padding: 1rem 0.5rem;
   }
-  
+
   .social-icon {
     font-size: 1.5rem;
   }
-  
+
   .social-content h3 {
     font-size: 1rem;
   }
-  
+
   .social-content span {
     font-size: 0.8rem;
   }
 }
+
 /* הוסף בסוף הקובץ */
 .contact-submit-section {
   margin-top: 20px;
@@ -521,60 +519,61 @@ body {
 .contact-submit-btn:active {
   transform: translateY(0);
 }
-/* הוספה לקובץ CSS הקיים */
 
 .contact-submit-section {
-    margin-top: 20px;
-    text-align: center;
+  margin-top: 20px;
+  text-align: center;
 }
 
 .contact-submit-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 15px 40px;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    min-width: 150px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  min-width: 150px;
 }
 
 .contact-submit-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .contact-submit-btn:active {
-    transform: translateY(0);
+  transform: translateY(0);
 }
 
 .contact-submit-btn:disabled,
 .contact-submit-btn.submitting {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .contact-submit-btn.submitting {
-    background: linear-gradient(135deg, #999 0%, #666 100%);
+  background: linear-gradient(135deg, #999 0%, #666 100%);
 }
 
-/* אנימציה לכפתור בזמן שליחה */
+
 .contact-submit-btn.submitting::after {
-    content: '';
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    margin-left: 10px;
-    border: 2px solid #ffffff;
-    border-radius: 50%;
-    border-top-color: transparent;
-    animation: spin 1s ease-in-out infinite;
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-left: 10px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s ease-in-out infinite;
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

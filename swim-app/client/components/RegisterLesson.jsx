@@ -51,12 +51,9 @@ function RegisterLesson() {
         }, 4000);
     };
 
-    // **הוספה**: פונקציה לטיפול באזהרות
-    const handleRegistrationWarnings = (warnings, registrationData) => {
-        console.log('🔍 Handling registration warnings:', warnings);
-        
+    const handleRegistrationWarnings = (warnings, registrationData) => {        
         if (warnings && warnings.length > 0) {
-            const warning = warnings[0]; // נציג את האזהרה הראשונה
+            const warning = warnings[0]; 
             
             setConflictModal({
                 isOpen: true,
@@ -67,7 +64,6 @@ function RegisterLesson() {
         }
     };
 
-    // **הוספה**: פונקציה לסגירת מודל האזהרות
     const closeConflictModal = () => {
         setConflictModal({
             isOpen: false,
@@ -169,7 +165,7 @@ function RegisterLesson() {
     return (
         <RegisterLessonsContext.Provider value={{
             addRegistration: handleRegistrationSuccess,
-            handleWarnings: handleRegistrationWarnings, // **הוספה**
+            handleWarnings: handleRegistrationWarnings,
             mode: 'register'
         }}>
             <div className="register-lesson-container">
@@ -252,7 +248,6 @@ function RegisterLesson() {
                 </div>
             </div>
 
-            {/* **הוספה**: מודל אזהרות */}
             {conflictModal.isOpen && (
                 <div className="modal-overlay" onClick={closeConflictModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>

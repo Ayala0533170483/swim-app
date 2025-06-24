@@ -3,6 +3,7 @@ const router = express.Router();
 const branchesController = require('../controllers/branchesController');
 const verifyToken = require('../middlewares/verifyToken');
 const { uploadPoolImage } = require('../services/fileService');
+const authorization = require('../middlewares/authorization.js');
 
 router.get('/', async (req, res, next) => {
     try {
@@ -19,7 +20,7 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.post('/', verifyToken, uploadPoolImage.single('image'), async (req, res, next) => {
+router.post('/', verifyToken,authorization, uploadPoolImage.single('image'), async (req, res, next) => {
     try {
         const branchData = req.body;
         const imageFile = req.file;
@@ -36,7 +37,7 @@ router.post('/', verifyToken, uploadPoolImage.single('image'), async (req, res, 
     }
 });
 
-router.put('/:id', verifyToken, uploadPoolImage.single('image'), async (req, res, next) => {
+router.put('/:id', verifyToken,authorization, uploadPoolImage.single('image'), async (req, res, next) => {
     try {
         const branchId = req.params.id;
         const branchData = req.body;
@@ -55,7 +56,7 @@ router.put('/:id', verifyToken, uploadPoolImage.single('image'), async (req, res
     }
 });
 
-router.delete('/:id', verifyToken, async (req, res, next) => {
+router.delete('/:id', verifyToken,authorization, async (req, res, next) => {
     try {
         const branchId = req.params.id;
         await branchesController.deleteBranch(branchId);

@@ -5,6 +5,7 @@ const errorHandler = (err, req, res, next) => {
             error: 'Access token required'
         });
     }
+    
     if (err.message && err.message.startsWith('{"type":"SCHEDULE_CONFLICT"')) {
         try {
             const conflictData = JSON.parse(err.message);

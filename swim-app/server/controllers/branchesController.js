@@ -1,5 +1,6 @@
 const genericService = require('../services/genericService');
 const { deleteOldImage } = require('../services/fileService');
+const { log } = require('../utils/logger');
 
 async function getBranches(filters = {}) {
     try {
@@ -23,6 +24,9 @@ async function createBranch(branchData, imageFile) {
         branchData.image_path = `uploads/pools/${imageFile.filename}`;
 
         const newBranch = await genericService.create('pools', branchData);
+
+        log('Branch created successfully', { branchId: newBranch.pool_id, name: branchData.name, city: branchData.city });
+
         return newBranch;
     } catch (error) {
         console.error('Error creating branch:', error);
@@ -30,6 +34,8 @@ async function createBranch(branchData, imageFile) {
         if (imageFile) {
             deleteOldImage(imageFile.filename);
         }
+
+        log('Failed to create branch', { name: branchData.name, city: branchData.city, error: error.message });
 
         throw error;
     }
@@ -44,7 +50,7 @@ async function updateBranch(id, branchData, imageFile) {
         if (imageFile) {
             const oldBranch = await genericService.get('pools', { pool_id: id });
             const oldImagePath = oldBranch[0]?.image_path;
-            updateData.image_path = imageFile.filename;
+            updateData.image_path = `uploads/pools/${imageFile.filename}`;
             if (oldImagePath) {
                 deleteOldImage(oldImagePath);
             }
@@ -53,15 +59,20 @@ async function updateBranch(id, branchData, imageFile) {
         const actualId = pool_id || id;
         const updatedBranch = await genericService.update('pools', actualId, updateData);
 
+        log('Branch updated successfully', { branchId: actualId, updatedFields: Object.keys(updateData) });
+
         return updatedBranch;
     } catch (error) {
         if (imageFile) {
             deleteOldImage(imageFile.filename);
         }
 
+        log('Failed to update branch', { branchId: id, error: error.message });
+
         throw error;
     }
 }
+
 
 async function deleteBranch(id) {
     try {
@@ -77,12 +88,17 @@ async function deleteBranch(id) {
                 deleteOldImage(imagePath);
             }
 
+            log('Branch deleted successfully', { branchId: id, imagePath: imagePath });
+
             return { message: 'Branch deleted successfully' };
         } else {
             throw new Error('Branch not found or already deleted');
         }
     } catch (error) {
         console.error('Error deleting branch:', error);
+
+        log('Failed to delete branch', { branchId: id, error: error.message });
+
         throw error;
     }
 }

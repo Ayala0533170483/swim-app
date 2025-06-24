@@ -1,4 +1,5 @@
 const genericService = require('../services/genericService');
+const { log } = require('../utils/logger');
 
 async function getMessages(query = {}, user = null) {
     try {
@@ -108,6 +109,8 @@ async function createMessage(messageData) {
         const newMessage = await genericService.create('contacts', dataToInsert);
         console.log('Created message successfully:', JSON.stringify(newMessage, null, 2));
 
+        log('Contact message created', { messageId: newMessage.contact_id, email: messageData.email, subject: messageData.subject });
+
         return {
             success: true,
             data: newMessage,
@@ -119,9 +122,11 @@ async function createMessage(messageData) {
 
 
         if (error.statusCode) {
+            log('Failed to create contact message', { email: messageData?.email, subject: messageData?.subject, error: error.message });
             throw error;
         }
 
+        log('Failed to create contact message', { email: messageData?.email, error: error.message });
 
         throw {
             statusCode: 500,
@@ -158,6 +163,8 @@ async function updateMessage(messageId, updateData) {
         await genericService.update('contacts', messageId, dataToUpdate);
         console.log('Message updated successfully');
 
+        log('Contact message updated', { messageId: messageId, updatedFields: Object.keys(dataToUpdate) });
+
         return {
             success: true,
             message: 'ההודעה עודכנה בהצלחה'
@@ -166,8 +173,11 @@ async function updateMessage(messageId, updateData) {
         console.error('Error in updateMessage:', error);
 
         if (error.statusCode) {
+            log('Failed to update contact message', { messageId: messageId, error: error.message });
             throw error;
         }
+
+        log('Failed to update contact message', { messageId: messageId, error: error.message });
 
         throw {
             statusCode: 500,
@@ -194,6 +204,8 @@ async function deleteMessage(messageId) {
         await genericService.remove('contacts', messageId);
         console.log('Message deleted successfully');
 
+        log('Contact message deleted', { messageId: messageId });
+
         return {
             success: true,
             message: 'ההודעה נמחקה בהצלחה'
@@ -202,8 +214,11 @@ async function deleteMessage(messageId) {
         console.error('Error in deleteMessage:', error);
 
         if (error.statusCode) {
+            log('Failed to delete contact message', { messageId: messageId, error: error.message });
             throw error;
         }
+
+        log('Failed to delete contact message', { messageId: messageId, error: error.message });
 
         throw {
             statusCode: 500,

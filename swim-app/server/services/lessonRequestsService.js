@@ -123,36 +123,10 @@ async function updateRequestStatus(requestId, statusData) {
     }
 }
 
-async function getRequestById(requestId, teacherId) {
-    const connection = await pool.getConnection();
-    try {
-        const sql = `
-            SELECT
-                lr.*,
-                s.name as student_name,
-                s.email as student_email,
-                t.name as teacher_name,
-                p.name as pool_name
-            FROM lesson_requests lr
-            JOIN users s ON lr.student_id = s.user_id
-            JOIN users t ON lr.teacher_id = t.user_id
-            LEFT JOIN pools p ON lr.pool_id = p.pool_id
-            WHERE lr.request_id = ? AND lr.teacher_id = ? AND lr.is_active = 1
-        `;
-        const [rows] = await connection.query(sql, [requestId, teacherId]);
-        return rows;
-        
-    } catch (error) {
-        throw error;
-    } finally {
-        connection.release();
-    }
-}
 
 module.exports = {
     createRequest,
     getTeacherRequests,
     getStudentRequests,
     updateRequestStatus,
-    getRequestById
 };

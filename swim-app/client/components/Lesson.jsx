@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import '../styles/Lesson.css';
 import '../styles/Update.css';
-import '../styles/LessonModal.css'; // נוסיף קובץ CSS חדש למודל
+import '../styles/LessonModal.css';
 import { LessonsContext } from "./MyLessons";
 import { RegisterLessonsContext } from "./RegisterLesson";
 import { userContext } from "./App";
@@ -39,19 +39,14 @@ function Lesson({ lesson, pools, mode = "view", showAsModal = false }) {
 
     const updateConfig = createLessonUpdateConfig(lesson, pools);
 
-    // פונקציות לניהול המודל
     const closeModal = () => {
         setIsModalOpen(false);
     };
-
-    // טיפול בלחיצה על הרקע
     const handleOverlayClick = (e) => {
         if (e.target === e.currentTarget) {
             closeModal();
         }
     };
-
-    // טיפול בלחיצה על ESC
     React.useEffect(() => {
         if (isModalOpen) {
             const handleEsc = (e) => {
@@ -60,7 +55,7 @@ function Lesson({ lesson, pools, mode = "view", showAsModal = false }) {
                 }
             };
             document.addEventListener('keydown', handleEsc);
-            document.body.style.overflow = 'hidden'; // מונע גלילה ברקע
+            document.body.style.overflow = 'hidden'; 
 
             return () => {
                 document.removeEventListener('keydown', handleEsc);
@@ -69,7 +64,6 @@ function Lesson({ lesson, pools, mode = "view", showAsModal = false }) {
         }
     }, [isModalOpen]);
 
-    // תוכן השיעור (אותו JSX כמו קודם)
     const lessonContent = (
         <div className={`lesson-card ${isConflictMode ? 'conflict-lesson-card' : ''} ${showAsModal ? 'lesson-modal-content' : ''}`}>
             <div className="lesson-header">
@@ -149,7 +143,7 @@ function Lesson({ lesson, pools, mode = "view", showAsModal = false }) {
                         <AddItem
                             type="registerLessons"
                             addDisplay={addRegistration}
-                            onWarnings={registerContext?.handleWarnings} // **חדש**
+                            onWarnings={registerContext?.handleWarnings}
                             defaltValues={{
                                 lesson_id: lesson.lesson_id,
                                 student_id: userData?.user_id,
@@ -208,12 +202,10 @@ function Lesson({ lesson, pools, mode = "view", showAsModal = false }) {
         </div>
     );
 
-    // אם showAsModal = false, מחזיר את התוכן הרגיל
     if (!showAsModal) {
         return lessonContent;
     }
 
-    // אם showAsModal = true, מחזיר את התוכן במודל
     if (!isModalOpen) {
         return null;
     }

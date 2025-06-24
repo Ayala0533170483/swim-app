@@ -9,7 +9,7 @@ const HomePage = () => {
                     <div className="hero-video-placeholder"></div>
                     <div className="hero-overlay"></div>
                     <div className="hero-content">
-                        <h1 className="hero-title">ברוכים הבאים לבית הספר לשחייה המוביל</h1>
+                        <h1 className="hero-title">בריכה אחת, הרבה חיוכים – שיעורי שחייה שמנוהלים בחוכמה.</h1>
                     </div>
                 </div>
             </section>

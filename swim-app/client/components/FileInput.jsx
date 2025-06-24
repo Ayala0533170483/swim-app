@@ -37,33 +37,27 @@ function FileInput({
             const file = event.target.files[0];
 
             if (file) {
-                // בדיקת גודל
                 if (file.size > maxSize) {
                     const maxSizeMB = Math.round(maxSize / (1024 * 1024));
                     const error = new Error(`גודל הקובץ חייב להיות קטן מ-${maxSizeMB}MB`);
                     
-                    // נקה את הקובץ מה-input
                     clearFileInput();
                     
                     if (onError) onError(error);
                     return;
                 }
 
-                // בדיקת סוג קובץ
                 if (allowedTypes.length > 0 && !allowedTypes.includes(file.type)) {
                     const error = new Error('סוג קובץ לא נתמך. אנא בחר PDF, Word או תמונה');
                     
-                    // נקה את הקובץ מה-input
                     clearFileInput();
                     
                     if (onError) onError(error);
                     return;
                 }
 
-                // אם הכל תקין - המשך
                 setSelectedFile(file);
 
-                // יצירת preview לתמונות
                 if (showPreview && file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
@@ -74,7 +68,6 @@ function FileInput({
                     setImagePreview(null);
                 }
 
-                // קריאה לפונקציה החיצונית
                 if (onChange) {
                     onChange(file);
                 }
@@ -118,7 +111,6 @@ function FileInput({
 
     return (
         <div className="file-input-wrapper">
-            {/* Input נסתר */}
             <input
                 type="file"
                 id={`${fieldKey}-file`}
@@ -128,7 +120,6 @@ function FileInput({
                 disabled={disabled}
             />
             
-            {/* אזור מעוצב */}
             <div
                 className="fake-file-input"
                 onClick={() => !disabled && document.getElementById(`${fieldKey}-file`).click()}
@@ -154,7 +145,6 @@ function FileInput({
                 </div>
             </div>
 
-            {/* תצוגה מקדימה */}
             {showPreview && getPreviewImage() && (
                 <div className="mini-image-preview">
                     <img

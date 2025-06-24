@@ -4,11 +4,12 @@ const { createGeneralMessageTemplate } = require('./templates/emailGeneralMessag
 const { createUserRemovalTemplate } = require('./templates/emailUserRemovalTemplate');
 const { createLessonCancellationTemplate } = require('./templates/emailLessonCancellationTemplate');
 const { emailRegisterlessonsTemplate } = require('./templates/emailLessonRequestTemplate');
+const { log } = require('../utils/logger');
 
 const cleanFileName = (originalName) => {
     return originalName
-        .replace(/[^\w\s.-]/g, '') // הסרת תווים מיוחדים
-        .replace(/\s+/g, '_')      // החלפת רווחים בקו תחתון
+        .replace(/[^\w\s.-]/g, '') 
+        .replace(/\s+/g, '_')      
         .trim();
 };
 
@@ -33,10 +34,16 @@ const sendLessonConfirmationEmail = async (studentEmail, studentName, lessonData
 
         const result = await transporter.sendMail(mailOptions);
         console.log('Email sent successfully:', result.messageId);
+        
+        log('Lesson confirmation email sent', { studentEmail: studentEmail, lessonId: lessonData.lesson_id, messageId: result.messageId });
+        
         return { success: true, messageId: result.messageId };
 
     } catch (error) {
         console.error('Error sending email:', error);
+        
+        log('Failed to send lesson confirmation email', { studentEmail: studentEmail, error: error.message });
+        
         return { success: false, error: error.message };
     }
 };
@@ -61,7 +68,6 @@ const sendGeneralMessage = async (recipients, subject, messageContent, attachedF
                     html: htmlContent
                 };
 
-                // הוספת קובץ מצורף אם קיים
                 if (attachedFile) {
                     mailOptions.attachments = [
                         {
@@ -93,9 +99,10 @@ const sendGeneralMessage = async (recipients, subject, messageContent, attachedF
             }
         }
 
-        // בדיקה כמה הצליחו
         const successful = results.filter(r => r.success).length;
         const failed = results.filter(r => !r.success).length;
+
+        log('General message emails sent', { totalRecipients: recipients.length, successful: successful, failed: failed, subject: subject });
 
         return {
             success: successful > 0,
@@ -106,6 +113,9 @@ const sendGeneralMessage = async (recipients, subject, messageContent, attachedF
 
     } catch (error) {
         console.error('Error in sendGeneralMessage:', error);
+        
+        log('Failed to send general message emails', { totalRecipients: recipients.length, subject: subject, error: error.message });
+        
         return {
             success: false,
             error: error.message,
@@ -113,10 +123,6 @@ const sendGeneralMessage = async (recipients, subject, messageContent, attachedF
             totalFailed: recipients.length
         };
     }
-};
-
-const sendCancellationEmail = async (studentEmail, studentName, lessonData) => {
-    // פונקציה לשליחת מייל ביטול
 };
 
 const sendUserRemovalEmail = async (userEmail, userName, userType) => {
@@ -133,10 +139,16 @@ const sendUserRemovalEmail = async (userEmail, userName, userType) => {
 
         const result = await transporter.sendMail(mailOptions);
         console.log(`User removal email sent to ${userEmail}:`, result.messageId);
+        
+        log('User removal email sent', { userEmail: userEmail, userType: userType, messageId: result.messageId });
+        
         return { success: true, messageId: result.messageId };
 
     } catch (error) {
         console.error(`Error sending user removal email to ${userEmail}:`, error);
+        
+        log('Failed to send user removal email', { userEmail: userEmail, userType: userType, error: error.message });
+        
         return { success: false, error: error.message };
     }
 };
@@ -155,15 +167,20 @@ const sendLessonCancellationEmail = async (teacherEmail, teacherName, lessonData
 
         const result = await transporter.sendMail(mailOptions);
         console.log(`Lesson cancellation email sent to ${teacherEmail}:`, result.messageId);
+        
+        log('Lesson cancellation email sent', { teacherEmail: teacherEmail, lessonId: lessonData.lesson_id, messageId: result.messageId });
+        
         return { success: true, messageId: result.messageId };
 
     } catch (error) {
         console.error(`Error sending lesson cancellation email to ${teacherEmail}:`, error);
+        
+        log('Failed to send lesson cancellation email', { teacherEmail: teacherEmail, lessonId: lessonData.lesson_id, error: error.message });
+        
         return { success: false, error: error.message };
     }
 };
 
-// הפונקציה החדשה לשליחת מייל סטטוס בקשה
 const sendLessonRequestStatusEmail = async (studentEmail, studentName, teacherName, requestData, status) => {
     try {
         const transporter = createTransporter();
@@ -182,10 +199,16 @@ const sendLessonRequestStatusEmail = async (studentEmail, studentName, teacherNa
 
         const result = await transporter.sendMail(mailOptions);
         console.log(`Lesson request status email sent to ${studentEmail}:`, result.messageId);
+        
+        log('Lesson request status email sent', { studentEmail: studentEmail, requestId: requestData.request_id, status: status, messageId: result.messageId });
+        
         return { success: true, messageId: result.messageId };
 
     } catch (error) {
         console.error(`Error sending lesson request status email to ${studentEmail}:`, error);
+        
+        log('Failed to send lesson request status email', { studentEmail: studentEmail, requestId: requestData.request_id, status: status, error: error.message });
+        
         return { success: false, error: error.message };
     }
 };
@@ -193,7 +216,6 @@ const sendLessonRequestStatusEmail = async (studentEmail, studentName, teacherNa
 module.exports = {
     sendLessonConfirmationEmail,
     sendGeneralMessage,
-    sendCancellationEmail,
     sendUserRemovalEmail,
     sendLessonCancellationEmail,
     sendLessonRequestStatusEmail

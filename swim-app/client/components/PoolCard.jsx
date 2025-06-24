@@ -12,16 +12,10 @@ function PoolCard({ pool, updateDisplay, deleteDisplay, setDisplayChanged }) {
     console.log(`Clicked on pool: ${pool.name}`);
   };
 
-  // 🎯 בואו נבדוק מה יש בנתונים
-  console.log('🔍 Pool data:', pool);
-  console.log('🔍 Image path:', pool.image_path);
-
   const imageUrl = getImageUrl(pool.image_path);
-  console.log('🔍 Generated image URL:', imageUrl);
 
   return (
     <div className={`user-card pool-card ${isExpanded ? 'expanded' : ''}`}>
-      {/* החלק הבסיסי - תמיד נראה */}
       <div className="user-info" onClick={handleCardClick}>
         <div className="user-avatar pool-avatar">
           {imageUrl ? (
@@ -30,9 +24,8 @@ function PoolCard({ pool, updateDisplay, deleteDisplay, setDisplayChanged }) {
                 src={imageUrl}
                 alt={pool.name}
                 className="pool-image"
-                onLoad={() => console.log('✅ Image loaded:', imageUrl)}
+                onLoad={() => console.log('Image loaded:', imageUrl)}
                 onError={(e) => {
-                  console.log('❌ Image failed to load:', imageUrl);
                   e.target.style.display = 'none';
                   e.target.nextSibling.style.display = 'flex';
                 }}
@@ -62,14 +55,12 @@ function PoolCard({ pool, updateDisplay, deleteDisplay, setDisplayChanged }) {
         </div>
       </div>
 
-      {/* החלק הבסיסי של הפעולות - תמיד נראה */}
       <div className="user-actions" onClick={handleCardClick}>
         <span className="click-hint">
           {isExpanded ? 'סגירת הפרטים' : 'פרטים נוספים'}
         </span>
       </div>
 
-      {/* פרטים מורחבים - רק כשמורחב */}
       {isExpanded && (
         <div className="expanded-details">
           <div className="pool-details">
@@ -90,7 +81,6 @@ function PoolCard({ pool, updateDisplay, deleteDisplay, setDisplayChanged }) {
           </div>
 
           <div className="action-buttons">
-            {/* תקן את כפתור העריכה */}
             <Update
               item={{ ...pool, id: pool.pool_id }}
               type="pools"

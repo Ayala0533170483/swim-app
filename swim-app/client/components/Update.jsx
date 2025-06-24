@@ -48,12 +48,10 @@ function Update({
         }
     };
 
-    // פונקציה לטיפול בשינוי קובץ
     const handleFileChange = (file) => {
         setSelectedFile(file);
     };
 
-    // פונקציה לטיפול בשגיאות קובץ
     const handleFileError = (error) => {
         setErrors(prev => ({
             ...prev,
@@ -84,7 +82,7 @@ function Update({
                             isValid = false;
                         }
                     }
-                    return; // דלג על בדיקות נוספות לשדה תמונה
+                    return; 
                 }
 
                 if (rules) {
@@ -132,17 +130,20 @@ function Update({
             const formData = new FormData();
 
             Object.keys(updatedItem).forEach(key => {
-                if (key !== 'image' && updatedItem[key] !== undefined && updatedItem[key] !== null) {
+                if (key === 'image') {
+                    return;
+                } else if (updatedItem[key] !== undefined && updatedItem[key] !== null && updatedItem[key] !== '') {
                     formData.append(key, updatedItem[key]);
                 }
             });
 
             formData.append('image', selectedFile);
-
+            console.log('🔍 Added image file to FormData:', selectedFile.name);
             body = formData;
         } else {
             headers["Content-Type"] = "application/json";
-            body = JSON.stringify(dataToSend || { ...item, ...updatedItem });
+            const { image, ...cleanData } = dataToSend || { ...item, ...updatedItem };
+            body = JSON.stringify(cleanData);
         }
 
         headers.Authorization = `Bearer ${token}`;
@@ -163,16 +164,17 @@ function Update({
         let token = Cookies.get("accessToken");
 
         try {
-            let response = await sendUpdateRequest(token);
+            const dataToSend = { ...item, ...updatedItem };
+            let response = await sendUpdateRequest(token, dataToSend);
 
             if (response.status === 401 || response.status === 403) {
                 token = await refreshToken();
-                response = await sendUpdateRequest(token);
+                response = await sendUpdateRequest(token, dataToSend);
             }
 
             if (response.ok) {
                 const result = await response.json();
-                const updatedData = result.data || { ...item, ...updatedItem };
+                const updatedData = result.data || dataToSend;
 
                 updateDisplay(updatedData);
                 setShowUpdateDetails(false);
@@ -183,7 +185,6 @@ function Update({
                 const errorData = await response.json().catch(() => ({}));
                 console.error('Error response:', errorData);
 
-                // הצגת הודעת שגיאה ספציפית
                 if (errorData.message && (errorData.message.includes('תמונה') || errorData.message.includes('גודל'))) {
                     alert(errorData.message);
                 } else {
@@ -366,4 +367,3 @@ function Update({
 }
 
 export default Update;
-

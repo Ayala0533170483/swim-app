@@ -3,6 +3,7 @@ import Branch from './Branch';
 import BranchesMap from './BranchesMap';
 import useHandleError from '../hooks/useHandleError';
 import useHandleDisplay from '../hooks/useHandleDisplay';
+import { fetchData } from '../js-files/GeneralRequests';
 import '../styles/Branches.css';
 
 function BranchesPage() {
@@ -17,23 +18,12 @@ function BranchesPage() {
       setLoading(true);
       clearErrors();
 
-      const response = await fetch('http://localhost:3000/branches', {
-        method: 'GET',
-        credentials: 'include',
-      });
+      const result = await fetchData('branches', '', handleError);
 
-
-      if (!response.ok) {
-        handleError('getError', new Error(`Server error: ${response.status}`), true);
-        return;
-      }
-
-      const result = await response.json();
-
-      if (result.success) {
+      if (result && result.success) {
         setBranches(result.data);
-      } else {
-        handleError('getError', new Error(result.error || 'Unknown error'), true);
+      } else if (result) {
+        setBranches(result);
       }
 
     } catch (error) {
@@ -60,7 +50,6 @@ function BranchesPage() {
             <p>מצא את הסניף הקרוב אליך והצטרף למשפחת השחייה שלנו</p>
           </div>
 
-          {/* רשימת הסניפים קודם */}
           <div className="branches-grid">
             {branches.map((branch) => (
               <Branch
@@ -72,7 +61,6 @@ function BranchesPage() {
             ))}
           </div>
 
-          {/* המפה אחרי הרשימה */}
           <div className="map-section">
             <h2>מפת הסניפים</h2>
             <BranchesMap
@@ -109,7 +97,6 @@ function BranchesPage() {
         </div>
 
 
-        {/* רשימת הסניפים */}
         <div className="branches-grid">
           {branches.map((branch) => (
             <Branch
@@ -121,7 +108,6 @@ function BranchesPage() {
           ))}
         </div>
 
-        {/* המפה */}
         <div className="map-section">
           <h2>מפת הסניפים</h2>
           <BranchesMap

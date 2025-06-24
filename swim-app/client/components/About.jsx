@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/About.css';
-import teem from "../assets/teem.jpg";
+import teem from "../assets/teem.png";
 
 function About() {
   const navigate = useNavigate();
@@ -64,6 +64,7 @@ function About() {
             </div>
             <div className="about-image">
               <div className="image-placeholder">
+                <img src={teem} alt="הצוות שלנו" />
               </div>
             </div>
           </div>

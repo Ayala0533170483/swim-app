@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const usersController = require('../controllers/usersController');
+const authorization = require('../middlewares/authorization');
+
 
 router.get('/', async (req, res, next) => {
     try {
@@ -57,7 +59,7 @@ router.put('/:id', async (req, res, next) => {
     }
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id',authorization , async (req, res, next) => {
     try {
         const id = req.params.id;
         const additionalData = req.body;

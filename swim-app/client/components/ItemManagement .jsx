@@ -97,9 +97,7 @@ function UserManagement({ userType }) {
       if (!Array.isArray(prev)) return [];
 
       return prev.filter(item => {
-        // זיהוי נכון של ID לפי סוג הפריט
         let itemId;
-
         if (isPoolManagement) {
           itemId = item.pool_id || item.id;
         } else {
@@ -111,7 +109,6 @@ function UserManagement({ userType }) {
     });
   };
 
-  // הגדרת הנתונים לפי סוג הניהול
   const getManagementConfig = () => {
     if (isPoolManagement) {
       return {
@@ -122,7 +119,6 @@ function UserManagement({ userType }) {
         validationRules: validationRules
       };
     } else {
-      // הגדרות המשתמשים הקיימות
       return {
         pageTitle: userType === 'students' ? 'ניהול תלמידים' : 'ניהול מורים',
         description: `צפייה וניהול ${userType === 'students' ? 'תלמידים' : 'מורים'} במערכת`,
@@ -158,7 +154,6 @@ function UserManagement({ userType }) {
 
   const config = getManagementConfig();
 
-  // בדיקה נוספת לפני הרינדור
   if (!Array.isArray(items)) {
     console.error('Items is not an array:', items);
     return (
@@ -173,13 +168,11 @@ function UserManagement({ userType }) {
   return (
     <div className="user-management-page">
       <div className="container">
-        {/* הריבוע הכחול - רק כותרת ותיאור */}
         <div className="page-header">
           <h1>{config.pageTitle}</h1>
           <p>{config.description}</p>
         </div>
 
-        {/* כפתור הוספה - מחוץ לריבוע הכחול */}
         {config.showAddButton && (
           <div className="add-item-section">
             <AddItem
@@ -202,7 +195,6 @@ function UserManagement({ userType }) {
           <div className="users-section">
             <div className="users-list">
               {items.map(item => {
-                // מפתח נכון לפי סוג הפריט
                 const key = isPoolManagement ? (item.pool_id || item.id) : (item.user_id || item.id);
 
                 return (

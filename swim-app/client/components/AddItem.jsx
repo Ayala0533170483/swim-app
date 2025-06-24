@@ -39,13 +39,11 @@ function AddItem({
     });
     const watchedValues = watch();
 
-    // פונקציה לטיפול בשינוי קובץ
     const handleFileChange = (file) => {
         setSelectedFile(file);
         setValue('image', file);
     };
 
-    // פונקציה לטיפול בשגיאות קובץ
     const handleFileError = (error) => {
         handleError('addError', error);
     };
@@ -54,45 +52,26 @@ function AddItem({
         const url = `http://localhost:3000/${type}`;
         const headers = {};
 
-    
-
-        // בדיקה אם יש קבצים (תמונות)
         const hasFiles = selectedFile || (keys && keys.some(key => key.type === 'file'));
-        
         let body;
         if (hasFiles && selectedFile) {
-            // שליחה כ-FormData עבור קבצים
             const formData = new FormData();
-            
-            console.log('🔍 Creating FormData...');
-            
-            // הוספת כל השדות ל-FormData
+
             Object.keys(data).forEach(key => {
                 if (key === 'image') {
-                    // דלג על שדה image מהנתונים הרגילים
                     return;
                 } else if (data[key] !== undefined && data[key] !== null && data[key] !== '') {
                     formData.append(key, data[key]);
-                    console.log(`🔍 Added to FormData: ${key} = ${data[key]}`);
                 }
             });
-            
-            // הוספת קובץ התמונה
             formData.append('image', selectedFile);
             console.log('🔍 Added image file to FormData:', selectedFile.name);
-            
             body = formData;
-            // לא מגדירים Content-Type - הדפדפן יגדיר אוטומטית עם boundary
         } else {
-            // שליחה רגילה כ-JSON
             headers["Content-Type"] = "application/json";
-            
-            // הסר את שדה התמונה אם אין קובץ
             const { image, ...cleanData } = data;
             body = JSON.stringify(cleanData);
-            console.log('🔍 Sending JSON:', cleanData);
         }
-
         headers.Authorization = `Bearer ${token}`;
 
         return await fetch(url, {
@@ -117,20 +96,20 @@ function AddItem({
                 response = await sendAddRequest(token, data);
             }
 
-             if (response.ok) {
-            const result = await response.json();
+            if (response.ok) {
+                const result = await response.json();
 
-            if (result.warnings && result.warnings.length > 0 && onWarnings) {
-                onWarnings(result.warnings, result.data || result);
-            }
+                if (result.warnings && result.warnings.length > 0 && onWarnings) {
+                    onWarnings(result.warnings, result.data || result);
+                }
 
-            addDisplay(result.data || result);
-            setDisplayChanged(true);
-            reset(defaltValues);
-            setShowAddItem(false);
-            setSelectedFile(null);
+                addDisplay(result.data || result);
+                setDisplayChanged(true);
+                reset(defaltValues);
+                setShowAddItem(false);
+                setSelectedFile(null);
 
-        } else {
+            } else {
                 const errorData = await response.json().catch(() => ({}));
 
                 if (onError && typeof onError === 'function') {
@@ -169,7 +148,6 @@ function AddItem({
             setIsSubmitting(false);
         }
     };
-
     const handleCancel = () => {
         reset(defaltValues);
         setShowAddItem(false);
@@ -280,11 +258,11 @@ function AddItem({
                                                 fieldKey={field.key}
                                                 showPreview={true}
                                             />
-                                            
+
                                             {field.note && (
                                                 <small className="field-note">{field.note}</small>
                                             )}
-                                            
+
                                             {errors[field.key] && (
                                                 <span className="error-message">
                                                     {errors[field.key].message}

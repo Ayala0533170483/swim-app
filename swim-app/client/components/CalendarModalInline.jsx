@@ -4,13 +4,11 @@ import '../styles/CalendarInline.css';
 import { convertLessonToCalendarEvent } from '../structures/lessonStructures';
 
 export default function CalendarInline({ lessons, userName }) {
-    console.log('🔍 Raw lessons data:', lessons);
     
     const events = lessons.map(lesson => {
         return convertLessonToCalendarEvent(lesson);
     });
 
-    console.log('📋 All events:', events);
 
     return (
         <div className="calendar-inline-container">

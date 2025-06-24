@@ -1,5 +1,7 @@
 const lessonRequestsService = require('../services/lessonRequestsService');
 const { sendLessonRequestStatusEmail } = require('./emailsController');
+const { log } = require('../utils/logger');
+
 
 async function createRequest(req, res) {
     try {
@@ -10,6 +12,7 @@ async function createRequest(req, res) {
         };
 
         const result = await lessonRequestsService.createRequest(requestData);
+        log('Lesson request created', { requestId: result.request_id, studentId: requestData.student_id, teacherId: requestData.teacher_id });
 
         res.json({
             success: true,
@@ -19,6 +22,8 @@ async function createRequest(req, res) {
 
     } catch (error) {
         console.error('Error creating lesson request:', error);
+        log('Failed to create lesson request', { studentId: req.body.student_id, teacherId: req.body.teacher_id, error: error.message });
+
         res.status(500).json({
             success: false,
             message: 'שגיאה ביצירת הבקשה'
@@ -84,6 +89,8 @@ async function updateRequestStatus(req, res) {
             console.error('Failed to send status email:', emailError);
         }
 
+        log('Lesson request status updated', { requestId: requestId, status: status, teacherId: teacherId, studentId: updatedRequestData.student_id });
+
         res.json({
             success: true,
             message: status === 'approved' ? 'הבקשה אושרה ושיעור נוצר במערכת' : 'הבקשה נדחתה'
@@ -91,6 +98,9 @@ async function updateRequestStatus(req, res) {
 
     } catch (error) {
         console.error('Error updating request status:', error);
+
+        log('Failed to update lesson request status', { requestId: req.params.requestId, status: req.body.status, teacherId: req.user.id, error: error.message });
+
         res.status(500).json({
             success: false,
             message: 'שגיאה בעדכון הבקשה'
@@ -117,6 +127,8 @@ async function deleteRequest(req, res) {
             console.error('Failed to send rejection email:', emailError);
         }
 
+        log('Lesson request rejected', { requestId: requestId, teacherId: teacherId, studentId: updatedRequestData.student_id });
+
         res.json({
             success: true,
             message: 'הבקשה נדחתה'
@@ -124,6 +136,9 @@ async function deleteRequest(req, res) {
 
     } catch (error) {
         console.error('Error rejecting request:', error);
+
+        log('Failed to reject lesson request', { requestId: req.params.requestId, teacherId: req.user.id, error: error.message });
+
         res.status(500).json({
             success: false,
             message: 'שגיאה בדחיית הבקשה'

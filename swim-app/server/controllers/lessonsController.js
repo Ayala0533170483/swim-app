@@ -1,6 +1,7 @@
 const genericService = require('../services/genericService');
 const lessonsService = require('../services/lessonsService');
 const { checkTimeConflict, checkQuarterHourWarnings } = require('../utils/timeUtils');
+const { log } = require('../utils/logger');
 
 async function getMyLessons(filters = {}) {
     try {
@@ -78,7 +79,6 @@ async function createLesson(lessonData) {
             pool: newPoolId
         });
 
-        // קבלת השיעורים הקיימים של המורה באותו תאריך
         const existingLessons = await lessonsService.getTeacherLessonsForDate(
             teacherId,
             lessonData.lesson_date
@@ -86,7 +86,6 @@ async function createLesson(lessonData) {
 
         console.log('🔍 Found existing teacher lessons:', existingLessons.length);
 
-        // הכנת אובייקט השיעור החדש לבדיקה
         const newLesson = {
             start_time: lessonData.start_time,
             end_time: lessonData.end_time,
@@ -94,7 +93,6 @@ async function createLesson(lessonData) {
             lesson_date: lessonData.lesson_date
         };
 
-        // בדיקה 1: חפיפה מלאה
         const conflictingLesson = checkTimeConflict(newLesson, existingLessons);
         
         if (conflictingLesson) {
@@ -106,10 +104,8 @@ async function createLesson(lessonData) {
             }));
         }
 
-        // בדיקה 2: אזהרות רבע שעה בבריכות שונות
         const warnings = checkQuarterHourWarnings(newLesson, existingLessons);
 
-        // יצירת השיעור
         lessonData.teacher_id = teacherId;
         delete lessonData.user_id;
         const result = await lessonsService.createLesson(lessonData);
@@ -117,6 +113,15 @@ async function createLesson(lessonData) {
         if (warnings.length > 0) {
             console.log(`⚠️ Teacher lesson created with ${warnings.length} warnings:`, warnings);
         }
+
+        log('Lesson created successfully', { 
+            lessonId: result.lesson_id, 
+            teacherId: teacherId, 
+            poolId: newPoolId, 
+            date: lessonData.lesson_date,
+            type: lessonData.lesson_type,
+            warnings: warnings.length 
+        });
 
         return {
             lesson: result,
@@ -127,8 +132,19 @@ async function createLesson(lessonData) {
         console.error('❌ Error in createLesson:', error.message);
 
         if (error.message.startsWith('{"type":"SCHEDULE_CONFLICT"')) {
+            log('Failed to create lesson - schedule conflict', { 
+                teacherId: lessonData.user_id, 
+                date: lessonData.lesson_date, 
+                startTime: lessonData.start_time 
+            });
             throw error;
         }
+        
+        log('Failed to create lesson', { 
+            teacherId: lessonData.user_id, 
+            error: error.message 
+        });
+        
         throw error;
     }
 }
@@ -138,8 +154,12 @@ async function updateLesson(lessonId, updateData) {
         delete updateData.registrations;
         delete updateData.id;
         await genericService.update('lessons', lessonId, updateData);
+        
+        log('Lesson updated successfully', { lessonId: lessonId, updatedFields: Object.keys(updateData) });
+        
         return { message: 'Lesson updated successfully' };
     } catch (error) {
+        log('Failed to update lesson', { lessonId: lessonId, error: error.message });
         throw error;
     }
 }
@@ -149,9 +169,15 @@ async function deleteLesson(lessonId) {
         console.log(`=== Deleting lesson ID: ${lessonId} ===`);
         const result = await genericService.remove('lessons', lessonId);
         console.log('Lesson deleted successfully');
+        
+        log('Lesson deleted successfully', { lessonId: lessonId });
+        
         return result;
     } catch (error) {
         console.error('Error in deleteLesson:', error);
+        
+        log('Failed to delete lesson', { lessonId: lessonId, error: error.message });
+        
         throw error;
     }
 }

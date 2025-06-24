@@ -80,7 +80,6 @@ function Branch({ branch, isSelected, onSelect }) {
                 {isSelected && (
                     <div className="branch-details">
                         <div className="branch-actions">
-                            <button className="btn-primary">הזמן שיעור ניסיון</button>
                             {branch.latitude && branch.longitude && (
                                 <button
                                     className="btn-secondary"

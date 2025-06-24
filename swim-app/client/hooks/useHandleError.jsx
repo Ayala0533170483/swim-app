@@ -23,10 +23,9 @@ export default function useHandleError() {
         alert(errorMessage);
     };
 
-    // פונקציה פשוטה שרק מזהה קונפליקטים - המודל יטפל בהצגה
     const handleLessonConflictError = (error) => {
         if (error.response?.data?.type === 'SCHEDULE_CONFLICT') {
-            return true; // מסמן שזה קונפליקט שיעורים
+            return true;
         }
         return false;
     };

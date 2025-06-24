@@ -6,9 +6,7 @@ import "../styles/NotFound.css";
 function Error() {
   const navigate = useNavigate();
 
-  // יצירת בועות אנימטיביות ומניעת גלילה
   useEffect(() => {
-    // מניעת גלילה בגוף הדף
     document.body.classList.add('no-scroll');
     
     const container = document.querySelector('.errorContainer');
@@ -25,7 +23,6 @@ function Error() {
       container.appendChild(bubblesContainer);
       
       return () => {
-        // החזרת הגלילה כשעוזבים את הדף
         document.body.classList.remove('no-scroll');
         if (container.contains(bubblesContainer)) {
           container.removeChild(bubblesContainer);

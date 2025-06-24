@@ -38,7 +38,6 @@ function LessonRequest({ request, mode = 'teacher' }) {
     const isTeacherMode = mode === 'teacher';
     const isStudentMode = mode === 'student';
 
-    // פונקציה לטיפול באישור בקשה
     const handleApproveRequest = (requestId) => {
         updateRequests({
             request_id: requestId,
@@ -46,14 +45,10 @@ function LessonRequest({ request, mode = 'teacher' }) {
         });
     };
 
-    // פונקציה לטיפול בדחיית בקשה
     const handleRejectRequest = (requestId) => {
         deleteRequests(requestId);
     };
-
-    // דיבוג - בדוק מה יש בנתונים
-    console.log('Request data:', request);
-
+    
     return (
         <div key={request.request_id} className="request-card" data-status={request.status}>
             <div className="request-header">
