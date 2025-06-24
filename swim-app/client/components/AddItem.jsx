@@ -54,9 +54,7 @@ function AddItem({
         const url = `http://localhost:3000/${type}`;
         const headers = {};
 
-        console.log('🔍 Original data:', data);
-        console.log('🔍 Selected file:', selectedFile);
-        console.log('🔍 Keys:', keys);
+    
 
         // בדיקה אם יש קבצים (תמונות)
         const hasFiles = selectedFile || (keys && keys.some(key => key.type === 'file'));
@@ -108,9 +106,6 @@ function AddItem({
     const onSubmit = async (data) => {
         if (isSubmitting) return;
 
-        console.log('🔍 Form submitted with data:', data);
-        console.log('🔍 Selected file state:', selectedFile);
-
         setIsSubmitting(true);
         let token = Cookies.get("accessToken");
 
@@ -122,11 +117,9 @@ function AddItem({
                 response = await sendAddRequest(token, data);
             }
 
-                   if (response.ok) {
+             if (response.ok) {
             const result = await response.json();
-            console.log('✅ Success response:', result);
 
-            // **שינוי כאן**: בדיקה אם יש warnings
             if (result.warnings && result.warnings.length > 0 && onWarnings) {
                 onWarnings(result.warnings, result.data || result);
             }
@@ -139,13 +132,10 @@ function AddItem({
 
         } else {
                 const errorData = await response.json().catch(() => ({}));
-                console.error('❌ Error response:', errorData);
 
-                // אם יש פונקציית onError מותאמת אישית (למשל לקונפליקטים)
                 if (onError && typeof onError === 'function') {
                     const handled = onError({ response: { data: errorData, status: response.status } });
                     if (handled) {
-                        // השגיאה טופלה על ידי הפונקציה המותאמת
                         setIsSubmitting(false);
                         return;
                     }
@@ -154,7 +144,6 @@ function AddItem({
                 if (useContactStyle) {
                     alert(errorData.message || 'שגיאה בשליחת ההודעה. אנא נסה שוב.');
                 } else {
-                    // הצגת הודעת שגיאה ספציפית לתמונות
                     if (errorData.message) {
                         alert(errorData.message);
                     } else {
@@ -163,9 +152,6 @@ function AddItem({
                 }
             }
         } catch (error) {
-            console.error('❌ Network error:', error);
-
-            // אם יש פונקציית onError מותאמת אישית
             if (onError && typeof onError === 'function') {
                 const handled = onError(error);
                 if (handled) {

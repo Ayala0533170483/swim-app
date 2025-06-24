@@ -34,7 +34,6 @@ function Signup() {
   };
 
   const onStepTwo = async (data) => {
-    console.log("🚀 Signup attempt with:", data);
 
     const payload = {
       name: data.name,
@@ -42,8 +41,6 @@ function Signup() {
       password: stepOneRef.current.password,
       type_id: parseInt(data.type_id),
     };
-
-    console.log("📤 Sending payload:", payload);
 
     try {
       const res = await fetch("http://localhost:3000/signup", {
@@ -92,7 +89,6 @@ function Signup() {
           <p className="signup-subtitle">הצטרפו לבית הספר לשחייה שלנו</p>
         </div>
 
-        {/* Step Indicator */}
         <div className="step-indicator">
           <div className={`step-circle ${!isStepTwo ? 'active' : 'completed'}`}>
             1
@@ -104,13 +100,11 @@ function Signup() {
         </div>
 
         <div className="login-container">
-          {/* שלב 1: אימייל וסיסמה */}
           <input
             type="email"
             {...reg1("email", {
               required: "אימייל נדרש",
               pattern: {
-                // value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                 message: "אימייל לא תקין"
               },
             })}

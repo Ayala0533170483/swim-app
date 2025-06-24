@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh-secret';
 const ACCESS_SECRET = process.env.JWT_SECRET || 'access-secret';
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const ip = req.ip;
@@ -21,11 +21,11 @@ router.post('/login', async (req, res, next) => {
 
         res.json({ user, accessToken });
     } catch (error) {
-        next(error); 
+        res.status(401).json({ error: error.message });
     }
 });
 
-router.post('/signup', async (req, res, next) => {
+router.post('/signup', async (req, res) => {
     try {
         const { name, email, password, type_id } = req.body;
         const ip = req.ip;
@@ -45,7 +45,9 @@ router.post('/signup', async (req, res, next) => {
         res.json({ user, accessToken });
 
     } catch (error) {
-        next(error); 
+        console.error(error);
+        const status = error.message.includes('in use') ? 409 : 500;
+        res.status(status).json({ error: error.message });
     }
 });
 
@@ -58,40 +60,25 @@ router.post('/logout', (req, res) => {
     res.json({ message: 'Logged out successfully' });
 });
 
-router.post('/refresh', (req, res, next) => {
-    try {
-        const token = req.cookies.refreshToken;
-        if (!token) {
-            const error = new Error('אין טוקן רענון');
-            error.status = 401;
-            throw error;
+router.post('/refresh', (req, res) => {
+    const token = req.cookies.refreshToken;
+    if (!token) return res.sendStatus(401);
+
+    jwt.verify(token, REFRESH_SECRET, (err, payload) => {
+        if (err) return res.sendStatus(403);
+
+        const ip = req.ip;
+        if (payload.ip !== ip) {
+            return res.status(403).json({ error: 'IP mismatch' });
         }
 
-        jwt.verify(token, REFRESH_SECRET, (err, payload) => {
-            if (err) {
-                const error = new Error('טוקן לא תקין');
-                error.status = 403;
-                return next(error);
-            }
+        const newAccessToken = jwt.sign(
+            { id: payload.id, email: payload.email, role: payload.role, ip: payload.ip },
+            ACCESS_SECRET,
+            { expiresIn: '15m' }
+        );
 
-            const ip = req.ip;
-            if (payload.ip !== ip) {
-                const error = new Error('IP mismatch');
-                error.status = 403;
-                return next(error);
-            }
-
-            const newAccessToken = jwt.sign(
-                { id: payload.id, email: payload.email, role: payload.role, ip: payload.ip },
-                ACCESS_SECRET,
-                { expiresIn: '15m' }
-            );
-
-            res.json({ accessToken: newAccessToken });
-        });
-    } catch (error) {
-        next(error);
-    }
+        res.json({ accessToken: newAccessToken });
+    });
 });
-
 module.exports = router;

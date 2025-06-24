@@ -9,7 +9,7 @@ export default function MainLayout() {
   const { userData } = useContext(userContext);
   const location = useLocation();
   const isProtectedRoute = username && location.pathname.includes(username);
-  
+
   if (isProtectedRoute && (!userData || username !== userData.username)) {
     return (
       <>
