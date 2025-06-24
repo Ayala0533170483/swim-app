@@ -1,6 +1,6 @@
 const genericService = require('../services/genericService');
 const usersService = require('../services/usersService');
-const { sendUserRemovalEmail, sendLessonCancellationEmail } = require('./emailController');
+const { sendUserRemovalEmail, sendLessonCancellationEmail } = require('./emailsController');
 
 
 async function createUser(userData) {
@@ -154,7 +154,7 @@ async function deleteUser(id, additionalData = null) {
         // בדיקה אם מדובר בתלמיד
         if (additionalData && additionalData.userType === 'students') {
             console.log('🔍 Deleting student with ID:', id);
-            
+
             // קבלת פרטי התלמיד לפני המחיקה
             const student = await usersService.getUserById(id);
             if (!student) {
@@ -171,7 +171,7 @@ async function deleteUser(id, additionalData = null) {
             if (cancelledLessons && cancelledLessons.length > 0) {
                 for (const lessonData of cancelledLessons) {
                     console.log('🔍 Checking lesson type:', lessonData.lesson_type);
-                    
+
                     // שליחת מייל רק לשיעורים פרטיים
                     if (lessonData.lesson_type === 'private') {
                         console.log('📧 Sending email to teacher:', lessonData.teacher_email);

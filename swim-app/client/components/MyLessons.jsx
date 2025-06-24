@@ -1,4 +1,3 @@
-
 import React, { useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { userContext } from './App';
 import AddItem from './AddItem';
@@ -140,6 +139,7 @@ function MyLessons() {
     }
   }, [addLessons]);
 
+
   const handleLessonError = (error) => {
     console.log('🔥 handleLessonError called!');
     console.log('Error response data:', error.response?.data);
@@ -184,6 +184,19 @@ function MyLessons() {
   if (!userData) {
     return <div className="loading">טוען נתוני משתמש...</div>;
   }
+  const handleLessonWarnings = useCallback((warnings, lessonData) => {
+    console.log('🔍 handleLessonWarnings called with:', warnings);
+
+    if (warnings && warnings.length > 0) {
+      const warning = warnings[0];
+      setConflictModal({
+        isOpen: true,
+        conflictLesson: warning.conflict,
+        message: warning.message,
+        type: warning.type
+      });
+    }
+  }, []);
 
   const ConflictModal = () => {
     if (!conflictModal.isOpen || !conflictModal.conflictLesson) return null;
@@ -238,28 +251,28 @@ function MyLessons() {
                 <p>ברוך הבא {userData.name}, כאן תוכל לראות את כל השיעורים שלך</p>
               </div>
 
-      
-{lessons.length > 0 && (
-  <div className="page-header-actions">
 
-    <div className="view-toggle-container">
-      <div className="view-toggle">
-        <button 
-          className={`toggle-btn ${viewMode === 'cards' ? 'active' : ''}`}
-          onClick={() => setViewMode('cards')}
-        >
-          📋 כרטיסים
-        </button>
-        <button 
-          className={`toggle-btn ${viewMode === 'calendar' ? 'active' : ''}`}
-          onClick={() => setViewMode('calendar')}
-        >
-          📅 לוח שנה
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+              {lessons.length > 0 && (
+                <div className="page-header-actions">
+
+                  <div className="view-toggle-container">
+                    <div className="view-toggle">
+                      <button
+                        className={`toggle-btn ${viewMode === 'cards' ? 'active' : ''}`}
+                        onClick={() => setViewMode('cards')}
+                      >
+                        📋 כרטיסים
+                      </button>
+                      <button
+                        className={`toggle-btn ${viewMode === 'calendar' ? 'active' : ''}`}
+                        onClick={() => setViewMode('calendar')}
+                      >
+                        📅 לוח שנה
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
             </div>
           </div>
@@ -271,6 +284,7 @@ function MyLessons() {
                 userId={userData.user_id}
                 type="lessons"
                 addDisplay={handleAddLesson}
+                onWarnings={handleLessonWarnings} // **הוסף את השורה הזאת**
                 defaltValues={defaultLessonValues(userData.user_id)}
                 nameButton="הוספת שיעור חדש"
                 validationRules={lessonValidationRules}
@@ -280,6 +294,7 @@ function MyLessons() {
               />
             </div>
           )}
+
 
 
           {loading ? (

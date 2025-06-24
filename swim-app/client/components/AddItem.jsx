@@ -18,7 +18,8 @@ function AddItem({
     validationRules = {},
     userId = null,
     useContactStyle = false,
-    onError = null
+    onError = null,
+    onWarnings = null
 }) {
     const [showAddItem, setShowAddItem] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -121,17 +122,22 @@ function AddItem({
                 response = await sendAddRequest(token, data);
             }
 
-            if (response.ok) {
-                const result = await response.json();
-                console.log('✅ Success response:', result);
+                   if (response.ok) {
+            const result = await response.json();
+            console.log('✅ Success response:', result);
 
-                addDisplay(result.data || result);
-                setDisplayChanged(true);
-                reset(defaltValues);
-                setShowAddItem(false);
-                setSelectedFile(null);
+            // **שינוי כאן**: בדיקה אם יש warnings
+            if (result.warnings && result.warnings.length > 0 && onWarnings) {
+                onWarnings(result.warnings, result.data || result);
+            }
 
-            } else {
+            addDisplay(result.data || result);
+            setDisplayChanged(true);
+            reset(defaltValues);
+            setShowAddItem(false);
+            setSelectedFile(null);
+
+        } else {
                 const errorData = await response.json().catch(() => ({}));
                 console.error('❌ Error response:', errorData);
 

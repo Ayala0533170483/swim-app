@@ -1,15 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const branchesController = require('../controllers/branchesController');
-const verifyToken = require('../middleware/verifyToken');
+const verifyToken = require('../middlewares/verifyToken');
 const { uploadPoolImage } = require('../services/fileService');
 
 router.get('/', async (req, res) => {
     try {
-        console.log('GET /branches called with query:', req.query); // הוסף את זה
+        console.log('GET /branches called with query:', req.query); 
         const query = { ...req.query };
         const branches = await branchesController.getBranches(query);
-        console.log('Branches found:', branches); // הוסף את זה
         res.json({
             success: true,
             data: branches
@@ -24,18 +23,12 @@ router.get('/', async (req, res) => {
     }
 });
 
-
 router.post('/', verifyToken, uploadPoolImage.single('image'), async (req, res) => {
     try {
-        console.log('POST /pools - Body:', req.body);
-        console.log('POST /pools - File:', req.file);
 
         const branchData = req.body;
         const imageFile = req.file;
-
         const newBranch = await branchesController.createBranch(branchData, imageFile);
-
-        console.log('POST /pools - Created branch:', newBranch);
 
         res.status(201).json({
             success: true,
@@ -44,9 +37,7 @@ router.post('/', verifyToken, uploadPoolImage.single('image'), async (req, res) 
         });
 
     } catch (error) {
-        console.error('Error creating branch:', error);
 
-        // הודעות שגיאה ספציפיות
         let errorMessage = 'Error creating branch';
         if (error.message.includes('Image is required')) {
             errorMessage = 'תמונה נדרשת ליצירת בריכה';
@@ -64,19 +55,14 @@ router.post('/', verifyToken, uploadPoolImage.single('image'), async (req, res) 
     }
 });
 
-// PUT - לעדכון בריכה (עם תמונה אופציונלית)
 router.put('/:id', verifyToken, uploadPoolImage.single('image'), async (req, res) => {
     try {
         const branchId = req.params.id;
         const branchData = req.body;
-        const imageFile = req.file; // אופציונלי בעדכון
-
-        console.log('PUT /pools/:id - ID from URL:', branchId, 'Body:', branchData);
-        console.log('PUT /pools/:id - File:', imageFile);
+        const imageFile = req.file; 
 
         const updatedBranch = await branchesController.updateBranch(branchId, branchData, imageFile);
 
-        console.log('PUT /pools/:id - Updated branch:', updatedBranch);
 
         res.json({
             success: true,
@@ -85,9 +71,7 @@ router.put('/:id', verifyToken, uploadPoolImage.single('image'), async (req, res
         });
 
     } catch (error) {
-        console.error('Error updating branch:', error);
 
-        // הודעות שגיאה ספציפיות
         let errorMessage = 'Error updating branch';
         if (error.message.includes('רק קבצי תמונה מותרים')) {
             errorMessage = error.message;
@@ -103,16 +87,10 @@ router.put('/:id', verifyToken, uploadPoolImage.single('image'), async (req, res
     }
 });
 
-// DELETE - למחיקת בריכה (לא משתנה)
 router.delete('/:id', verifyToken, async (req, res) => {
     try {
         const branchId = req.params.id;
-
-        console.log('DELETE /pools/:id - ID:', branchId);
-
         await branchesController.deleteBranch(branchId);
-
-        console.log('DELETE /pools/:id - Success');
 
         res.json({
             success: true,

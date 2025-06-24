@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const { sendGeneralMessage } = require('../controllers/emailController');
+const { sendGeneralMessage } = require('../controllers/emailsController');
 
-// הגדרת multer לטיפול בקבצים מצורפים
 const storage = multer.memoryStorage();
 const upload = multer({
     storage: storage,
@@ -19,7 +18,7 @@ const upload = multer({
             'image/jpg',
             'image/png'
         ];
-        
+
         if (allowedTypes.includes(file.mimetype)) {
             cb(null, true);
         } else {
@@ -28,54 +27,47 @@ const upload = multer({
     }
 });
 
-// נתיב בסיסי
-router.get('/', (req, res) => {
-    res.json({ message: 'Email router is working' });
-});
-
-// נתיב לשליחת הודעות כלליות
 router.post('/send-general-message', upload.single('attachedFile'), async (req, res) => {
     try {
         const { userIds, subject, messageContent, recipients } = req.body;
-        
-        // בדיקת נתונים נדרשים
+
         if (!userIds || !Array.isArray(JSON.parse(userIds)) || JSON.parse(userIds).length === 0) {
-            return res.status(400).json({ 
-                success: false, 
-                error: 'נדרש לבחור לפחות משתמש אחד' 
+            return res.status(400).json({
+                success: false,
+                error: 'נדרש לבחור לפחות משתמש אחד'
             });
         }
 
         if (!subject || !subject.trim()) {
-            return res.status(400).json({ 
-                success: false, 
-                error: 'נדרש נושא להודעה' 
+            return res.status(400).json({
+                success: false,
+                error: 'נדרש נושא להודעה'
             });
         }
 
         if (!messageContent || !messageContent.trim()) {
-            return res.status(400).json({ 
-                success: false, 
-                error: 'נדרש תוכן להודעה' 
+            return res.status(400).json({
+                success: false,
+                error: 'נדרש תוכן להודעה'
             });
         }
 
         if (!recipients || !Array.isArray(JSON.parse(recipients)) || JSON.parse(recipients).length === 0) {
-            return res.status(400).json({ 
-                success: false, 
-                error: 'נדרשים פרטי נמענים' 
+            return res.status(400).json({
+                success: false,
+                error: 'נדרשים פרטי נמענים'
             });
         }
 
         const recipientsList = JSON.parse(recipients);
         const result = await sendGeneralMessage(
-            recipientsList, 
-            subject.trim(), 
-            messageContent.trim(), 
+            recipientsList,
+            subject.trim(),
+            messageContent.trim(),
             req.file
         );
 
-       if (result.totalSent > 0) {
+        if (result.totalSent > 0) {
 
             res.json({
                 success: true,
@@ -96,9 +88,9 @@ router.post('/send-general-message', upload.single('attachedFile'), async (req, 
 
     } catch (error) {
         console.error('Error in send-general-message route:', error);
-        res.status(500).json({ 
-            success: false, 
-            error: 'שגיאה בשרת: ' + error.message 
+        res.status(500).json({
+            success: false,
+            error: 'שגיאה בשרת: ' + error.message
         });
     }
 });

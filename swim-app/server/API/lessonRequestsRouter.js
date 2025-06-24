@@ -29,12 +29,6 @@ router.get('/', (req, res) => {
     }
 });
 
-router.get('/', (req, res) => {
-    const role = req.user.role;
-    const functionName = `get${role.charAt(0).toUpperCase() + role.slice(1)}Requests`;
-    lessonRequestsController[functionName](req, res);
-});
-
 router.put('/:requestId', (req, res) => {
     const { status } = req.body;
     const userRole = req.user.role;

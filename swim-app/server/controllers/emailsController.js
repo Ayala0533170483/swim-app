@@ -1,9 +1,9 @@
 const { createTransporter } = require('../config/emailTransporter');
-const { createLessonConfirmationTemplate } = require('../templates/emailRequestTemplate');
-const { createGeneralMessageTemplate } = require('../templates/emailGeneralMessageTemplate');
-const { createUserRemovalTemplate } = require('../templates/emailUserRemovalTemplate');
-const { createLessonCancellationTemplate } = require('../templates/emailLessonCancellationTemplate');
-const { emailRegisterlessonsTemplate } = require('../templates/emailLessonRequestTemplate');
+const { createLessonConfirmationTemplate } = require('./templates/emailRequestTemplate');
+const { createGeneralMessageTemplate } = require('./templates/emailGeneralMessageTemplate');
+const { createUserRemovalTemplate } = require('./templates/emailUserRemovalTemplate');
+const { createLessonCancellationTemplate } = require('./templates/emailLessonCancellationTemplate');
+const { emailRegisterlessonsTemplate } = require('./templates/emailLessonRequestTemplate');
 
 const cleanFileName = (originalName) => {
     return originalName

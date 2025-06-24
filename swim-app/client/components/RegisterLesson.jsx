@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext } from 'react';
 import { userContext } from './App';
 import { fetchData } from '../js-files/GeneralRequests';
@@ -14,8 +13,14 @@ function RegisterLesson() {
     const [pools, setPools] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     const [successMessage, setSuccessMessage] = useState('');
+
+    const [conflictModal, setConflictModal] = useState({
+        isOpen: false,
+        conflictLesson: null,
+        message: '',
+        type: ''
+    });
 
     const [filter, setFilter] = useState({
         lessonType: 'all',
@@ -24,7 +29,6 @@ function RegisterLesson() {
         poolName: 'all'
     });
     const { handleError } = useHandleError();
-
 
     const availablePoolNames = React.useMemo(() => {
         const poolNames = [...new Set(availableLessons.map(lesson => lesson.pool_name))];
@@ -45,6 +49,32 @@ function RegisterLesson() {
         setTimeout(() => {
             setSuccessMessage('');
         }, 4000);
+    };
+
+    // **הוספה**: פונקציה לטיפול באזהרות
+    const handleRegistrationWarnings = (warnings, registrationData) => {
+        console.log('🔍 Handling registration warnings:', warnings);
+        
+        if (warnings && warnings.length > 0) {
+            const warning = warnings[0]; // נציג את האזהרה הראשונה
+            
+            setConflictModal({
+                isOpen: true,
+                conflictLesson: warning.conflict,
+                message: warning.message,
+                type: warning.type
+            });
+        }
+    };
+
+    // **הוספה**: פונקציה לסגירת מודל האזהרות
+    const closeConflictModal = () => {
+        setConflictModal({
+            isOpen: false,
+            conflictLesson: null,
+            message: '',
+            type: ''
+        });
     };
 
     useEffect(() => {
@@ -139,6 +169,7 @@ function RegisterLesson() {
     return (
         <RegisterLessonsContext.Provider value={{
             addRegistration: handleRegistrationSuccess,
+            handleWarnings: handleRegistrationWarnings, // **הוספה**
             mode: 'register'
         }}>
             <div className="register-lesson-container">
@@ -220,6 +251,36 @@ function RegisterLesson() {
                     )}
                 </div>
             </div>
+
+            {/* **הוספה**: מודל אזהרות */}
+            {conflictModal.isOpen && (
+                <div className="modal-overlay" onClick={closeConflictModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2>⚠️ אזהרה</h2>
+                            <button className="modal-close" onClick={closeConflictModal}>×</button>
+                        </div>
+                        <div className="modal-body">
+                            <p className="conflict-message">{conflictModal.message}</p>
+                            {conflictModal.conflictLesson && (
+                                <div className="conflict-lesson">
+                                    <h3>פרטי השיעור הקיים:</h3>
+                                    <Lesson
+                                        lesson={conflictModal.conflictLesson}
+                                        pools={pools}
+                                        mode="conflict"
+                                    />
+                                </div>
+                            )}
+                        </div>
+                        <div className="modal-footer">
+                            <button className="btn-modal-close" onClick={closeConflictModal}>
+                                הבנתי
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </RegisterLessonsContext.Provider>
     );
 }

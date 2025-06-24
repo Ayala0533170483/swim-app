@@ -32,14 +32,43 @@ export const formatAgeRange = (minAge, maxAge) => {
 };
 
 export const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('he-IL', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+  // בדיקה אם התאריך קיים
+  if (!dateString) {
+    console.log('❌ formatDate: dateString is null/undefined:', dateString);
+    return 'תאריך לא זמין';
+  }
+
+  try {
+    // נסה לנקות את התאריך אם הוא מכיל זמן
+    let cleanDateString = dateString;
+    if (typeof dateString === 'string' && dateString.includes('T')) {
+      cleanDateString = dateString.split('T')[0];
+    }
+
+    console.log('🔍 formatDate input:', dateString, 'cleaned:', cleanDateString);
+    
+    const date = new Date(cleanDateString);
+    
+    // בדיקה אם התאריך תקין
+    if (isNaN(date.getTime())) {
+      console.log('❌ formatDate: Invalid date created from:', dateString);
+      return 'תאריך לא תקין';
+    }
+
+    console.log('✅ formatDate: Valid date created:', date);
+    
+    return date.toLocaleDateString('he-IL', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  } catch (error) {
+    console.error('❌ formatDate error:', error, 'for dateString:', dateString);
+    return 'שגיאה בתאריך';
+  }
 };
+
 
 export const formatTime = (timeString) => {
   return timeString?.substring(0, 5);

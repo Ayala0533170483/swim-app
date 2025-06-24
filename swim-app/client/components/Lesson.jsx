@@ -149,6 +149,7 @@ function Lesson({ lesson, pools, mode = "view", showAsModal = false }) {
                         <AddItem
                             type="registerLessons"
                             addDisplay={addRegistration}
+                            onWarnings={registerContext?.handleWarnings} // **חדש**
                             defaltValues={{
                                 lesson_id: lesson.lesson_id,
                                 student_id: userData?.user_id,

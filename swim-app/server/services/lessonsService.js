@@ -1,5 +1,49 @@
 const pool = require('./connection');
 
+async function createLesson(lessonData) {
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const [res] = await conn.query(
+      'INSERT INTO lessons SET ?',
+      [lessonData]
+    );
+    const lessonId = res.insertId;
+    const [[lessonWithPool]] = await conn.query(
+      `
+        SELECT
+          l.lesson_id,
+          l.teacher_id,
+          l.pool_id,
+          p.name AS pool_name,
+          l.lesson_date,
+          l.start_time,
+          l.end_time,
+          l.lesson_type,
+          l.max_participants,
+          l.min_age,
+          l.max_age,
+          l.level,
+          l.is_active,
+          l.num_registered
+        FROM lessons l
+        LEFT JOIN pools p ON l.pool_id = p.pool_id
+        WHERE l.lesson_id = ?
+      `,
+      [lessonId]
+    );
+
+    await conn.commit();
+    return lessonWithPool;
+  } catch (error) {
+    await conn.rollback();
+    throw error;
+  } finally {
+    conn.release();
+  }
+}
+
 async function getMyLessons({ role, id }) {
   const sql = `
         SELECT 
@@ -147,8 +191,6 @@ l.max_age,
   }
 }
 
-// פונקציה חדשה - מחזירה את כל השיעורים של המורה באותו תאריך
-
 async function getTeacherLessonsForDate(teacherId, lessonDate) {
   const sql = `
     SELECT 
@@ -167,16 +209,110 @@ async function getTeacherLessonsForDate(teacherId, lessonDate) {
     WHERE l.teacher_id = ? 
     AND l.lesson_date = ?
     AND l.is_active = 1
-    ORDER BY l.start_time`;
+    ORDER BY l.end_time`;
 
   const [rows] = await pool.query(sql, [teacherId, lessonDate]);
   console.log(`Found ${rows.length} existing lessons for teacher ${teacherId} on ${lessonDate}`);
   return rows;
 }
 
+async function getStudentLessonsForDate(studentId, lessonDate) {
+  const sql = `
+    SELECT 
+      l.lesson_id,
+      l.pool_id,
+      p.name as pool_name,
+      l.lesson_date,
+      l.start_time,
+      l.end_time,
+      l.lesson_type,
+      l.level,
+      l.min_age,
+      l.max_age,
+      u.name as teacher_name
+    FROM lessons l
+    LEFT JOIN pools p ON l.pool_id = p.pool_id
+    LEFT JOIN users u ON l.teacher_id = u.user_id
+    INNER JOIN lesson_registrations lr ON l.lesson_id = lr.lesson_id
+    WHERE lr.student_id = ? 
+    AND l.lesson_date = ?
+    AND l.is_active = 1
+    AND lr.is_active = 1
+    ORDER BY l.end_time`;
+
+  const [rows] = await pool.query(sql, [studentId, lessonDate]);
+  console.log(`Found ${rows.length} existing lessons for student ${studentId} on ${lessonDate}`);
+  return rows;
+}
+
+
+async function getLessonAndStudentSchedule(lessonId, studentId) {
+  const conn = await pool.getConnection();
+  try {
+    // שאילתה 1: פרטי השיעור החדש
+    const [newLessonRows] = await conn.query(
+      `SELECT 
+        l.lesson_id,
+        l.lesson_date,
+        l.start_time,
+        l.end_time,
+        l.pool_id,
+        p.name as pool_name
+       FROM lessons l
+       LEFT JOIN pools p ON l.pool_id = p.pool_id
+       WHERE l.lesson_id = ? AND l.is_active = 1`,
+      [lessonId]
+    );
+
+    if (newLessonRows.length === 0) {
+      return { newLesson: null, existingLessons: [] };
+    }
+
+    const newLesson = newLessonRows[0];
+
+    // שאילתה 2: השיעורים הקיימים של התלמיד באותו תאריך
+    const [existingLessonsRows] = await conn.query(
+      `SELECT 
+        l.lesson_id,
+        l.pool_id,
+        p.name as pool_name,
+        l.lesson_date,
+        l.start_time,
+        l.end_time,
+        l.lesson_type,
+        l.level,
+        l.min_age,
+        l.max_age,
+        u.name as teacher_name
+       FROM lessons l
+       LEFT JOIN pools p ON l.pool_id = p.pool_id
+       LEFT JOIN users u ON l.teacher_id = u.user_id
+       INNER JOIN lesson_registrations lr ON l.lesson_id = lr.lesson_id
+       WHERE lr.student_id = ? 
+       AND l.lesson_date = ?
+       AND l.is_active = 1
+       AND lr.is_active = 1
+       ORDER BY l.end_time`,
+      [studentId, newLesson.lesson_date]
+    );
+
+    return {
+      newLesson: newLesson,
+      existingLessons: existingLessonsRows
+    };
+
+  } finally {
+    conn.release();
+  }
+}
+
+
 module.exports = {
+  createLesson,
   getMyLessons,
   getAvailableLessons,
   registerStudentToLesson,
-  getTeacherLessonsForDate  // פונקציה חדשה
+  getTeacherLessonsForDate,
+  getStudentLessonsForDate,
+ getLessonAndStudentSchedule
 };

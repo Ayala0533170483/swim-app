@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const messagesController = require('../controllers/messagesController');
-const verifyToken = require('../middleware/verifyToken');
+const verifyToken = require('../middlewares/verifyToken');
 
 router.get('/', verifyToken, async (req, res) => {
     try {
@@ -26,11 +26,11 @@ router.post('/', async (req, res) => {
             message: error.message,
             error: error.error
         };
-        
+
         if (error.received) {
             response.received = error.received;
         }
-        
+
         res.status(error.statusCode || 500).json(response);
     }
 });

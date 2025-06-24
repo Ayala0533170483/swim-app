@@ -3,7 +3,7 @@ const path = require('path');
 const app = express();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const verifyToken = require('./middleware/verifyToken');
+const verifyToken = require('./middlewares/verifyToken.js');
 
 app.use(cors({
     origin: ['http://localhost:5173', 'http://localhost:5174'],
@@ -21,12 +21,12 @@ const lessonesRouter = require('./api/lessonsRouter.js');
 const registerLessonsRouter = require('./api/registerLessonsRouter.js')
 const messagesRouter = require('./api/messagesRouter.js');
 const branchesRouter = require('./api/branchesRouter.js');
-const emailRouter = require('./api/emailRouter.js');
+const emailRouter = require('./api/emailsRouter.js');
 const lessonRequestsRouter = require('./api/lessonRequestsRouter.js');
 app.use('/', authRouter);
 app.use('/users', verifyToken, usersRouter);
 app.use('/lessons', verifyToken, lessonesRouter);
-app.use('/registerLessons', verifyToken, registerLessonsRouter)
+app.use('/registerLessons', verifyToken, registerLessonsRouter);
 app.use('/messages', messagesRouter);
 app.use('/pools', branchesRouter);
 app.use('/branches', branchesRouter);

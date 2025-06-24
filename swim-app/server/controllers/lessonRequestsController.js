@@ -1,5 +1,5 @@
 const lessonRequestsService = require('../services/lessonRequestsService');
-const { sendLessonRequestStatusEmail } = require('./emailController');
+const { sendLessonRequestStatusEmail } = require('./emailsController');
 
 async function createRequest(req, res) {
     try {
