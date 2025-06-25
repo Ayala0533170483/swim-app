@@ -12,3 +12,8 @@
 [2025-06-24T23:14:25.758Z] Branch created successfully | {"branchId":8,"name":"גג","city":"צצ"}
 [2025-06-24T23:14:38.637Z] Branch updated successfully | {"branchId":"8","updatedFields":["name","city","latitude","longitude","phone","description","is_active","image_path"]}
 [2025-06-24T23:14:43.591Z] Branch deleted successfully | {"branchId":"8","imagePath":"uploads/pools/pool_1750806878587.jpg"}
+[2025-06-25T06:33:31.189Z] Failed to delete user | {"userId":"12","error":"Unknown column 'is_active' in 'field list'"}
+[2025-06-25T06:34:13.091Z] Failed to delete user | {"userId":"12","error":"Unknown column 'is_active' in 'field list'"}
+[2025-06-25T06:35:49.895Z] Failed to delete user | {"userId":"12","error":"Unknown column 'is_active' in 'field list'"}
+[2025-06-25T06:46:02.255Z] Branch created successfully | {"branchId":9,"name":"קק","city":"קק"}
+[2025-06-25T06:46:05.847Z] Branch deleted successfully | {"branchId":"9","imagePath":"uploads/pools/pool_1750833962194.png"}
