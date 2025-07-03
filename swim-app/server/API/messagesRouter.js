@@ -41,3 +41,13 @@ router.delete('/:id', verifyToken,authorization, async (req, res, next) => {
 });
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
+

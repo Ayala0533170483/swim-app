@@ -1,18 +1,17 @@
-import React, { useContext } from "react"
+import React from "react";
 import { FaTrash } from "react-icons/fa";
 import useHandleError from "../hooks/useHandleError";
 import refreshToken from "../js-files/RefreshToken";
 import Cookies from 'js-cookie';
 
-function Delete({ 
-    id, 
-    type, 
-    deleteDisplay, 
-    setDisplayChanged = () => { }, 
-    dependent, 
+function Delete({
+    id,
+    type,
+    deleteDisplay,
+    setDisplayChanged = () => { },
     nameButton = "",
     text = "",
-    additionalData = null 
+    additionalData = null
 }) {
     const { handleError } = useHandleError();
 
@@ -25,11 +24,11 @@ function Delete({
             },
             credentials: 'include',
         };
-        
+
         if (body) {
             options.body = JSON.stringify(body);
         }
-        
+
         return await fetch(url, options);
     };
 
@@ -37,34 +36,6 @@ function Delete({
         let token = Cookies.get("accessToken");
 
         try {
-            if (dependent) {
-                let singularType = type.slice(0, -1);
-                let dependentArrayResponse = await sendDeleteRequest(token, `http://localhost:3000/${dependent}/?${singularType}Id=${id}`);
-
-                if (dependentArrayResponse.status === 401 || dependentArrayResponse.status === 403) {
-                    token = await refreshToken();
-                    dependentArrayResponse = await sendDeleteRequest(token, `http://localhost:3000/${dependent}/?${singularType}Id=${id}`);
-                }
-
-                if (!dependentArrayResponse.ok) {
-                    throw new Error(`Failed to fetch dependent data for ${dependent}`);
-                }
-
-                let dependentArray = await dependentArrayResponse.json();
-                for (let element of dependentArray) {
-                    let dependentResponse = await sendDeleteRequest(token, `http://localhost:3000/${dependent}/${element.id}`);
-
-                    if (dependentResponse.status === 401 || dependentResponse.status === 403) {
-                        token = await refreshToken();
-                        dependentResponse = await sendDeleteRequest(token, `http://localhost:3000/${dependent}/${element.id}`);
-                    }
-
-                    if (!dependentResponse.ok) {
-                        throw new Error(`Failed to delete dependent ${dependent} with ID: ${element.id}`);
-                    }
-                }
-            }
-
             let response = await sendDeleteRequest(token, `http://localhost:3000/${type}/${id}`, additionalData);
 
             if (response.status === 401 || response.status === 403) {
@@ -88,9 +59,9 @@ function Delete({
     return (
         <button className="edit-button delete-variant" onClick={deleteItem}>
             <FaTrash className="edit-icon" />
-            {displayText} 
+            {displayText}
         </button>
-    )
+    );
 }
 
 export default Delete;

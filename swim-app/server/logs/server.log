@@ -12,3 +12,47 @@
 [2025-06-24T23:14:25.758Z] Branch created successfully | {"branchId":8,"name":"גג","city":"צצ"}
 [2025-06-24T23:14:38.637Z] Branch updated successfully | {"branchId":"8","updatedFields":["name","city","latitude","longitude","phone","description","is_active","image_path"]}
 [2025-06-24T23:14:43.591Z] Branch deleted successfully | {"branchId":"8","imagePath":"uploads/pools/pool_1750806878587.jpg"}
+[2025-06-25T08:00:56.037Z] User login successful | {"userId":5,"email":"33@3","role":"teacher","ip":"::1"}
+[2025-06-25T08:01:07.222Z] User login successful | {"userId":6,"email":"3@3","role":"admin","ip":"::1"}
+[2025-06-25T08:01:18.376Z] User deleted successfully | {"userId":"1"}
+[2025-06-25T08:01:32.886Z] User removal email sent | {"userEmail":"2@2","userType":"students","messageId":"<db3dcf4e-2c10-bd07-4647-20e621b12909@gmail.com>"}
+[2025-06-25T08:01:32.886Z] Student deleted successfully | {"studentId":"3","email":"2@2","cancelledLessons":0}
+[2025-06-25T08:01:33.989Z] User removal email sent | {"userEmail":"2@2","userType":"students","messageId":"<821e1e72-12cf-d046-4160-c0be2ac75d87@gmail.com>"}
+[2025-06-25T08:01:33.989Z] Student deleted successfully | {"studentId":"3","email":"2@2","cancelledLessons":0}
+[2025-06-25T08:01:55.657Z] Contact message updated | {"messageId":"11","updatedFields":["full_name","email","phone","subject","message","is_active","is_handled"]}
+[2025-06-25T08:01:57.868Z] Contact message updated | {"messageId":"12","updatedFields":["full_name","email","phone","subject","message","is_active","is_handled"]}
+[2025-06-25T08:02:00.875Z] Contact message updated | {"messageId":"4","updatedFields":["full_name","email","phone","subject","message","is_active","is_handled"]}
+[2025-06-25T08:02:01.547Z] Contact message updated | {"messageId":"5","updatedFields":["full_name","email","phone","subject","message","is_active","is_handled"]}
+[2025-06-25T08:02:02.170Z] Contact message updated | {"messageId":"6","updatedFields":["full_name","email","phone","subject","message","is_active","is_handled"]}
+[2025-06-25T08:02:57.207Z] User login failed | {"email":"2@2","error":"שגיאת שרת,נסה שוב","ip":"::1"}
+[2025-06-25T08:02:59.382Z] User login failed | {"email":"2@2","error":"שגיאת שרת,נסה שוב","ip":"::1"}
+[2025-06-25T08:03:06.183Z] User login failed | {"email":"2@2","error":"שגיאת שרת,נסה שוב","ip":"::1"}
+[2025-06-25T08:03:39.898Z] User login successful | {"userId":3,"email":"2@2","role":"student","ip":"::1"}
+[2025-06-25T08:04:02.744Z] Failed to send lesson confirmation email | {"studentEmail":"2@2","error":"createLessonConfirmationTemplate is not a function"}
+[2025-06-25T08:04:02.745Z] Student registered to lesson successfully | {"studentId":3,"lessonId":31,"warnings":0}
+[2025-06-25T08:04:34.477Z] Failed to send lesson confirmation email | {"studentEmail":"2@2","error":"createLessonConfirmationTemplate is not a function"}
+[2025-06-25T08:04:34.478Z] Student registered to lesson successfully | {"studentId":3,"lessonId":9,"warnings":0}
+[2025-06-25T08:06:00.456Z] User login failed | {"email":"1@1","error":"שגיאת שרת,נסה שוב","ip":"::1"}
+[2025-06-25T08:06:19.113Z] User login successful | {"userId":3,"email":"2@2","role":"student","ip":"::1"}
+[2025-06-25T08:06:31.117Z] User login successful | {"userId":1,"email":"1@1","role":"teacher","ip":"::1"}
+[2025-06-25T08:07:35.136Z] Lesson created successfully | {"lessonId":46,"teacherId":1,"poolId":2,"date":"2025-06-29","type":"private","warnings":0}
+[2025-06-25T08:07:43.211Z] Lesson deleted successfully | {"lessonId":"46"}
+[2025-06-25T08:08:11.652Z] Lesson created successfully | {"lessonId":47,"teacherId":1,"poolId":1,"date":"2025-06-29","type":"group","warnings":0}
+[2025-06-25T08:08:18.255Z] Lesson deleted successfully | {"lessonId":"47"}
+[2025-06-25T08:10:01.407Z] Failed to create lesson - schedule conflict | {"teacherId":1,"date":"2025-06-30","startTime":"15:30"}
+[2025-06-25T08:11:43.814Z] Lesson created successfully | {"lessonId":48,"teacherId":1,"poolId":2,"date":"2025-06-29","type":"private","warnings":0}
+[2025-06-25T08:11:51.847Z] Lesson deleted successfully | {"lessonId":"48"}
+[2025-06-25T08:12:23.841Z] Lesson created successfully | {"lessonId":49,"teacherId":1,"poolId":2,"date":"2025-06-29","type":"private","warnings":0}
+[2025-06-25T08:12:30.749Z] Lesson deleted successfully | {"lessonId":"49"}
+[2025-06-25T08:13:12.500Z] Lesson created successfully | {"lessonId":50,"teacherId":1,"poolId":2,"date":"2025-06-29","type":"group","warnings":0}
+[2025-06-25T08:14:15.386Z] Failed to create lesson - schedule conflict | {"teacherId":1,"date":"2025-06-30","startTime":"15:30"}
+[2025-06-25T08:19:38.666Z] User login successful | {"userId":3,"email":"Ayala214926@gmail.com","role":"student","ip":"::1"}
+[2025-06-25T08:20:06.997Z] User login successful | {"userId":1,"email":"m0583216525@gmail.com","role":"teacher","ip":"::1"}
+[2025-06-25T08:20:28.147Z] User login successful | {"userId":4,"email":"ayalamenda@gmail.com","role":"teacher","ip":"::1"}
+[2025-06-25T08:40:04.895Z] User login successful | {"userId":1,"email":"m0583216525@gmail.com","role":"teacher","ip":"::1"}
+[2025-06-25T08:41:28.335Z] User login successful | {"userId":3,"email":"Ayala214926@gmail.com","role":"student","ip":"::1"}
+[2025-06-25T08:42:18.021Z] User login successful | {"userId":4,"email":"ayalamenda@gmail.com","role":"teacher","ip":"::1"}
+[2025-06-25T08:42:31.919Z] User login successful | {"userId":4,"email":"ayalamenda@gmail.com","role":"teacher","ip":"::1"}
+[2025-06-25T08:42:55.073Z] User login successful | {"userId":6,"email":"3@3","role":"admin","ip":"::1"}
+[2025-06-25T08:44:06.109Z] Contact message updated | {"messageId":"4","updatedFields":["full_name","email","phone","subject","message","is_active","is_handled"]}
+[2025-07-01T22:34:20.727Z] User login successful | {"userId":6,"email":"3@3","role":"admin","ip":"::1"}
