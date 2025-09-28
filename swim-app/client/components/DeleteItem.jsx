@@ -8,7 +8,7 @@ function Delete({
     id,
     type,
     deleteDisplay,
-    setDisplayChanged = () => {},
+    setDisplayChanged = () => { },
     nameButton = "",
     text = "",
     additionalData = null
