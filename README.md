@@ -1,5 +1,5 @@
 # Swimming Lessons Management System
-
+ 
 ## Overview  
 REST API system for swimming lessons management with React client, Node.js/Express server, and MySQL database.
 
